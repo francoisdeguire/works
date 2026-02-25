@@ -8,4 +8,4 @@ Feel free to reach out – I'm always happy to connect 🤍
 
 ---
 
-<sub>Built with Next.js 16 / React 19 / Tailwind CSS v4 / TypeScript – Deployed on Vercel</sub>
+<sub>Built with Next.js 16 / React 19 / Tailwind v4 / TypeScript – Deployed on Vercel</sub>
