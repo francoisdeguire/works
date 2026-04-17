@@ -1,7 +1,28 @@
-import type { NextConfig } from "next";
+import createMDX from '@next/mdx'
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  reactCompiler: true,
 
-export default nextConfig;
+  experimental: {
+    viewTransition: true,
+  },
+
+  pageExtensions: ['ts', 'tsx', 'mdx'],
+
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.francois.works' },
+      { protocol: 'https', hostname: 'videos.francois.works' },
+    ],
+  },
+}
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  },
+})
+
+export default withMDX(nextConfig)

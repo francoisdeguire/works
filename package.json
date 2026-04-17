@@ -6,20 +6,30 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "verify": "bun run typecheck && bun run lint && bun run build",
+    "postinstall": "next typegen"
   },
   "dependencies": {
+    "@mdx-js/loader": "^3",
+    "@mdx-js/react": "^3",
+    "@next/mdx": "16.2.4",
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2",
     "@tailwindcss/postcss": "^4",
+    "@types/mdx": "^2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.4",
+    "babel-plugin-react-compiler": "^1",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
