@@ -9,7 +9,7 @@ export default function BackPill({ label, href }: BackPillProps) {
   return (
     <Link
       href={href}
-      className="inline-flex h-10 items-center gap-3 rounded-pill bg-black/5 pr-6 pl-5 text-body font-medium text-foreground transition-colors duration-fast hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+      className="inline-flex h-10 items-center gap-3 rounded-full bg-black/5 pr-6 pl-5 text-base font-medium text-foreground transition-colors duration-100 hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
     >
       <BackArrow />
       {label}

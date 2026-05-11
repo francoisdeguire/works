@@ -9,7 +9,7 @@ const OpenMeteoResponse = z.object({
 })
 
 export type WeatherSnapshot = {
-  tempF: number
+  tempC: number
   condition: string
 }
 
@@ -18,7 +18,6 @@ export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
   url.searchParams.set('latitude', site.location.coordinates.latitude.toString())
   url.searchParams.set('longitude', site.location.coordinates.longitude.toString())
   url.searchParams.set('current', 'temperature_2m,weather_code')
-  url.searchParams.set('temperature_unit', 'fahrenheit')
 
   try {
     const response = await fetch(url, { next: { revalidate: 600 } })
@@ -27,7 +26,7 @@ export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
     const parsed = OpenMeteoResponse.safeParse(json)
     if (!parsed.success) return null
     return {
-      tempF: Math.round(parsed.data.current.temperature_2m),
+      tempC: Math.round(parsed.data.current.temperature_2m),
       condition: codeToCondition(parsed.data.current.weather_code),
     }
   } catch {

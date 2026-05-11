@@ -4,7 +4,9 @@ export default function GetInTouch() {
   return (
     <a
       href={`mailto:${site.email}`}
-      className="inline-flex h-10 items-center rounded-pill bg-pill-background/90 px-5 text-body font-medium text-pill-foreground transition-opacity duration-fast hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+      target="_blank"
+      className="flex h-10 font-display uppercase bg-background/85 backdrop-blur-md tracking-tight text-[15px] items-center gap-7 rounded-full px-8 border-[0.5px] border-foreground/10 font-medium text-foreground/60 hover:text-foreground transition-colors duration-100"
+      rel="noopener"
     >
       Get In Touch
     </a>

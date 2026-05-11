@@ -1,34 +1,59 @@
-import { site } from '@/lib/site'
-import { getCurrentWeather } from '@/lib/weather'
-import LogoMark from './logo-mark'
-import TerminalClock from './terminal-clock'
+import { headers } from "next/headers";
+import { site } from "@/lib/site";
+import { getCurrentWeather } from "@/lib/weather";
+import CardTilt from "./card-tilt";
+import HoverTrail from "./hover-trail";
+import LogoMark from "./logo-mark";
+
+const FAHRENHEIT_COUNTRIES = new Set(["US", "GB"]);
 
 export default async function TerminalCard() {
-  const weather = await getCurrentWeather()
+  const [weather, headersList] = await Promise.all([
+    getCurrentWeather(),
+    headers(),
+  ]);
+
+  const country = headersList.get("x-vercel-ip-country") ?? "";
+  const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country);
 
   return (
-    <div className="rounded-card bg-black p-8 font-display text-white">
-      <div className="grid min-h-72 grid-cols-2 gap-y-16">
-        <div className="self-start">
-          <LogoMark size={32} />
+    <div className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-[2.5rem] bg-transparent sm:bg-black sm:p-8 p-4 font-display text-foreground sm:text-white">
+      <CardTilt />
+      <HoverTrail />
+      <div className="relative flex flex-col h-full sm:h-80 sm:justify-between">
+        <div className="flex flex-col sm:flex-row max-sm:flex-1 min-h-0">
+          <div className="flex-1 max-sm:hidden">
+            <LogoMark size={30} />
+          </div>
+          <div className="flex max-sm:flex-1 items-center justify-center min-h-0">
+            <a
+              href={`mailto:${site.email}`}
+              className="max-sm:mb-4 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              {site.email.toUpperCase()}
+            </a>
+          </div>
         </div>
-        <a
-          href={`mailto:${site.email}`}
-          className="self-start justify-self-end text-subtitle transition-opacity duration-fast hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-        >
-          {site.email.toUpperCase()} ↗
-        </a>
-        <div className="self-end text-subtitle">
-          <p>MADE WITH LOVE</p>
-          <p>(AND MATCHA)</p>
-        </div>
-        <div className="self-end justify-self-end text-right text-subtitle">
-          <p>
-            <TerminalClock />
-          </p>
-          {weather ? <p>{`${weather.condition} • ${weather.tempF}°F`}</p> : null}
+
+        <div className="flex justify-between text-foreground-muted sm:text-white/80 ">
+          <div className="self-end text-sm sm:text-base -mb-0.5">
+            <p>MADE WITH LOVE</p>
+            <p>(AND MATCHA)</p>
+          </div>
+          <div className="self-end justify-self-end text-right text-sm sm:text-base -mb-0.5">
+            <p>BASED IN MTL</p>
+            {weather ? (
+              <p>
+                {weather.condition}
+                {" ∙ "}
+                {useFahrenheit
+                  ? `${Math.round((weather.tempC * 9) / 5 + 32)}°F`
+                  : `${weather.tempC}°C`}
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

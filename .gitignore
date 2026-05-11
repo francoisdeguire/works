@@ -27,6 +27,7 @@ next-env.d.ts
 .notes/
 private/
 *.local.*
+docs/
 
 # editor
 .idea/

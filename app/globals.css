@@ -1,105 +1,133 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@theme {
-  --color-white: #ffffff;
-  --color-black: #0a0a0a;
-
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f4f4f5;
-  --color-gray-200: #e4e4e7;
-  --color-gray-300: #d4d4d8;
-  --color-gray-400: #a1a1aa;
-  --color-gray-500: #71717a;
-  --color-gray-600: #52525b;
-  --color-gray-700: #3f3f46;
-  --color-gray-800: #27272a;
-  --color-gray-900: #18181b;
-  --color-gray-950: #09090b;
-
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-gray-950);
-  --color-foreground-muted: var(--color-gray-500);
-  --color-border: var(--color-gray-200);
-  --color-border-subtle: var(--color-gray-100);
-
-  --color-pill-background: var(--color-black);
-  --color-pill-foreground: var(--color-white);
-  --color-surface-1: var(--color-white);
-  --color-surface-2: var(--color-gray-50);
-  --color-surface-3: var(--color-gray-100);
-  --color-dotted-grid: var(--color-gray-300);
-
-  --text-display: clamp(2.5rem, 5vw, 3.75rem);
-  --text-display--line-height: 1.4;
-
-  --text-h1: 3rem;
-  --text-h1--line-height: 1.4;
-
-  --text-h2: 1.5rem;
-  --text-h2--line-height: 1.6;
-
-  --text-subtitle: 1.375rem;
-  --text-subtitle--line-height: 1.6;
-
-  --text-h3: 1.125rem;
-  --text-h3--line-height: 1.6;
-
-  --text-body: 1rem;
-  --text-body--line-height: 1.6;
-
-  --text-small: 0.875rem;
-  --text-small--line-height: 1.6;
-
-  --text-tiny: 0.75rem;
-  --text-tiny--line-height: 1.6;
-
-  --container-page: 47rem;
-
-  --radius-pill: 9999px;
-  --radius-card: 24px;
-  --radius-input: 10px;
-  --radius-tile: 16px;
-
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
-  --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --duration-slow: 400ms;
-}
+/* ── Theme ────────────────────────────────────────────────────────────────── */
 
 @theme inline {
-  --font-sans: var(--font-mona-sans), system-ui, sans-serif;
-  --font-display: var(--font-departure-mono), ui-monospace, monospace;
+    /* Surface-flipping aliases (overridden per data-surface) */
+    --color-background: var(--color-white);
+    --color-foreground: var(--color-gray-950);
+    --color-foreground-muted: var(--color-gray-500);
+    --color-border: var(--color-gray-200);
+    --color-border-subtle: var(--color-gray-100);
+
+    /* Constants (do not flip per data-surface) */
+    --color-dos: oklch(0.452 0.313214 264.052);
+    --color-pill-background: var(--color-black);
+    --color-pill-foreground: var(--color-white);
+    --color-surface-2: var(--color-gray-50);
+    --color-dotted-grid: var(--color-gray-300);
+
+    --font-sans: var(--font-mona-sans), system-ui, sans-serif;
+    --font-display: var(--font-departure-mono), ui-monospace, monospace;
+
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
 }
 
-body {
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground font-sans antialiased selection:bg-dos selection:text-background;
+    }
 }
 
-body[data-surface='dotted'] {
-  --color-background: var(--color-gray-100);
-  background-image: radial-gradient(circle, var(--color-dotted-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+/* ── Surface treatments ───────────────────────────────────────────────────── */
+
+body[data-surface="dotted"] {
+    --color-background: var(--color-gray-100);
+    background-image: radial-gradient(
+        circle,
+        var(--color-dotted-grid) 1px,
+        transparent 1px
+    );
+    background-size: 24px 24px;
 }
 
-body[data-surface='dark'] {
-  --color-background: var(--color-black);
-  --color-foreground: var(--color-white);
-  --color-border: var(--color-gray-800);
-  --color-border-subtle: var(--color-gray-900);
+body[data-surface="dark"] {
+    --color-background: var(--color-black);
+    --color-foreground: var(--color-white);
+    --color-border: var(--color-gray-800);
+    --color-border-subtle: var(--color-gray-900);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    scroll-behavior: auto !important;
-  }
+/* ── Utilities ────────────────────────────────────────────────────────────── */
+
+@utility stagger-* {
+    --stagger: --value(integer);
+    @media (prefers-reduced-motion: no-preference) {
+        animation: slide-enter 800ms var(--ease-emphasized) both;
+        animation-delay: calc(var(--stagger) * 120ms);
+    }
+}
+
+@utility eased-gradient {
+    --eg-from: var(--tw-gradient-from, black);
+    --eg-to: var(--tw-gradient-to, transparent);
+    --eg-angle: var(--eg-direction, to bottom);
+    background: linear-gradient(
+        var(--eg-angle),
+        var(--eg-from) 0%,
+        color-mix(in oklch, var(--eg-from) 99%, var(--eg-to) 1%) 6.25%,
+        color-mix(in oklch, var(--eg-from) 97%, var(--eg-to) 3%) 12.5%,
+        color-mix(in oklch, var(--eg-from) 93%, var(--eg-to) 7%) 18.75%,
+        color-mix(in oklch, var(--eg-from) 87%, var(--eg-to) 13%) 25%,
+        color-mix(in oklch, var(--eg-from) 80%, var(--eg-to) 20%) 31.25%,
+        color-mix(in oklch, var(--eg-from) 71%, var(--eg-to) 29%) 37.5%,
+        color-mix(in oklch, var(--eg-from) 61%, var(--eg-to) 39%) 43.75%,
+        color-mix(in oklch, var(--eg-from) 50%, var(--eg-to) 50%) 50%,
+        color-mix(in oklch, var(--eg-from) 39%, var(--eg-to) 61%) 56.25%,
+        color-mix(in oklch, var(--eg-from) 29%, var(--eg-to) 71%) 62.5%,
+        color-mix(in oklch, var(--eg-from) 20%, var(--eg-to) 80%) 68.75%,
+        color-mix(in oklch, var(--eg-from) 13%, var(--eg-to) 87%) 75%,
+        color-mix(in oklch, var(--eg-from) 7%, var(--eg-to) 93%) 81.25%,
+        color-mix(in oklch, var(--eg-from) 3%, var(--eg-to) 97%) 87.5%,
+        color-mix(in oklch, var(--eg-from) 1%, var(--eg-to) 99%) 93.75%,
+        var(--eg-to) 100%
+    );
+}
+
+@utility eased-gradient-to-b {
+    --eg-direction: to bottom;
+}
+@utility eased-gradient-to-t {
+    --eg-direction: to top;
+}
+@utility eased-gradient-to-r {
+    --eg-direction: to right;
+}
+@utility eased-gradient-to-l {
+    --eg-direction: to left;
+}
+
+@property --tilt-amount {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@utility tilt-card {
+    transform: perspective(1500px)
+        rotateX(calc(var(--tilt-x, 0deg) * var(--tilt-amount, 0)))
+        rotateY(calc(var(--tilt-y, 0deg) * var(--tilt-amount, 0)));
+    transition: --tilt-amount 400ms var(--ease-standard);
+    will-change: transform;
+}
+
+@media (min-width: 40rem) {
+    .tilt-card:hover {
+        --tilt-amount: 1;
+    }
+}
+
+/* ── Animations ───────────────────────────────────────────────────────────── */
+
+@keyframes slide-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 }
