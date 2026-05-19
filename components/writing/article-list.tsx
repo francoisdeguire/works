@@ -62,5 +62,5 @@ function groupByYear(articles: Article[]): [string, Article[]][] {
     if (bucket) bucket.push(article)
     else map.set(year, [article])
   }
-  return [...map.entries()].sort(([a], [b]) => (a < b ? 1 : -1))
+  return [...map.entries()].sort(([a], [b]) => b.localeCompare(a))
 }

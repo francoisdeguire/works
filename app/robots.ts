@@ -1,10 +1,9 @@
 import type { MetadataRoute } from 'next'
-
-const SITE_URL = 'https://francois.works'
+import { site } from '@/lib/site'
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [{ userAgent: '*', allow: '/' }],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${site.url}/sitemap.xml`,
   }
 }

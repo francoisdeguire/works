@@ -1,14 +1,32 @@
 import type { MDXComponents } from 'mdx/types'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import Caption from '@/components/mdx/caption'
 import Figure from '@/components/mdx/figure'
 import Note from '@/components/mdx/note'
 import Preview from '@/components/mdx/preview'
 import Video from '@/components/mdx/video'
-import { assetUrl, imagesHost } from './lib/cdn'
+import { assetUrl, imagesHost, isAnimatedImage } from './lib/cdn'
 import { cn } from './lib/cn'
+
+const FALLBACK_IMG_WIDTH = 800
+const FALLBACK_IMG_HEIGHT = 500
+
+function resolveDimension(
+  value: string | number | undefined,
+  label: 'width' | 'height',
+  fallback: number,
+  src: string,
+): number {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  const parsed = Number(value)
+  if (Number.isFinite(parsed) && parsed > 0) return parsed
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`MDX <img> missing ${label} (src: ${src}); using ${fallback}px fallback.`)
+  }
+  return fallback
+}
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -18,7 +36,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       if (className?.includes('section-link')) {
         return (
           <a href={url} className={cn('section-link', className)} {...rest}>
-            {children as ReactNode}
+            {children}
           </a>
         )
       }
@@ -31,34 +49,33 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
             className={cn('link', className)}
             {...rest}
           >
-            {children as ReactNode}
+            {children}
           </a>
         )
       }
       if (url.startsWith('#')) {
         return (
           <a href={url} className={cn('link', className)} {...rest}>
-            {children as ReactNode}
+            {children}
           </a>
         )
       }
       return (
         <Link href={url} className={cn('link', className)} {...rest}>
-          {children as ReactNode}
+          {children}
         </Link>
       )
     },
     img: ({ src, alt, width, height, ...rest }: ComponentPropsWithoutRef<'img'>) => {
       const srcString = typeof src === 'string' ? src : ''
-      // GIFs must bypass the loader; optimization params strip animation frames
-      const isAnimated = /\.gif(\?|$)/i.test(srcString)
+      const animated = isAnimatedImage(srcString)
       return (
         <Image
-          src={isAnimated ? assetUrl(srcString, imagesHost()) : srcString}
+          src={animated ? assetUrl(srcString, imagesHost()) : srcString}
           alt={alt ?? ''}
-          width={typeof width === 'number' ? width : Number(width) || 800}
-          height={typeof height === 'number' ? height : Number(height) || 500}
-          unoptimized={isAnimated}
+          width={resolveDimension(width, 'width', FALLBACK_IMG_WIDTH, srcString)}
+          height={resolveDimension(height, 'height', FALLBACK_IMG_HEIGHT, srcString)}
+          unoptimized={animated}
           {...rest}
         />
       )

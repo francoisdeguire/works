@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
 import SiteHeader from '@/components/site-header'
+import { site } from '@/lib/site'
 import './globals.css'
 
 const monaSans = Mona_Sans({
@@ -24,12 +25,12 @@ const departureMono = localFont({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://francois.works'),
+  metadataBase: new URL(site.url),
   title: {
-    default: 'François Deguire',
-    template: '%s — François Deguire',
+    default: site.name,
+    template: `%s — ${site.name}`,
   },
-  description: 'Design engineer / creative developer.',
+  description: site.description,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

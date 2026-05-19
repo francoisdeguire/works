@@ -35,6 +35,8 @@
 /* ── Base ─────────────────────────────────────────────────────────────────── */
 
 @layer base {
+  /* Tailwind v4's `border` utility inherits `currentColor` by default. The reset here
+     lets us write `border` / `border-t` without restating the color every time. */
   * {
     @apply border-border;
   }

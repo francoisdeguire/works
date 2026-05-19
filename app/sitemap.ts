@@ -1,18 +1,18 @@
 import type { MetadataRoute } from 'next'
+import { site } from '@/lib/site'
 import { getAllArticles } from '@/lib/writing'
-
-const SITE_URL = 'https://francois.works'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getAllArticles()
+  const now = new Date()
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: SITE_URL, lastModified: new Date() },
-    { url: `${SITE_URL}/writing`, lastModified: new Date() },
-    { url: `${SITE_URL}/artifacts`, lastModified: new Date() },
-    { url: `${SITE_URL}/photography`, lastModified: new Date() },
+    { url: site.url, lastModified: now },
+    { url: `${site.url}/writing`, lastModified: now },
+    { url: `${site.url}/artifacts`, lastModified: now },
+    { url: `${site.url}/photography`, lastModified: now },
   ]
   const articleRoutes: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${SITE_URL}/writing/${a.slug}`,
+    url: `${site.url}/writing/${a.slug}`,
     lastModified: new Date(a.updated ?? a.date),
   }))
   return [...staticRoutes, ...articleRoutes]

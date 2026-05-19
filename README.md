@@ -11,8 +11,9 @@ The source is part of the portfolio. Built with care; readable on purpose.
 - [TypeScript](https://www.typescriptlang.org) (strict)
 - [Tailwind CSS v4](https://tailwindcss.com)
 - [MDX](https://mdxjs.com) for writing
-- Cloudflare R2 + Vercel image optimization for photography
-- Bunny.net for artifact video loops
+- [Bunny CDN](https://bunny.net) for images and video (custom `next/image` loader)
+- [Biome](https://biomejs.dev) for lint + format
+- [bun](https://bun.sh) as the package manager
 
 ## Develop
 

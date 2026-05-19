@@ -4,6 +4,7 @@ import GithubSlugger from 'github-slugger'
 import matter from 'gray-matter'
 import { cache } from 'react'
 import { z } from 'zod'
+import { articleModules } from '@/lib/article-modules'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'writing')
 const WORDS_PER_MINUTE = 220
@@ -31,6 +32,8 @@ export type Article = ArticleMeta & {
   headings: Heading[]
 }
 
+// We extract h2 only — articles use a single heading level by convention (see CLAUDE.md).
+// Bumping to h2+h3 means matching `^#{2,3}\s+...` and tracking depth in `Heading`.
 const H2_RE = /^##\s+(.+)$/gm
 const FENCED_CODE_RE = /^```[\s\S]*?^```$/gm
 // Strip paired uppercase-tagged JSX blocks (Preview, Note, Figure with children, etc.)
@@ -41,8 +44,9 @@ export function extractHeadings(source: string): Heading[] {
   const stripped = source.replace(FENCED_CODE_RE, '').replace(JSX_BLOCK_RE, '')
   const slugger = new GithubSlugger()
   const headings: Heading[] = []
-  for (const match of stripped.matchAll(H2_RE)) {
-    const text = match[1].trim()
+  for (const [, captured] of stripped.matchAll(H2_RE)) {
+    if (!captured) continue
+    const text = captured.trim()
     headings.push({ text, id: slugger.slug(text) })
   }
   return headings
@@ -94,9 +98,18 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
   const articles = await Promise.all(
     files.filter((f) => f.endsWith('.mdx')).map((f) => loadArticle(path.join(CONTENT_DIR, f))),
   )
+  if (process.env.NODE_ENV !== 'production') {
+    for (const article of articles) {
+      if (!(article.slug in articleModules)) {
+        console.warn(
+          `Article "${article.slug}" has no entry in lib/article-modules.ts — it will 404 until registered.`,
+        )
+      }
+    }
+  }
   const visible =
     process.env.NODE_ENV === 'production' ? articles.filter((a) => a.published) : articles
-  return visible.sort((a, b) => (a.date < b.date ? 1 : -1))
+  return visible.sort((a, b) => b.date.localeCompare(a.date))
 })
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-function Note({ children }: { children: ReactNode }) {
+function NoteRoot({ children }: { children: ReactNode }) {
   return <aside className="mdx-note">{children}</aside>
 }
 
@@ -12,7 +12,9 @@ function NoteContent({ children }: { children: ReactNode }) {
   return <div className="mdx-note-body">{children}</div>
 }
 
-Note.Title = NoteTitle
-Note.Content = NoteContent
+const Note = Object.assign(NoteRoot, {
+  Title: NoteTitle,
+  Content: NoteContent,
+})
 
 export default Note

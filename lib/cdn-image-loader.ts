@@ -1,10 +1,9 @@
-'use client'
-
 import { assetUrl, imagesHost } from './cdn'
 
 type LoaderArgs = { src: string; width: number; quality?: number }
 
 const PASSTHROUGH_EXTENSIONS = ['.gif', '.svg']
+const DEFAULT_QUALITY = 75
 
 function extension(src: string): string {
   const path = src.split('?')[0] ?? ''
@@ -20,6 +19,6 @@ export default function bunnyImageLoader({ src, width, quality }: LoaderArgs): s
   const url = new URL(absolute)
   url.searchParams.set('width', String(width))
   url.searchParams.set('format', 'webp')
-  url.searchParams.set('quality', String(quality ?? 75))
+  url.searchParams.set('quality', String(quality ?? DEFAULT_QUALITY))
   return url.toString()
 }

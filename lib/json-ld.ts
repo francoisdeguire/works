@@ -1,14 +1,14 @@
+import { site } from '@/lib/site'
 import type { Article } from '@/lib/writing'
 
-const SITE_URL = 'https://francois.works'
 const AUTHOR = {
   '@type': 'Person',
-  name: 'François Deguire',
-  url: SITE_URL,
+  name: site.name,
+  url: site.url,
 } as const
 
 export function blogPostingJsonLd(article: Article, path: string): string {
-  const url = `${SITE_URL}${path}`
+  const url = `${site.url}${path}`
   const payload = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -20,6 +20,6 @@ export function blogPostingJsonLd(article: Article, path: string): string {
     url,
     image: `${url}/opengraph-image.png`,
   }
-  // JSON.stringify does not escape `/`, so a title containing `</script>` could break out.
+  // Escape `<` so a value containing `</script>` cannot terminate the surrounding tag.
   return JSON.stringify(payload).replace(/</g, '\\u003c')
 }

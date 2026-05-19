@@ -13,14 +13,22 @@ export type WeatherSnapshot = {
   condition: string
 }
 
+const REVALIDATE_SECONDS = 600
+const REQUEST_TIMEOUT_MS = 3000
+
 export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
   const url = new URL('https://api.open-meteo.com/v1/forecast')
   url.searchParams.set('latitude', site.location.coordinates.latitude.toString())
   url.searchParams.set('longitude', site.location.coordinates.longitude.toString())
   url.searchParams.set('current', 'temperature_2m,weather_code')
 
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
   try {
-    const response = await fetch(url, { next: { revalidate: 600 } })
+    const response = await fetch(url, {
+      next: { revalidate: REVALIDATE_SECONDS },
+      signal: controller.signal,
+    })
     if (!response.ok) return null
     const json: unknown = await response.json()
     const parsed = OpenMeteoResponse.safeParse(json)
@@ -31,6 +39,8 @@ export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
     }
   } catch {
     return null
+  } finally {
+    clearTimeout(timeout)
   }
 }
 

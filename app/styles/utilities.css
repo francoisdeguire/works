@@ -1,5 +1,9 @@
 /* Custom utilities and keyframes. Imported from globals.css. */
 
+@utility pill {
+  @apply flex h-10 items-center gap-7 rounded-full border-[0.5px] border-foreground/10 bg-background/85 px-8 font-display font-medium text-[15px] uppercase tracking-tight backdrop-blur-md;
+}
+
 @utility stagger-* {
   --stagger: --value(integer);
   @media (prefers-reduced-motion: no-preference) {
