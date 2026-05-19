@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "./styles/utilities.css";
-@import "./styles/prose.css";
+@import 'tailwindcss';
+@import './styles/utilities.css';
+@import './styles/prose.css';
 
 @source './content/**/*.mdx';
 
@@ -48,17 +48,13 @@
 
 /* ── Surface treatments ───────────────────────────────────────────────────── */
 
-body[data-surface="dotted"] {
+body[data-surface='dotted'] {
   --color-background: var(--color-gray-100);
-  background-image: radial-gradient(
-    circle,
-    var(--color-dotted-grid) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle, var(--color-dotted-grid) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-body[data-surface="dark"] {
+body[data-surface='dark'] {
   --color-background: var(--color-black);
   --color-foreground: var(--color-white);
   --color-border: var(--color-gray-800);

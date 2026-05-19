@@ -105,34 +105,6 @@ The `<Preview>` component is the article's "live demo" callout: a `<figure>` wit
 
 The chrome is a `<figure>` and the caption is a `<figcaption>`. The same `<Caption>` component works inside `<Figure>` for image captions — one styling source, two parents.
 
-## Media routes through Bunny CDN
-
-Images and videos are delivered from two Bunny pull zones — `images.francois.works` and `videos.francois.works` — through a custom `next/image` loader that requests WebP at the density the viewport actually needs. Authoring stays MDX-shaped.
-
-<Figure
-  src="/test.jpg"
-  alt="A 1200-square smoke-test image served from Bunny"
-  width={1200}
-  height={1200}
->
-  <Caption>
-    Served as WebP via Bunny's Image Processing query params. No client-side
-    optimization runs.
-  </Caption>
-</Figure>
-
-Plain markdown images flow through the same loader:
-
-![A smaller inline variant of the same image](/test.jpg)
-
-Short autoplay loops fit `<Video>`. The defaults — `autoplay`, `muted`, `loop`, `playsInline` — cover the common case; override per prop when an article needs controls or a manual start.
-
-<Video src="/test.mp4" width={1280} height={720}>
-  <Caption>A short autoplay loop served from Bunny.</Caption>
-</Video>
-
-GIFs work but are discouraged: an MP4 of the same clip is typically 10–100× smaller. When a `.gif` does appear, the loader passes it through untouched so animation survives.
-
 ## Headings carry shareable anchors
 
 Every `##` gets a stable ID via `rehype-slug`, then a small `#` glyph appended by `rehype-autolink-headings`. The glyph hides until you hover the heading or focus its anchor with the keyboard, so the prose stays clean while remaining shareable.

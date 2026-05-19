@@ -9,7 +9,6 @@ type TocProps = {
 }
 
 export default function Toc({ headings }: TocProps) {
-  const h2Count = headings.filter((h) => h.depth === 2).length
   const [activeId, setActiveId] = useState<string | null>(headings[0]?.id ?? null)
 
   useEffect(() => {
@@ -33,35 +32,46 @@ export default function Toc({ headings }: TocProps) {
     return () => observer.disconnect()
   }, [headings])
 
-  if (h2Count < 3) return null
+  if (headings.length < 3) return null
 
   return (
-    <nav aria-label="Table of contents" className="-left-56 absolute top-48 hidden w-48 xl:block">
-      {headings.map((h) => (
-        <a
-          key={h.id}
-          href={`#${h.id}`}
-          className="group flex h-6 items-center rounded-sm focus-visible:outline focus-visible:outline-foreground"
-        >
-          <span
-            className={cn(
-              'h-px transition-all',
-              h.depth === 2 ? 'w-6' : 'ml-3 w-3',
-              activeId === h.id
-                ? 'w-8 bg-foreground'
-                : 'bg-foreground-muted group-hover:bg-foreground',
-            )}
-          />
-          <span
-            className={cn(
-              'ml-3 whitespace-nowrap font-display text-xs uppercase transition-colors',
-              activeId === h.id ? 'text-foreground' : 'text-foreground-muted group-hover:text-foreground',
-            )}
-          >
-            {h.text}
-          </span>
-        </a>
-      ))}
+    <nav
+      aria-label="Table of contents"
+      className="fixed top-48 my-4 left-8 pr-2 hidden max-w-64 xl:flex flex-col gap-6"
+    >
+      <h3 className="font-display text-xs uppercase">Table of contents</h3>
+
+      <div className="flex flex-col gap-1">
+        {headings.map((h) => {
+          const isActive = activeId === h.id
+          return (
+            <a
+              key={h.id}
+              href={`#${h.id}`}
+              className="group flex h-6 items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-foreground"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'h-px shrink-0 transition-all',
+                  isActive ? 'w-6' : 'w-3',
+                  isActive ? 'bg-foreground' : 'bg-foreground-muted/30 group-hover:bg-foreground',
+                )}
+              />
+              <span
+                className={cn(
+                  'font-sans font-[450] tracking-wide text-xs transition-colors',
+                  isActive
+                    ? 'text-foreground'
+                    : 'text-foreground-muted/50 group-hover:text-foreground',
+                )}
+              >
+                {h.text}
+              </span>
+            </a>
+          )
+        })}
+      </div>
     </nav>
   )
 }

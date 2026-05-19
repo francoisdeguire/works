@@ -20,7 +20,6 @@ export const articleMetaSchema = z.object({
 export type ArticleMeta = z.infer<typeof articleMetaSchema>
 
 export type Heading = {
-  depth: 2 | 3
   text: string
   id: string
 }
@@ -32,17 +31,19 @@ export type Article = ArticleMeta & {
   headings: Heading[]
 }
 
-const HEADING_RE = /^(#{2,3})\s+(.+)$/gm
+const H2_RE = /^##\s+(.+)$/gm
 const FENCED_CODE_RE = /^```[\s\S]*?^```$/gm
+// Strip paired uppercase-tagged JSX blocks (Preview, Note, Figure with children, etc.)
+// so markdown headings nested inside MDX components don't leak into the TOC.
+const JSX_BLOCK_RE = /^<([A-Z][\w.]*)\b[^>]*>[\s\S]*?^<\/\1>\s*$/gm
 
 export function extractHeadings(source: string): Heading[] {
-  const stripped = source.replace(FENCED_CODE_RE, '')
+  const stripped = source.replace(FENCED_CODE_RE, '').replace(JSX_BLOCK_RE, '')
   const slugger = new GithubSlugger()
   const headings: Heading[] = []
-  for (const match of stripped.matchAll(HEADING_RE)) {
-    const depth = match[1].length as 2 | 3
-    const text = match[2].trim()
-    headings.push({ depth, text, id: slugger.slug(text) })
+  for (const match of stripped.matchAll(H2_RE)) {
+    const text = match[1].trim()
+    headings.push({ text, id: slugger.slug(text) })
   }
   return headings
 }

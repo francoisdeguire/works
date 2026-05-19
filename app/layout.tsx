@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
+import SiteHeader from '@/components/site-header'
 import './globals.css'
 
 const monaSans = Mona_Sans({
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <SiteHeader />
         {children}
       </body>
     </html>

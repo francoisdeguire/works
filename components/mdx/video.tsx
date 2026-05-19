@@ -1,18 +1,18 @@
-import type { ReactNode } from "react";
-import { assetUrl, imagesHost, videoUrl } from "@/lib/cdn";
+import type { ReactNode } from 'react'
+import { assetUrl, imagesHost, videoUrl } from '@/lib/cdn'
 
 type VideoProps = {
-  src: string;
-  width?: number;
-  height?: number;
-  poster?: string;
-  controls?: boolean;
-  autoPlay?: boolean;
-  muted?: boolean;
-  loop?: boolean;
-  playsInline?: boolean;
-  children?: ReactNode;
-};
+  src: string
+  width?: number
+  height?: number
+  poster?: string
+  controls?: boolean
+  autoPlay?: boolean
+  muted?: boolean
+  loop?: boolean
+  playsInline?: boolean
+  children?: ReactNode
+}
 
 export default function Video({
   src,
@@ -44,5 +44,5 @@ export default function Video({
 
       {children}
     </figure>
-  );
+  )
 }
