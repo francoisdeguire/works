@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
 
   images: {
+    loader: 'custom',
+    loaderFile: './lib/cdn-image-loader.ts',
     remotePatterns: [
       { protocol: 'https', hostname: 'images.francois.works' },
       { protocol: 'https', hostname: 'videos.francois.works' },
@@ -20,8 +22,22 @@ const nextConfig: NextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
+    remarkPlugins: [
+      ['remark-frontmatter', ['yaml']],
+      ['remark-gfm', {}],
+    ],
+    rehypePlugins: [
+      ['rehype-slug', {}],
+      ['rehype-pretty-code', { theme: 'min-light', keepBackground: false }],
+      [
+        'rehype-autolink-headings',
+        {
+          behavior: 'append',
+          content: { type: 'text', value: '#' },
+          properties: { className: ['section-link'], ariaLabel: 'Link to section' },
+        },
+      ],
+    ],
   },
 })
 

@@ -1,20 +1,17 @@
-import { headers } from "next/headers";
-import { site } from "@/lib/site";
-import { getCurrentWeather } from "@/lib/weather";
-import CardTilt from "./card-tilt";
-import HoverTrail from "./hover-trail";
-import LogoMark from "./logo-mark";
+import { headers } from 'next/headers'
+import { site } from '@/lib/site'
+import { getCurrentWeather } from '@/lib/weather'
+import CardTilt from './card-tilt'
+import HoverTrail from './hover-trail'
+import LogoMark from './logo-mark'
 
-const FAHRENHEIT_COUNTRIES = new Set(["US", "GB"]);
+const FAHRENHEIT_COUNTRIES = new Set(['US', 'GB'])
 
 export default async function TerminalCard() {
-  const [weather, headersList] = await Promise.all([
-    getCurrentWeather(),
-    headers(),
-  ]);
+  const [weather, headersList] = await Promise.all([getCurrentWeather(), headers()])
 
-  const country = headersList.get("x-vercel-ip-country") ?? "";
-  const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country);
+  const country = headersList.get('x-vercel-ip-country') ?? ''
+  const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country)
 
   return (
     <div className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-[2.5rem] bg-transparent sm:bg-black sm:p-8 p-4 font-display text-foreground sm:text-white">
@@ -45,7 +42,7 @@ export default async function TerminalCard() {
             {weather ? (
               <p>
                 {weather.condition}
-                {" ∙ "}
+                {' ∙ '}
                 {useFahrenheit
                   ? `${Math.round((weather.tempC * 9) / 5 + 32)}°F`
                   : `${weather.tempC}°C`}
@@ -55,5 +52,5 @@ export default async function TerminalCard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

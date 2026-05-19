@@ -1,0 +1,140 @@
+---
+title: Hello Typography
+date: 2026-05-10
+summary: A brief tour of the writing pipeline — paragraphs, lists, emphasis, code, notes, asides, and dividers — so the seams stay visible before any real article ships.
+tags: [writing, typography]
+---
+
+This is the first piece in the writing section. Its only job is to exercise every component of the pipeline, so the rendering stays honest. Built on [Next.js 16](https://nextjs.org) with MDX, Shiki, and a hand-rolled prose layer.
+
+Most real articles are not a single paragraph per section. They stack thoughts: one idea lands, the next qualifies it, a third adds an example. The spacing between those siblings should feel intentional — close enough to read as one movement, open enough to breathe.
+
+## Why a seed article exists
+
+Before the first real article ships, something has to prove the rendering. Without a live exercise of every prose element, regressions hide easily: a code block that loses its theme, an `inline reference` that picks up the wrong styling, or a note whose title inherits block margins it never asked for.
+
+So this article tests the surface deliberately. It is not meant to read well. It is meant to fail loudly when something in the chain drifts.
+
+When two or more paragraphs sit back to back, the first carries the claim. The second sharpens it. A third might cite a constraint, a counterexample, or a number you will forget unless it is bold.
+
+That rhythm is different from a list. Lists scan vertically. Paragraphs argue horizontally across lines, then stack. If the gap between siblings is too wide, the reader treats each block as a new section. If it is too tight, the wall of text never inhales.
+
+## Emphasis in prose
+
+Body copy can carry **bold stress** and _italic voice_ in the same sentence — or **_both at once_** when the idea needs it.
+
+Emphasis should not fight the muted body color. Strong text steps to full foreground. Italic leans without shouting. Together they stay inside the same line box so the eye does not jump.
+
+## Lists scan vertically
+
+Unordered lists use a disc marker and hang from the left margin. They are for parallel items with no implied sequence:
+
+- MDX compiles to plain `ul` / `li` nodes — no custom component required
+- `list-disc` and `ml-6` come from `.article-body` in `prose.css`
+- Nested emphasis still works: **build**, _ship_, then iterate
+
+Ordered lists use decimal markers when the sequence matters:
+
+1. Write the article in `content/writing/*.mdx`
+2. Register the slug in `lib/article-modules.ts`
+3. Run `bun verify` before you call the branch done
+
+A paragraph after a list should pick up the same rhythm as one before it. The list is a detour; the prose line continues.
+
+---
+
+The rule above is a thematic break, not a new chapter. An `hr` marks a shift in topic without promoting a heading. Use it when the reader needs a pause — after a dense proof, before a payoff, between two stories that share a page but not a thread.
+
+## Code blocks read in monospace
+
+Code blocks render through `rehype-pretty-code` at build time, themed with Vesper. A short TypeScript example:
+
+```ts
+type Article = {
+  slug: string;
+  title: string;
+  date: string;
+  readingTimeMinutes: number;
+};
+
+function isRecent(article: Article): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  return article.date >= today;
+}
+```
+
+No client-side syntax-highlighting JavaScript ships. The HTML arrives pre-styled.
+
+The block above should sit with comfortable margin above and below — enough to separate it from prose, not so much that it floats alone on the page. JetBrains Mono carries the tokens; the frame stays quiet.
+
+## Notes pull a thought aside
+
+<Note>
+  <Note.Title>Convention</Note.Title>
+  <Note.Content>
+    Notes call out a constraint, a gotcha, or a piece of context the reader
+    needs without breaking the flow of the prose around them.
+  </Note.Content>
+</Note>
+
+Notes are louder than asides: a border, a surface tint, an optional title in display type. Paragraphs inside should not pick up the article body’s vertical margins.
+
+Wrap one when the reader must not miss a detail. Wrap two in a row only if you enjoy debugging CSS.
+
+## Asides whisper instead of speak
+
+<aside>
+  Asides are quieter than notes. They sit in the margin of an idea, not at its
+  center. Use them sparingly.
+</aside>
+
+An aside can follow a paragraph, precede one, or sit between two that continue the same argument on the other side. The left rule is the only ornament.
+
+## Previews host live demos
+
+import HelloTypographyFontSwap from "@/content/writing/demos/hello-typography/font-swap";
+
+The `<Preview>` component is the article's "live demo" callout: a `<figure>` with a tinted card surface, paired with an optional `<Caption>` underneath. Use it whenever the prose needs to show a runnable example rather than describe one.
+
+<Preview>
+  <HelloTypographyFontSwap />
+  <Caption>
+    The two-font system in action — toggle between Departure Mono and Mona Sans.
+  </Caption>
+</Preview>
+
+The chrome is a `<figure>` and the caption is a `<figcaption>`. The same `<Caption>` component works inside `<Figure>` for image captions — one styling source, two parents.
+
+## Media routes through Bunny CDN
+
+Images and videos are delivered from two Bunny pull zones — `images.francois.works` and `videos.francois.works` — through a custom `next/image` loader that requests WebP at the density the viewport actually needs. Authoring stays MDX-shaped.
+
+<Figure
+  src="/test.jpg"
+  alt="A 1200-square smoke-test image served from Bunny"
+  width={1200}
+  height={1200}
+>
+  <Caption>
+    Served as WebP via Bunny's Image Processing query params. No client-side
+    optimization runs.
+  </Caption>
+</Figure>
+
+Plain markdown images flow through the same loader:
+
+![A smaller inline variant of the same image](/test.jpg)
+
+Short autoplay loops fit `<Video>`. The defaults — `autoplay`, `muted`, `loop`, `playsInline` — cover the common case; override per prop when an article needs controls or a manual start.
+
+<Video src="/test.mp4" width={1280} height={720}>
+  <Caption>A short autoplay loop served from Bunny.</Caption>
+</Video>
+
+GIFs work but are discouraged: an MP4 of the same clip is typically 10–100× smaller. When a `.gif` does appear, the loader passes it through untouched so animation survives.
+
+## Headings carry shareable anchors
+
+Every `##` gets a stable ID via `rehype-slug`, then a small `#` glyph appended by `rehype-autolink-headings`. The glyph hides until you hover the heading or focus its anchor with the keyboard, so the prose stays clean while remaining shareable.
+
+Follow a hash link here — [Notes pull a thought aside](#notes-pull-a-thought-aside) — and the section title should land below the fixed header with `scroll-mt-20`, not tucked underneath it. Balance on headings matters most when the line is short and uppercase: the last word should not orphan alone on a second line.

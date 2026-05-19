@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import { Mona_Sans } from 'next/font/google'
+import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
-import SiteHeader from '@/components/site-header'
 import './globals.css'
 
 const monaSans = Mona_Sans({
@@ -9,6 +8,12 @@ const monaSans = Mona_Sans({
   subsets: ['latin'],
   display: 'swap',
   axes: ['wdth'],
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
+  subsets: ['latin'],
+  display: 'swap',
 })
 
 const departureMono = localFont({
@@ -28,7 +33,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${monaSans.variable} ${departureMono.variable}`}>
+    <html
+      lang="en"
+      className={`${monaSans.variable} ${jetbrainsMono.variable} ${departureMono.variable}`}
+    >
       <body data-surface="default">
         <a
           href="#main"
@@ -36,7 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SiteHeader variant="default" />
         {children}
       </body>
     </html>
