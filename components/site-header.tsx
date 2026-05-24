@@ -22,6 +22,7 @@ export default function SiteHeader() {
 
       <div
         aria-hidden
+        data-header-fade
         className="eased-gradient eased-gradient-to-b from-background to-transparent w-full absolute top-0 left-0 h-full"
       />
     </header>

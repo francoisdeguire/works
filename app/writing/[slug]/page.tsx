@@ -6,14 +6,14 @@ import { articleModules } from '@/lib/article-modules'
 import { blogPostingJsonLd } from '@/lib/json-ld'
 import { getAllArticles, getArticleBySlug } from '@/lib/writing'
 
-type RouteParams = Promise<{ slug: string }>
-
 export async function generateStaticParams() {
   const articles = await getAllArticles()
   return articles.map((a) => ({ slug: a.slug }))
 }
 
-export async function generateMetadata({ params }: { params: RouteParams }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/writing/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const article = await getArticleBySlug(slug)
   if (!article) return {}
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
   }
 }
 
-export default async function WritingArticlePage({ params }: { params: RouteParams }) {
+export default async function WritingArticlePage({ params }: PageProps<'/writing/[slug]'>) {
   const { slug } = await params
   const article = await getArticleBySlug(slug)
   if (!article) notFound()

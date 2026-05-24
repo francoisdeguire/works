@@ -1,12 +1,16 @@
+import ArtifactGrid from '@/components/artifacts/artifact-grid'
 import PageTitle from '@/components/page-title'
+import { getAllArtifacts } from '@/lib/artifacts'
 
-export default function ArtifactsPage() {
+export default async function ArtifactsPage() {
+  const artifacts = await getAllArtifacts()
   return (
-    <>
-      <main id="main" className="mx-auto w-full max-w-page px-6 pt-48 pb-24">
-        <PageTitle title="Artifacts" subtitle="Snippets exploring code, design and craft" />
-        <p className="mt-12 text-center text-foreground-muted">Phase 5 lights up the bento grid.</p>
-      </main>
-    </>
+    <main
+      id="main"
+      className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48"
+    >
+      <PageTitle title="Artifacts" subtitle="Snippets exploring code, design and craft" />
+      <ArtifactGrid artifacts={artifacts} />
+    </main>
   )
 }

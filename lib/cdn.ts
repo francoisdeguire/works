@@ -11,6 +11,8 @@ export function videosHost(): string {
 }
 
 export function assetUrl(src: string, host: string): string {
+  // Leading-slash paths are served from /public locally — useful for placeholders during dev.
+  if (src.startsWith('/')) return src
   return new URL(src, host).toString()
 }
 

@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next'
+import { getAllArtifacts } from '@/lib/artifacts'
 import { site } from '@/lib/site'
 import { getAllArticles } from '@/lib/writing'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = await getAllArticles()
+  const [articles, artifacts] = await Promise.all([getAllArticles(), getAllArtifacts()])
   const now = new Date()
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: site.url, lastModified: now },
@@ -15,5 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${site.url}/writing/${a.slug}`,
     lastModified: new Date(a.updated ?? a.date),
   }))
-  return [...staticRoutes, ...articleRoutes]
+  const artifactRoutes: MetadataRoute.Sitemap = artifacts
+    .filter((a) => a.kind === 'demo')
+    .map((a) => ({
+      url: `${site.url}/artifacts/${a.slug}`,
+      lastModified: new Date(a.updated ?? a.date),
+    }))
+  return [...staticRoutes, ...articleRoutes, ...artifactRoutes]
 }

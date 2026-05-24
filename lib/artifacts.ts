@@ -1,0 +1,59 @@
+import { cache } from 'react'
+import { z } from 'zod'
+import { artifactsManifest } from '@/content/artifacts/manifest'
+import { artifactModules } from '@/lib/artifact-modules'
+
+const baseSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  title: z.string(),
+  date: z.iso.date(),
+  updated: z.iso.date().optional(),
+  /** Overlay text color over the video. 'light' renders white text, 'dark' renders gray-950. */
+  mode: z.enum(['light', 'dark']),
+  video: z.string().optional(),
+  poster: z.string(),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  published: z.boolean().default(true),
+})
+
+const demoSchema = baseSchema.extend({ kind: z.literal('demo') })
+
+const visitSchema = baseSchema.extend({
+  kind: z.literal('visit'),
+  // External URL or internal path. Internal paths render <Link>; externals render <a target="_blank">.
+  href: z.union([z.url(), z.string().startsWith('/')]),
+})
+
+export const artifactSchema = z.discriminatedUnion('kind', [demoSchema, visitSchema])
+export type ArtifactInput = z.input<typeof artifactSchema>
+export type Artifact = z.output<typeof artifactSchema>
+
+export const getAllArtifacts = cache(async (): Promise<Artifact[]> => {
+  const parsed = artifactsManifest.map((entry, index) => {
+    try {
+      return artifactSchema.parse(entry) satisfies Artifact
+    } catch (error) {
+      const why = error instanceof Error ? error.message : String(error)
+      const id = 'slug' in entry && typeof entry.slug === 'string' ? entry.slug : `index ${index}`
+      throw new Error(`Invalid artifact (${id}): ${why}`)
+    }
+  })
+  if (process.env.NODE_ENV !== 'production') {
+    for (const a of parsed) {
+      if (a.kind === 'demo' && !(a.slug in artifactModules)) {
+        console.warn(
+          `Artifact "${a.slug}" has no entry in lib/artifact-modules.ts — it will 404 until registered.`,
+        )
+      }
+    }
+  }
+  const visible =
+    process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
+  return visible.sort((a, b) => b.date.localeCompare(a.date))
+})
+
+export async function getArtifactBySlug(slug: string): Promise<Artifact | null> {
+  const artifacts = await getAllArtifacts()
+  return artifacts.find((a) => a.slug === slug) ?? null
+}

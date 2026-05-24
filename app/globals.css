@@ -50,15 +50,32 @@
 
 /* ── Surface treatments ───────────────────────────────────────────────────── */
 
-body[data-surface='dotted'] {
+/* Surfaces work on any element so per-route layouts can wrap children in a
+   <div data-surface="..."> and cascade the tokens. The body keeps data-surface="default"
+   from the root layout; nested wrappers override their own subtree. */
+
+[data-surface='dotted'] {
   --color-background: var(--color-gray-100);
+  background-color: var(--color-background);
   background-image: radial-gradient(circle, var(--color-dotted-grid) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-body[data-surface='dark'] {
+[data-surface='dark'] {
   --color-background: var(--color-black);
   --color-foreground: var(--color-white);
   --color-border: var(--color-gray-800);
   --color-border-subtle: var(--color-gray-900);
+  background-color: var(--color-background);
+}
+
+/* The header lives in the root layout, outside per-route surface wrappers,
+   so it can't inherit data-surface directly. :has() lets the body react to
+   whichever surface its subtree declares: show the fade by default, hide it
+   when any non-default surface appears in the page. */
+[data-header-fade] {
+  display: block;
+}
+body:has([data-surface]:not([data-surface='default'])) [data-header-fade] {
+  display: none;
 }
