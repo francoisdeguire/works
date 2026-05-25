@@ -1,72 +1,102 @@
-@import 'tailwindcss';
-@import './styles/utilities.css';
-@import './styles/prose.css';
+@import "tailwindcss";
+@import "./styles/utilities.css";
+@import "./styles/prose.css";
 
 @source './content/**/*.mdx';
 
-/* ── Theme ────────────────────────────────────────────────────────────────── */
+/* The header lives in the root layout, outside per-route surface wrappers,
+   so descendant utilities can't reach it via [data-surface=…] directly. This
+   variant uses :has() so the rule fires for both header descendants and any
+   element inside the dark surface itself. */
+@custom-variant surface-dark (body:has([data-surface="dark"]) &);
+
+/* ── Surface tokens ──────────────────────────────────────────────────────── */
+
+:root {
+    --background: var(--color-white);
+    --foreground: var(--color-gray-950);
+    --foreground-muted: var(--color-gray-600);
+    --border: var(--color-gray-200);
+    --border-subtle: var(--color-gray-100);
+    --pill-background: var(--color-black);
+    --pill-foreground: var(--color-white);
+}
 
 @theme inline {
-  /* Surface-flipping aliases (overridden per data-surface) */
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-gray-950);
-  --color-foreground-muted: var(--color-gray-600);
-  --color-border: var(--color-gray-200);
-  --color-border-subtle: var(--color-gray-100);
+    /* Surface-flipping aliases (cascade through the semantic vars above) */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-foreground-muted: var(--foreground-muted);
+    --color-border: var(--border);
+    --color-border-subtle: var(--border-subtle);
+    --color-pill-background: var(--pill-background);
+    --color-pill-foreground: var(--pill-foreground);
 
-  /* Constants (do not flip per data-surface) */
-  --color-dos: oklch(0.452 0.313214 264.052);
-  --color-pill-background: var(--color-black);
-  --color-pill-foreground: var(--color-white);
-  --color-surface-2: var(--color-gray-50);
-  --color-code-bg: var(--color-gray-100);
-  --color-dotted-grid: var(--color-gray-300);
+    /* Constants (do not flip per data-surface) */
+    --color-dos: oklch(0.452 0.313214 264.052);
+    --color-surface-2: var(--color-gray-50);
+    --color-code-bg: var(--color-gray-100);
+    --color-dotted-grid: var(--color-gray-300);
 
-  --font-sans: var(--font-mona-sans), system-ui, sans-serif;
-  --font-display: var(--font-departure-mono), ui-monospace, monospace;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+    --font-sans: var(--font-mona-sans), system-ui, sans-serif;
+    --font-display: var(--font-departure-mono), ui-monospace, monospace;
+    --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --max-w-page: 80rem;
+    --max-w-page: 80rem;
 
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────────── */
 
 @layer base {
-  /* Tailwind v4's `border` utility inherits `currentColor` by default. The reset here
+    /* Tailwind v4's `border` utility inherits `currentColor` by default. The reset here
      lets us write `border` / `border-t` without restating the color every time. */
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-dos selection:text-background;
-  }
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-foreground;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground font-sans antialiased selection:bg-dos selection:text-background;
+    }
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-foreground;
+    }
 }
 
 /* ── Surface treatments ───────────────────────────────────────────────────── */
 
-/* Surfaces work on any element so per-route layouts can wrap children in a
-   <div data-surface="..."> and cascade the tokens. The body keeps data-surface="default"
-   from the root layout; nested wrappers override their own subtree. */
+/* Per-route layouts wrap children in <div data-surface="..."> and the
+   semantic vars cascade through every descendant utility. The dark block is
+   also applied to the SiteHeader (see :has() selector list below) since
+   the header lives outside the per-route wrapper. */
 
-[data-surface='dotted'] {
-  --color-background: var(--color-gray-100);
-  background-color: var(--color-background);
-  background-image: radial-gradient(circle, var(--color-dotted-grid) 1px, transparent 1px);
-  background-size: 24px 24px;
+[data-surface="dotted"] {
+    --background: var(--color-gray-100);
+    background-color: var(--background);
+    background-image: radial-gradient(
+        circle,
+        var(--color-dotted-grid) 1px,
+        transparent 1px
+    );
+    background-size: 24px 24px;
 }
 
-[data-surface='dark'] {
-  --color-background: var(--color-black);
-  --color-foreground: var(--color-white);
-  --color-border: var(--color-gray-800);
-  --color-border-subtle: var(--color-gray-900);
-  background-color: var(--color-background);
+[data-surface="dark"],
+body:has([data-surface="dark"]) > header {
+    --background: var(--color-black);
+    --foreground: var(--color-white);
+    --foreground-muted: var(--color-gray-400);
+    --border: var(--color-gray-800);
+    --border-subtle: var(--color-gray-900);
+    --pill-background: var(--color-white);
+    --pill-foreground: var(--color-black);
+}
+
+/* Paint the dark wrapper itself (the header stays transparent so the canvas
+   shows through). */
+[data-surface="dark"] {
+    background-color: var(--background);
 }
 
 /* The header lives in the root layout, outside per-route surface wrappers,
@@ -74,8 +104,8 @@
    whichever surface its subtree declares: show the fade by default, hide it
    when any non-default surface appears in the page. */
 [data-header-fade] {
-  display: block;
+    display: block;
 }
-body:has([data-surface]:not([data-surface='default'])) [data-header-fade] {
-  display: none;
+body:has([data-surface]:not([data-surface="default"])) [data-header-fade] {
+    display: none;
 }
