@@ -9,7 +9,7 @@ function NoteTitle({ children }: { children: ReactNode }) {
 }
 
 function NoteContent({ children }: { children: ReactNode }) {
-  return <div className="mdx-note-body">{children}</div>
+  return <div>{children}</div>
 }
 
 const Note = Object.assign(NoteRoot, {

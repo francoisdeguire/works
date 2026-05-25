@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { assetUrl, imagesHost, videoUrl } from '@/lib/cdn'
 
 type ArtifactMediaProps = {
-  video?: string
+  video?: string | undefined
   poster: string
   alt: string
 }

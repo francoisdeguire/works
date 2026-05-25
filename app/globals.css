@@ -4,13 +4,11 @@
 
 @source './content/**/*.mdx';
 
-/* The header lives in the root layout, outside per-route surface wrappers,
-   so descendant utilities can't reach it via [data-surface=…] directly. This
-   variant uses :has() so the rule fires for both header descendants and any
-   element inside the dark surface itself. */
+/* SiteHeader lives outside per-route surface wrappers; :has() lets the dark
+   surface block cascade onto it the same as any descendant. */
 @custom-variant surface-dark (body:has([data-surface='dark']) &);
 
-/* ── Surface tokens ──────────────────────────────────────────────────────── */
+/* ── Tokens ───────────────────────────────────────────────────────────────── */
 
 :root {
   --background: var(--color-white);
@@ -24,7 +22,7 @@
 }
 
 @theme inline {
-  /* Surface-flipping aliases (cascade through the semantic vars above) */
+  /* Aliases — flip with the current surface. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
@@ -34,7 +32,7 @@
   --color-pill-foreground: var(--pill-foreground);
   --color-pill-glass: var(--pill-glass);
 
-  /* Constants (do not flip per data-surface) */
+  /* Constants — do not flip. */
   --color-dos: oklch(0.452 0.313214 264.052);
   --color-surface-2: var(--color-gray-50);
   --color-code-bg: var(--color-gray-100);
@@ -53,8 +51,7 @@
 /* ── Base ─────────────────────────────────────────────────────────────────── */
 
 @layer base {
-  /* Tailwind v4's `border` utility inherits `currentColor` by default. The reset here
-     lets us write `border` / `border-t` without restating the color every time. */
+  /* Tailwind v4's `border` utility inherits currentColor; reset to our token. */
   * {
     @apply border-border;
   }
@@ -67,11 +64,6 @@
 }
 
 /* ── Surface treatments ───────────────────────────────────────────────────── */
-
-/* Per-route layouts wrap children in <div data-surface="..."> and the
-   semantic vars cascade through every descendant utility. The dark block is
-   also applied to the SiteHeader (see :has() selector list below) since
-   the header lives outside the per-route wrapper. */
 
 [data-surface='dotted'] {
   --background: var(--color-gray-100);
@@ -92,19 +84,12 @@ body:has([data-surface='dark']) > header {
   --pill-glass: var(--color-zinc-800);
 }
 
-/* Paint the dark wrapper itself (the header stays transparent so the canvas
-   shows through). */
 [data-surface='dark'] {
   background-color: var(--background);
 }
 
-/* The header lives in the root layout, outside per-route surface wrappers,
-   so it can't inherit data-surface directly. :has() lets the body react to
-   whichever surface its subtree declares: show the fade by default, hide it
-   when any non-default surface appears in the page. */
-[data-header-fade] {
-  display: block;
-}
+/* Header fade shows over the default surface and hides as soon as a
+   non-default surface takes over below. */
 body:has([data-surface]:not([data-surface='default'])) [data-header-fade] {
   display: none;
 }

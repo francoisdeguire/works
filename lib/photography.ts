@@ -21,15 +21,7 @@ export type PhotoInput = z.input<typeof photoSchema>
 export type Photo = z.output<typeof photoSchema>
 
 export const getAllPhotos = cache(async (): Promise<Photo[]> => {
-  return manifestSchema.parse(photographyManifest).map((entry, index) => {
-    try {
-      return photoSchema.parse(entry) satisfies Photo
-    } catch (error) {
-      const why = error instanceof Error ? error.message : String(error)
-      const id = 'slug' in entry && typeof entry.slug === 'string' ? entry.slug : `index ${index}`
-      throw new Error(`Invalid photo (${id}): ${why}`)
-    }
-  })
+  return manifestSchema.parse(photographyManifest)
 })
 
 const DEFAULT_QUALITY = 75

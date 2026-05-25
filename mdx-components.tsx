@@ -31,37 +31,31 @@ function resolveDimension(
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
-    a: ({ href, children, className, ...rest }: ComponentPropsWithoutRef<'a'>) => {
+    a: ({ href, children, className }: ComponentPropsWithoutRef<'a'>) => {
       const url = href ?? ''
       if (className?.includes('section-link')) {
         return (
-          <a href={url} className={cn('section-link', className)} {...rest}>
+          <a href={url} className={cn('section-link', className)}>
             {children}
           </a>
         )
       }
       if (url.startsWith('http')) {
         return (
-          <a
-            href={url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={cn('link', className)}
-            {...rest}
-          >
+          <a href={url} target="_blank" rel="noreferrer noopener" className={cn('link', className)}>
             {children}
           </a>
         )
       }
       if (url.startsWith('#')) {
         return (
-          <a href={url} className={cn('link', className)} {...rest}>
+          <a href={url} className={cn('link', className)}>
             {children}
           </a>
         )
       }
       return (
-        <Link href={url} className={cn('link', className)} {...rest}>
+        <Link href={url} className={cn('link', className)}>
           {children}
         </Link>
       )

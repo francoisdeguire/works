@@ -50,7 +50,7 @@ export function Cell({ photo, x, y, cellSize, loading = 'lazy' }: CellProps) {
             width={photo.width}
             height={photo.height}
             loading={eager ? 'eager' : 'lazy'}
-            fetchPriority={eager ? 'high' : undefined}
+            fetchPriority={eager ? 'high' : 'auto'}
             decoding="async"
             draggable={false}
             onError={() => setErrored(true)}

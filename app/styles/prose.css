@@ -36,7 +36,7 @@
 
     /* Inline code: any <code> outside a <pre>. Block code is styled below. */
     & code:not(pre code) {
-      @apply rounded bg-white border px-1 py-px font-mono text-[0.9em] text-foreground sm:whitespace-nowrap;
+      @apply rounded bg-code-bg border px-1 py-px font-mono text-[0.9em] text-foreground sm:whitespace-nowrap;
     }
 
     /* ── Lists ───────────────────────────────────────────────────────── */
@@ -133,7 +133,7 @@
     /* ── rehype-pretty-code ──────────────────────────────────────────── */
     & [data-rehype-pretty-code-figure] {
       & pre {
-        @apply my-8 overflow-x-auto rounded-md bg-white border py-4 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
+        @apply my-8 overflow-x-auto rounded-md bg-code-bg border py-4 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
       }
 
       & pre code {
