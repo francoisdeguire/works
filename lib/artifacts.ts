@@ -48,8 +48,7 @@ export const getAllArtifacts = cache(async (): Promise<Artifact[]> => {
       }
     }
   }
-  const visible =
-    process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
+  const visible = process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
   return visible.sort((a, b) => b.date.localeCompare(a.date))
 })
 

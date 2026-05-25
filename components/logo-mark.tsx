@@ -1,8 +1,8 @@
 type LogoMarkProps = {
-  size?: number
+  size: number
 }
 
-export default function LogoMark({ size = 20 }: LogoMarkProps) {
+export default function LogoMark({ size }: LogoMarkProps) {
   return (
     <svg
       viewBox="0 0 20 20"

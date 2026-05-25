@@ -1,7 +1,7 @@
 import { cache } from 'react'
 import { z } from 'zod'
-import { assetUrl, imagesHost } from '@/lib/cdn'
 import { photographyManifest } from '@/content/photography/manifest'
+import { assetUrl, imagesHost } from '@/lib/cdn'
 
 const photoSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),

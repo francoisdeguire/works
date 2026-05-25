@@ -1,9 +1,9 @@
-import ArtifactTile from "@/components/artifacts/artifact-tile";
-import type { Artifact } from "@/lib/artifacts";
+import ArtifactTile from '@/components/artifacts/artifact-tile'
+import type { Artifact } from '@/lib/artifacts'
 
 type ArtifactGridProps = {
-  artifacts: Artifact[];
-};
+  artifacts: Artifact[]
+}
 
 export default function ArtifactGrid({ artifacts }: ArtifactGridProps) {
   if (artifacts.length === 0) {
@@ -11,7 +11,7 @@ export default function ArtifactGrid({ artifacts }: ArtifactGridProps) {
       <p className="mt-16 text-center font-display text-xs uppercase text-foreground-muted">
         New artifacts soon.
       </p>
-    );
+    )
   }
 
   return (
@@ -22,5 +22,5 @@ export default function ArtifactGrid({ artifacts }: ArtifactGridProps) {
         </li>
       ))}
     </ul>
-  );
+  )
 }

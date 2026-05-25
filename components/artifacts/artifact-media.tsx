@@ -61,8 +61,6 @@ export default function ArtifactMedia({ video, poster, alt }: ArtifactMediaProps
       loop
       playsInline
       className={mediaClass}
-    >
-      <track kind="captions" />
-    </video>
+    />
   )
 }

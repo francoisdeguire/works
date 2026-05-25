@@ -38,9 +38,7 @@ export default function Video({
         muted={muted}
         loop={loop}
         playsInline={playsInline}
-      >
-        <track kind="captions" />
-      </video>
+      />
 
       {children}
     </figure>

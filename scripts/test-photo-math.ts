@@ -2,6 +2,7 @@
 // Asserts the lib/photography-math invariants. Exits non-zero on any failure
 // so this can be wired into bun verify later without a test framework.
 
+import type { Photo } from '../lib/photography'
 import {
   cellAt,
   cellJitter,
@@ -11,7 +12,6 @@ import {
   pickCellSize,
   visibleCells,
 } from '../lib/photography-math'
-import type { Photo } from '../lib/photography'
 
 const failures: string[] = []
 
@@ -60,7 +60,11 @@ for (let row = -10; row <= 10; row++) {
     }
   }
 }
-check('no same-photo within Chebyshev distance 2 across [-10..10]² with N=20', dupes === 0, `${dupes} dupes found`)
+check(
+  'no same-photo within Chebyshev distance 2 across [-10..10]² with N=20',
+  dupes === 0,
+  `${dupes} dupes found`,
+)
 
 // --- Tiny-N fallback: N<9 uses direct hash (9-color tiling doesn't apply).
 // No distance guarantee in this regime — manifestSchema enforces N>=5 in
@@ -69,7 +73,10 @@ for (const testN of [3, 5, 8]) {
   for (let row = -5; row <= 5; row++) {
     for (let col = -5; col <= 5; col++) {
       const pick = cellPhotoIndex(col, row, SEED, testN)
-      check(`cellPhotoIndex(${col},${row}) returns valid index with N=${testN}`, pick >= 0 && pick < testN)
+      check(
+        `cellPhotoIndex(${col},${row}) returns valid index with N=${testN}`,
+        pick >= 0 && pick < testN,
+      )
     }
   }
 }
@@ -103,12 +110,17 @@ for (const testSeed of [1, 42, 12345, 987654321, 2147483646]) {
         }
       }
     }
-    check(`no Chebyshev-2 dupes (seed=${testSeed}, N=${N})`, dupesAtSeed === 0, `${dupesAtSeed} dupes`)
+    check(
+      `no Chebyshev-2 dupes (seed=${testSeed}, N=${N})`,
+      dupesAtSeed === 0,
+      `${dupesAtSeed} dupes`,
+    )
   }
 }
 
 // --- cellJitter bounds ---------------------------------------------------
-let jxMin = Infinity, jxMax = -Infinity
+let jxMin = Infinity,
+  jxMax = -Infinity
 for (let row = -20; row <= 20; row++) {
   for (let col = -20; col <= 20; col++) {
     const jx = cellJitter(col, row, SEED, 'x')

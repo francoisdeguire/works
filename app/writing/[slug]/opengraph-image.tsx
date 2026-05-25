@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { notFound } from 'next/navigation'
 import { ImageResponse } from 'next/og'
 import { formatLongDate } from '@/lib/date'
 import { getArticleBySlug } from '@/lib/writing'
@@ -20,8 +21,7 @@ type RouteParams = Promise<{ slug: string }>
 export default async function Image({ params }: { params: RouteParams }) {
   const { slug } = await params
   const article = await getArticleBySlug(slug)
-  const title = article?.title ?? 'Writing'
-  const dateLabel = article ? formatLongDate(article.date) : ''
+  if (!article) notFound()
   const fontData = await fontDataPromise
 
   return new ImageResponse(
@@ -57,7 +57,7 @@ export default async function Image({ params }: { params: RouteParams }) {
           maxWidth: '90%',
         }}
       >
-        {title}
+        {article.title}
       </div>
       <div
         style={{
@@ -67,7 +67,7 @@ export default async function Image({ params }: { params: RouteParams }) {
           letterSpacing: 1,
         }}
       >
-        {dateLabel}
+        {formatLongDate(article.date)}
       </div>
     </div>,
     {
