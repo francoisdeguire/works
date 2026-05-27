@@ -1,5 +1,5 @@
 import { headers } from 'next/headers'
-import { site } from '@/lib/site'
+import { mailtoLinkProps, site } from '@/lib/site'
 import { getCurrentWeather } from '@/lib/weather'
 import LogoMark from './logo-mark'
 import TerminalCardSurface from './terminal-card-surface'
@@ -21,7 +21,7 @@ export default async function TerminalCard() {
           </div>
           <div className="flex max-sm:flex-1 items-center justify-center min-h-0">
             <a
-              href={`mailto:${site.email}`}
+              {...mailtoLinkProps}
               className="max-sm:mb-4 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {site.email.toUpperCase()}

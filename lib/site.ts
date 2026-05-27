@@ -10,3 +10,9 @@ export const site = {
     coordinates: { latitude: 45.5019, longitude: -73.5674 },
   },
 } as const
+
+export const mailtoLinkProps = {
+  href: `mailto:${site.email}?subject=${encodeURIComponent('Hello there! Reaching out from francois.works')}`,
+  target: '_blank',
+  rel: 'noopener noreferrer',
+} as const

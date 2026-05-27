@@ -14,8 +14,8 @@
     "postinstall": "next typegen"
   },
   "dependencies": {
-    "@mdx-js/loader": "^3",
-    "@mdx-js/react": "^3",
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
     "@next/mdx": "16.2.4",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
@@ -27,19 +27,19 @@
     "rehype-slug": "^6.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
-    "shiki": "^4.0.2",
-    "zod": "^4"
+    "shiki": "^4.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2",
-    "@tailwindcss/postcss": "^4",
-    "@types/mdx": "^2",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "^1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@biomejs/biome": "^2.4.16",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^20.19.41",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.9.3"
   },
   "ignoreScripts": [
     "sharp"

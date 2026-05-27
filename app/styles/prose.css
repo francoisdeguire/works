@@ -1,153 +1,153 @@
 /* Article body typography — scoped on the MDX wrapper in app/writing/[slug]/page.tsx. */
 
 @layer components {
-  .prose-body {
-    @apply font-sans font-[450] text-foreground-muted;
-  }
-
-  .article-body {
-    /* ── Headings ────────────────────────────────────────────────────── */
-    & .section-link {
-      @apply ml-2 text-foreground-muted/60 opacity-0 transition-[opacity,color] duration-200 ease-standard hover:text-foreground;
+    .prose-body {
+        @apply font-sans font-[450] text-foreground-muted;
     }
 
-    & h2 {
-      @apply mt-20 mb-8 scroll-mt-20 font-display text-base text-foreground sm:text-lg uppercase leading-none text-balance;
+    .article-body {
+        /* ── Headings ────────────────────────────────────────────────────── */
+        & .section-link {
+            @apply ml-2 text-foreground-muted/60 opacity-0 transition-[opacity,color] duration-200 ease-standard hover:text-foreground;
+        }
+
+        & h2 {
+            @apply mt-20 mb-8 scroll-mt-20 font-display text-base text-foreground sm:text-lg uppercase leading-none text-balance;
+        }
+
+        & h2:is(:hover, :focus-within) .section-link {
+            @apply opacity-100;
+        }
+
+        /* ── Paragraphs ──────────────────────────────────────────────────── */
+        & blockquote > p,
+        & > p {
+            @apply mt-6 first:mt-0 text-base leading-loose text-pretty;
+        }
+
+        /* ── Inline ──────────────────────────────────────────────────────── */
+        & strong {
+            @apply font-semibold text-foreground;
+        }
+
+        & em {
+            @apply italic;
+        }
+
+        /* Inline code: any <code> outside a <pre>. Block code is styled below. */
+        & code:not(pre code) {
+            @apply rounded border px-1 py-px font-mono text-[0.9em] text-foreground sm:whitespace-nowrap;
+        }
+
+        /* ── Lists ───────────────────────────────────────────────────────── */
+        & ul {
+            @apply my-4 ml-6 list-disc marker:text-foreground-muted/50;
+        }
+
+        & ol {
+            @apply my-4 ml-6 list-decimal marker:text-foreground-muted/50;
+        }
+
+        & li {
+            @apply my-3;
+        }
+
+        /* ── Blocks ──────────────────────────────────────────────────────── */
+        & blockquote {
+            @apply my-6 border-l-2 pl-4 italic;
+        }
+
+        & aside:not(.mdx-note) {
+            @apply my-6 border-l pl-4;
+
+            & p {
+                @apply my-1 leading-relaxed;
+            }
+
+            & p + p {
+                @apply mt-2;
+            }
+        }
+
+        & .link {
+            @apply text-foreground underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors duration-200 ease-standard;
+        }
+
+        & hr {
+            @apply border-0 border-t my-12 mx-auto max-w-80;
+        }
+
+        /* ── Embedded media ──────────────────────────────────────────────── */
+        & img {
+            @apply rounded-md border border-border;
+        }
+
+        & figure:not([data-rehype-pretty-code-figure]) {
+            @apply my-8;
+        }
+
+        & video {
+            @apply rounded-md border;
+        }
+
+        /* ── MDX components ──────────────────────────────────────────────── */
+        & .mdx-note {
+            @apply my-8 rounded-md border p-5 -mx-2;
+
+            & .mdx-note-title {
+                @apply mb-2 font-display text-xs uppercase tracking-wider text-foreground-muted;
+            }
+        }
+
+        & .mdx-preview-card {
+            @apply rounded-md border bg-background p-1 -mx-2 text-foreground;
+
+            /* Reset prose styles that would otherwise bleed into demo content. */
+            & a:not(.section-link) {
+                @apply font-normal underline-offset-0 hover:no-underline;
+            }
+
+            & ul,
+            & ol {
+                @apply my-0 ml-0 list-none;
+            }
+
+            & li {
+                @apply my-0;
+            }
+
+            & img {
+                @apply my-0 rounded-none border-0;
+            }
+        }
+
+        & .mdx-caption {
+            @apply mt-4 mx-4 text-pretty leading-relaxed text-center text-sm text-foreground-muted/70;
+        }
+
+        /* Inline code inside a Preview or Caption reads as body voice, not a pill. */
+        & :is(.mdx-preview-card, .mdx-caption) code:not(pre code) {
+            @apply rounded-none border-0 bg-transparent p-0 font-mono text-[0.95em];
+        }
+
+        /* ── rehype-pretty-code ──────────────────────────────────────────── */
+        & [data-rehype-pretty-code-figure] {
+            & pre {
+                @apply my-8 -mx-2 overflow-x-auto max-h-128 rounded-md border py-3 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
+            }
+
+            & pre code {
+                @apply grid bg-transparent p-0 [font:inherit];
+            }
+
+            /* Horizontal inset on lines — not on pre — so overflow scroll stays inside padding. */
+            & [data-line] {
+                @apply px-4;
+            }
+        }
+
+        & [data-rehype-pretty-code-title] {
+            @apply mb-2 font-mono text-xs uppercase tracking-wide text-foreground-muted;
+        }
     }
-
-    & h2:is(:hover, :focus-within) .section-link {
-      @apply opacity-100;
-    }
-
-    /* ── Paragraphs ──────────────────────────────────────────────────── */
-    & blockquote > p,
-    & > p {
-      @apply mt-6 first:mt-0 text-base leading-loose text-pretty;
-    }
-
-    /* ── Inline ──────────────────────────────────────────────────────── */
-    & strong {
-      @apply font-semibold text-foreground;
-    }
-
-    & em {
-      @apply italic;
-    }
-
-    /* Inline code: any <code> outside a <pre>. Block code is styled below. */
-    & code:not(pre code) {
-      @apply rounded bg-code-bg border px-1 py-px font-mono text-[0.9em] text-foreground sm:whitespace-nowrap;
-    }
-
-    /* ── Lists ───────────────────────────────────────────────────────── */
-    & ul {
-      @apply my-4 ml-6 list-disc marker:text-foreground-muted/50;
-    }
-
-    & ol {
-      @apply my-4 ml-6 list-decimal marker:text-foreground-muted/50;
-    }
-
-    & li {
-      @apply my-3;
-    }
-
-    /* ── Blocks ──────────────────────────────────────────────────────── */
-    & blockquote {
-      @apply my-6 border-l-2 pl-4 italic;
-    }
-
-    & aside:not(.mdx-note) {
-      @apply my-6 border-l pl-4;
-
-      & p {
-        @apply my-1 leading-relaxed;
-      }
-
-      & p + p {
-        @apply mt-2;
-      }
-    }
-
-    & .link {
-      @apply text-foreground underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors duration-200 ease-standard;
-    }
-
-    & hr {
-      @apply border-0 border-t my-12 mx-auto max-w-80;
-    }
-
-    /* ── Embedded media ──────────────────────────────────────────────── */
-    & img {
-      @apply rounded-md border border-border;
-    }
-
-    & figure:not([data-rehype-pretty-code-figure]) {
-      @apply my-8;
-    }
-
-    & video {
-      @apply rounded-md border;
-    }
-
-    /* ── MDX components ──────────────────────────────────────────────── */
-    & .mdx-note {
-      @apply my-8 rounded-md border p-4;
-
-      & .mdx-note-title {
-        @apply mb-2 font-display text-xs uppercase tracking-wider text-foreground-muted;
-      }
-    }
-
-    & .mdx-preview-card {
-      @apply rounded-md border bg-background p-1 text-foreground;
-
-      /* Reset prose styles that would otherwise bleed into demo content. */
-      & a:not(.section-link) {
-        @apply font-normal underline-offset-0 hover:no-underline;
-      }
-
-      & ul,
-      & ol {
-        @apply my-0 ml-0 list-none;
-      }
-
-      & li {
-        @apply my-0;
-      }
-
-      & img {
-        @apply my-0 rounded-none border-0;
-      }
-    }
-
-    & .mdx-caption {
-      @apply mt-4 mx-4 text-pretty leading-relaxed text-center text-sm text-foreground-muted/70;
-    }
-
-    /* Inline code inside a Preview or Caption reads as body voice, not a pill. */
-    & :is(.mdx-preview-card, .mdx-caption) code:not(pre code) {
-      @apply rounded-none border-0 bg-transparent p-0 font-mono text-[0.95em];
-    }
-
-    /* ── rehype-pretty-code ──────────────────────────────────────────── */
-    & [data-rehype-pretty-code-figure] {
-      & pre {
-        @apply my-8 overflow-x-auto rounded-md bg-code-bg border py-4 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
-      }
-
-      & pre code {
-        @apply grid bg-transparent p-0 [font:inherit];
-      }
-
-      /* Horizontal inset on lines — not on pre — so overflow scroll stays inside padding. */
-      & [data-line] {
-        @apply px-4;
-      }
-    }
-
-    & [data-rehype-pretty-code-title] {
-      @apply mb-2 font-mono text-xs uppercase tracking-wide text-foreground-muted;
-    }
-  }
 }

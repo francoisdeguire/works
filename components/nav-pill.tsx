@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { site } from '@/lib/site'
+import { mailtoLinkProps } from '@/lib/site'
 
 type NavPillProps = {
   withContact?: boolean
@@ -23,7 +23,7 @@ export default function NavPill({ withContact = false }: NavPillProps) {
       <Link href="/artifacts" aria-current={isActive('/artifacts') ? 'page' : undefined}>
         Artifacts
       </Link>
-      {withContact ? <a href={`mailto:${site.email}`}>Hi</a> : null}
+      {withContact ? <a {...mailtoLinkProps}>Hi</a> : null}
     </nav>
   )
 }
