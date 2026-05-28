@@ -1,74 +1,122 @@
 /* Custom utilities and keyframes. Imported from globals.css. */
 
 @utility stagger-* {
-  --stagger: --value(integer);
-  @media (prefers-reduced-motion: no-preference) {
-    animation: slide-enter 800ms var(--ease-emphasized) both;
-    animation-delay: calc(var(--stagger) * 120ms);
-  }
+    --stagger: --value(integer);
+    @media (prefers-reduced-motion: no-preference) {
+        animation: slide-enter 800ms var(--ease-emphasized) both;
+        animation-delay: calc(var(--stagger) * 120ms);
+    }
 }
 
 @utility eased-gradient {
-  --eg-from: var(--tw-gradient-from, black);
-  --eg-to: var(--tw-gradient-to, transparent);
-  --eg-angle: var(--eg-direction, to bottom);
-  background: linear-gradient(
-    var(--eg-angle),
-    var(--eg-from) 0%,
-    color-mix(in oklch, var(--eg-from) 99%, var(--eg-to) 1%) 6.25%,
-    color-mix(in oklch, var(--eg-from) 97%, var(--eg-to) 3%) 12.5%,
-    color-mix(in oklch, var(--eg-from) 93%, var(--eg-to) 7%) 18.75%,
-    color-mix(in oklch, var(--eg-from) 87%, var(--eg-to) 13%) 25%,
-    color-mix(in oklch, var(--eg-from) 80%, var(--eg-to) 20%) 31.25%,
-    color-mix(in oklch, var(--eg-from) 71%, var(--eg-to) 29%) 37.5%,
-    color-mix(in oklch, var(--eg-from) 61%, var(--eg-to) 39%) 43.75%,
-    color-mix(in oklch, var(--eg-from) 50%, var(--eg-to) 50%) 50%,
-    color-mix(in oklch, var(--eg-from) 39%, var(--eg-to) 61%) 56.25%,
-    color-mix(in oklch, var(--eg-from) 29%, var(--eg-to) 71%) 62.5%,
-    color-mix(in oklch, var(--eg-from) 20%, var(--eg-to) 80%) 68.75%,
-    color-mix(in oklch, var(--eg-from) 13%, var(--eg-to) 87%) 75%,
-    color-mix(in oklch, var(--eg-from) 7%, var(--eg-to) 93%) 81.25%,
-    color-mix(in oklch, var(--eg-from) 3%, var(--eg-to) 97%) 87.5%,
-    color-mix(in oklch, var(--eg-from) 1%, var(--eg-to) 99%) 93.75%,
-    var(--eg-to) 100%
-  );
+    --eg-from: var(--tw-gradient-from, black);
+    --eg-to: var(--tw-gradient-to, transparent);
+    --eg-angle: var(--eg-direction, to bottom);
+    background: linear-gradient(
+        var(--eg-angle),
+        var(--eg-from) 0%,
+        color-mix(in oklch, var(--eg-from) 99%, var(--eg-to) 1%) 6.25%,
+        color-mix(in oklch, var(--eg-from) 97%, var(--eg-to) 3%) 12.5%,
+        color-mix(in oklch, var(--eg-from) 93%, var(--eg-to) 7%) 18.75%,
+        color-mix(in oklch, var(--eg-from) 87%, var(--eg-to) 13%) 25%,
+        color-mix(in oklch, var(--eg-from) 80%, var(--eg-to) 20%) 31.25%,
+        color-mix(in oklch, var(--eg-from) 71%, var(--eg-to) 29%) 37.5%,
+        color-mix(in oklch, var(--eg-from) 61%, var(--eg-to) 39%) 43.75%,
+        color-mix(in oklch, var(--eg-from) 50%, var(--eg-to) 50%) 50%,
+        color-mix(in oklch, var(--eg-from) 39%, var(--eg-to) 61%) 56.25%,
+        color-mix(in oklch, var(--eg-from) 29%, var(--eg-to) 71%) 62.5%,
+        color-mix(in oklch, var(--eg-from) 20%, var(--eg-to) 80%) 68.75%,
+        color-mix(in oklch, var(--eg-from) 13%, var(--eg-to) 87%) 75%,
+        color-mix(in oklch, var(--eg-from) 7%, var(--eg-to) 93%) 81.25%,
+        color-mix(in oklch, var(--eg-from) 3%, var(--eg-to) 97%) 87.5%,
+        color-mix(in oklch, var(--eg-from) 1%, var(--eg-to) 99%) 93.75%,
+        var(--eg-to) 100%
+    );
 }
 
 @utility eased-gradient-to-b {
-  --eg-direction: to bottom;
+    --eg-direction: to bottom;
 }
 @utility eased-gradient-to-t {
-  --eg-direction: to top;
+    --eg-direction: to top;
 }
 @utility eased-gradient-to-r {
-  --eg-direction: to right;
+    --eg-direction: to right;
 }
 @utility eased-gradient-to-l {
-  --eg-direction: to left;
+    --eg-direction: to left;
 }
 
 @property --tilt-amount {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
 }
 
 @utility tilt-card {
-  transform: perspective(1500px) rotateX(calc(var(--tilt-x, 0deg) * var(--tilt-amount, 0)))
-    rotateY(calc(var(--tilt-y, 0deg) * var(--tilt-amount, 0)));
-  transition: --tilt-amount 400ms var(--ease-standard);
-  will-change: transform;
+    transform: perspective(1500px)
+        rotateX(calc(var(--tilt-x, 0deg) * var(--tilt-amount, 0)))
+        rotateY(calc(var(--tilt-y, 0deg) * var(--tilt-amount, 0)));
+    transition: --tilt-amount 400ms var(--ease-standard);
+    will-change: transform;
 }
 
 @media (min-width: 40rem) {
-  .tilt-card:hover {
-    --tilt-amount: 1;
-  }
+    .tilt-card:hover {
+        --tilt-amount: 1;
+    }
 }
 
 @keyframes slide-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@utility reveal-down {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: reveal-down 200ms linear both;
+    }
+}
+
+@keyframes reveal-down {
+    from {
+        height: 0;
+    }
+}
+
+@utility blink {
+    @media (prefers-reduced-motion: no-preference) {
+        animation: blink 1s step-end infinite;
+    }
+}
+
+@keyframes blink {
+    0% {
+        background-color: white;
+        color: black;
+    }
+    50% {
+        background-color: black;
+        color: white;
+    }
+}
+
+@utility appear-* {
+    --appear: --value(integer);
+    @media (prefers-reduced-motion: no-preference) {
+        opacity: 0;
+        animation: appear 0ms step-start forwards;
+        animation-delay: calc(var(--appear) * 1.5s + 200ms);
+    }
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
