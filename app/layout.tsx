@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import SiteHeader from '@/components/site-header'
 import { site } from '@/lib/site'
 import './globals.css'
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
     default: site.name,
-    template: `%s — ${site.name}`,
+    template: `%s – ${site.name}`,
   },
   description: site.description,
 }
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body data-surface="default">
         <SiteHeader />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   )

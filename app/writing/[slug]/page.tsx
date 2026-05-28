@@ -17,13 +17,16 @@ export async function generateMetadata({
   const { slug } = await params
   const article = await getArticleBySlug(slug)
   if (!article) return {}
+  const path = `/writing/${slug}`
   return {
     title: article.title,
     description: article.summary,
+    alternates: { canonical: path },
     openGraph: {
       title: article.title,
       description: article.summary,
       type: 'article',
+      url: path,
       publishedTime: article.date,
       modifiedTime: article.updated ?? article.date,
     },

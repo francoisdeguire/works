@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import PageTitle from "@/components/page-title";
 import ArticleList from "@/components/writing/article-list";
 import { getAllArticles } from "@/lib/writing";
+
+export const metadata: Metadata = {
+  title: "Writing",
+  description: "Articles about code, design and life.",
+  alternates: { canonical: "/writing" },
+  openGraph: {
+    title: "Writing – Francois Deguire",
+    description: "Articles about code, design and life.",
+    url: "/writing",
+  },
+};
 
 export default async function WritingPage() {
   const articles = await getAllArticles();

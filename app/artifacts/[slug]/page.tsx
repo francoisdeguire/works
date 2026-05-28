@@ -16,9 +16,11 @@ export async function generateMetadata({
   const { slug } = await params
   const artifact = await getArtifactBySlug(slug)
   if (!artifact || artifact.kind !== 'demo') return {}
+  const path = `/artifacts/${slug}`
   return {
     title: artifact.title,
-    openGraph: { title: artifact.title, type: 'website' },
+    alternates: { canonical: path },
+    openGraph: { title: artifact.title, type: 'website', url: path },
     twitter: { card: 'summary_large_image', title: artifact.title },
   }
 }
