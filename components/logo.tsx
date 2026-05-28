@@ -6,7 +6,7 @@ export default function Logo() {
     <Link
       href="/"
       aria-label="Home"
-      className="inline-flex size-10 items-center justify-center rounded-full bg-pill-background text-pill-foreground transition-opacity duration-100 hover:opacity-80 surface-dark:hover:opacity-90"
+      className="logo inline-flex size-10 items-center justify-center rounded-full bg-pill-background text-pill-foreground"
     >
       <LogoMark size={20} />
     </Link>

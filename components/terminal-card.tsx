@@ -1,19 +1,22 @@
-import { headers } from 'next/headers'
-import { mailtoLinkProps, site } from '@/lib/site'
-import { getCurrentWeather } from '@/lib/weather'
-import LogoMark from './logo-mark'
-import TerminalCardSurface from './terminal-card-surface'
+import { headers } from "next/headers";
+import { mailtoLinkProps, site } from "@/lib/site";
+import { getCurrentWeather } from "@/lib/weather";
+import LogoMark from "./logo-mark";
+import TerminalCardSurface from "./terminal-card-surface";
 
-const FAHRENHEIT_COUNTRIES = new Set(['US', 'GB'])
+const FAHRENHEIT_COUNTRIES = new Set(["US", "GB"]);
 
 export default async function TerminalCard() {
-  const [weather, headersList] = await Promise.all([getCurrentWeather(), headers()])
+  const [weather, headersList] = await Promise.all([
+    getCurrentWeather(),
+    headers(),
+  ]);
 
-  const country = headersList.get('x-vercel-ip-country') ?? ''
-  const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country)
+  const country = headersList.get("x-vercel-ip-country") ?? "";
+  const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country);
 
   return (
-    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-[2.5rem] bg-transparent sm:bg-black sm:p-8 p-4 font-display text-foreground sm:text-white">
+    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 p-4 font-display text-foreground sm:text-white">
       <div className="relative flex flex-col h-full sm:h-80 sm:justify-between">
         <div className="flex flex-col sm:flex-row max-sm:flex-1 min-h-0">
           <div className="flex-1 max-sm:hidden">
@@ -39,7 +42,7 @@ export default async function TerminalCard() {
             {weather ? (
               <p>
                 {weather.condition}
-                {' ∙ '}
+                {" ∙ "}
                 {useFahrenheit
                   ? `${Math.round((weather.tempC * 9) / 5 + 32)}°F`
                   : `${weather.tempC}°C`}
@@ -49,5 +52,5 @@ export default async function TerminalCard() {
         </div>
       </div>
     </TerminalCardSurface>
-  )
+  );
 }

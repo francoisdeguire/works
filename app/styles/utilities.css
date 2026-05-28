@@ -120,3 +120,30 @@
         opacity: 1;
     }
 }
+
+@utility logo-pixel {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .logo:hover .logo-pixel,
+    .logo:focus-visible .logo-pixel {
+        animation: pixel-ripple 240ms step-end var(--ripple-delay) 1;
+    }
+}
+
+@keyframes pixel-ripple {
+    0% {
+        transform: scale(0); /* invisible */
+    }
+    33% {
+        transform: scale(0.25); /* 1px */
+    }
+    66% {
+        transform: scale(0.5); /* 2px */
+    }
+    100% {
+        transform: scale(1); /* 4px */
+    }
+}
