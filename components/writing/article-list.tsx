@@ -7,13 +7,11 @@ type ArticleListProps = {
 };
 
 export default function ArticleList({ articles }: ArticleListProps) {
-  if (articles.length === 0) {
-    return (
-      <p className="mt-16 text-center font-display text-xs uppercase text-foreground-muted">
-        Coming soon.
-      </p>
-    );
-  }
+  return (
+    <p className="mt-16 sm:mt-32 text-center font-display text-sm uppercase text-foreground-muted">
+      Coming soon
+    </p>
+  );
 
   const years = groupByYear(articles);
   return (
