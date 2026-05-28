@@ -1,7 +1,6 @@
 import { cache } from 'react'
 import { z } from 'zod'
 import { artifactsManifest } from '@/content/artifacts/manifest'
-import { artifactModules } from '@/lib/artifact-modules'
 
 const baseSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -39,15 +38,6 @@ export const getAllArtifacts = cache(async (): Promise<Artifact[]> => {
       throw new Error(`Invalid artifact (${id}): ${why}`)
     }
   })
-  if (process.env.NODE_ENV !== 'production') {
-    for (const a of parsed) {
-      if (a.kind === 'demo' && !(a.slug in artifactModules)) {
-        console.warn(
-          `Artifact "${a.slug}" has no entry in lib/artifact-modules.ts — it will 404 until registered.`,
-        )
-      }
-    }
-  }
   const visible = process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
   return visible.sort((a, b) => b.date.localeCompare(a.date))
 })

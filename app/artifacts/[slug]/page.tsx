@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { artifactModules } from '@/lib/artifact-modules'
 import { getAllArtifacts, getArtifactBySlug } from '@/lib/artifacts'
 
 export const dynamicParams = false
@@ -29,9 +28,7 @@ export default async function ArtifactPage({ params }: PageProps<'/artifacts/[sl
   const { slug } = await params
   const artifact = await getArtifactBySlug(slug)
   if (!artifact || artifact.kind !== 'demo') notFound()
-  const loader = artifactModules[artifact.slug]
-  if (!loader) notFound()
-  const { default: Demo } = await loader()
+  const { default: Demo } = await import(`@/app/artifacts/_experiments/${slug}`)
   return (
     <main
       id="main"

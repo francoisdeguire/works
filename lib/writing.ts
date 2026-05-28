@@ -4,7 +4,6 @@ import GithubSlugger from 'github-slugger'
 import matter from 'gray-matter'
 import { cache } from 'react'
 import { z } from 'zod'
-import { articleModules } from '@/lib/article-modules'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'writing')
 const WORDS_PER_MINUTE = 220
@@ -98,15 +97,6 @@ export const getAllArticles = cache(async (): Promise<Article[]> => {
   const articles = await Promise.all(
     files.filter((f) => f.endsWith('.mdx')).map((f) => loadArticle(path.join(CONTENT_DIR, f))),
   )
-  if (process.env.NODE_ENV !== 'production') {
-    for (const article of articles) {
-      if (!(article.slug in articleModules)) {
-        console.warn(
-          `Article "${article.slug}" has no entry in lib/article-modules.ts — it will 404 until registered.`,
-        )
-      }
-    }
-  }
   const visible =
     process.env.NODE_ENV === 'production' ? articles.filter((a) => a.published) : articles
   return visible.sort((a, b) => b.date.localeCompare(a.date))

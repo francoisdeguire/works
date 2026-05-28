@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ArticleHeader from '@/components/writing/article-header'
 import Toc from '@/components/writing/toc'
-import { articleModules } from '@/lib/article-modules'
 import { blogPostingJsonLd } from '@/lib/json-ld'
 import { getAllArticles, getArticleBySlug } from '@/lib/writing'
 
@@ -42,9 +41,7 @@ export default async function WritingArticlePage({ params }: PageProps<'/writing
   const { slug } = await params
   const article = await getArticleBySlug(slug)
   if (!article) notFound()
-  const loader = articleModules[slug]
-  if (!loader) notFound()
-  const { default: MDX } = await loader()
+  const { default: MDX } = await import(`@/content/writing/${slug}.mdx`)
 
   return (
     <>
