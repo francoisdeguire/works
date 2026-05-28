@@ -27,7 +27,7 @@
 
         /* ── Inline ──────────────────────────────────────────────────────── */
         & strong {
-            @apply font-semibold text-foreground;
+            @apply font-medium text-foreground;
         }
 
         & em {

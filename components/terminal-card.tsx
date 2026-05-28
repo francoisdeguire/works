@@ -16,7 +16,7 @@ export default async function TerminalCard() {
   const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country);
 
   return (
-    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 p-4 font-display text-foreground sm:text-white">
+    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 py-4 font-display text-foreground sm:text-white">
       <div className="relative flex flex-col h-full sm:h-80 sm:justify-between">
         <div className="flex flex-col sm:flex-row max-sm:flex-1 min-h-0">
           <div className="flex-1 max-sm:hidden">
@@ -25,7 +25,7 @@ export default async function TerminalCard() {
           <div className="flex max-sm:flex-1 items-center justify-center min-h-0">
             <a
               {...mailtoLinkProps}
-              className="max-sm:mb-4 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {site.email.toUpperCase()}
             </a>

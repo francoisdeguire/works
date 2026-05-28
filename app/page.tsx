@@ -21,13 +21,12 @@ export default function HomePage() {
         className={cn(
           "mt-16 sm:mt-32",
           "space-y-12 sm:space-y-24 *:space-y-6 *:sm:space-y-12",
-          "text-lg sm:text-2xl leading-loose font-medium tracking-tight text-foreground-muted",
-          "[font-variation-settings:'wdth'_103]",
+          "text-lg sm:text-2xl leading-loose font-[475] tracking-tight text-foreground-muted",
         )}
       >
         <div>
           <p className="stagger-3">
-            <strong className="font-medium text-foreground">
+            <strong className="font-[450] text-foreground">
               My work lives between design and engineering.
             </strong>{" "}
             I compose interfaces, components, and the quiet systems underneath
@@ -42,14 +41,31 @@ export default function HomePage() {
 
         <div>
           <p className="stagger-5">
-            Since 2022, I've been at Volume7, where I now lead design for the
-            20-person fullstack engineering team. We ship for enterprise and
-            high-growth clients. My work spans systems, tooling, and UI.
+            Since 2022, I've been at{" "}
+            <a
+              href="https://www.volume7.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
+            >
+              Volume7
+            </a>
+            , where I now lead design for the 20-person fullstack engineering
+            team. We ship for enterprise and high-growth clients. My work spans
+            systems, tooling, and UI.
           </p>
           <p className="stagger-6">
-            Before that, I worked two years at Ubisoft building developer
-            interfaces, shipping the internal tools design system, and weaving
-            design into engineering workflows.
+            Before that, I worked two years at{" "}
+            <a
+              href="https://www.ubisoft.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
+            >
+              Ubisoft
+            </a>{" "}
+            building developer interfaces, shipping the internal tools design
+            system, and weaving design into engineering workflows.
           </p>
         </div>
 
@@ -59,10 +75,11 @@ export default function HomePage() {
             writing code for fun, or deep in some seemingly random new hobby.
           </p>
           <p className="stagger-8">
-            Current hobby: the endless money pit that is film photography.{" "}
+            Current hobby: the endless money pit that is film photography.
+            <br />
             <Link
               href="/photography"
-              className="font-medium text-foreground underline-offset-4 transition-opacity duration-100 hover:underline hover:opacity-80 focus-visible:underline"
+              className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
             >
               View some of my shots
             </Link>
@@ -70,7 +87,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <footer className="stagger-9 mt-12 sm:mt-72 max-w-176 mx-auto">
+      <footer className="stagger-9 mt-12 sm:mt-72 max-w-180 mx-auto">
         <TerminalCard />
       </footer>
     </main>

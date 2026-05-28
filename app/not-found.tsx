@@ -23,7 +23,7 @@ export default function NotFound() {
   return (
     <main id="main" className="relative h-dvh">
       <div className="reveal-down absolute bg-black top-0 left-0 w-full h-full z-50" />
-      <div className="relative inset-0 py-[4ch] pl-[4ch] pr-[2ch] text-white leading-relaxed font-display uppercase text-[11px] sm:text-[22px] z-60">
+      <div className="relative inset-0 px-[4ch] py-[6ch] text-white leading-relaxed font-display uppercase text-[11px] sm:text-[22px] z-60">
         <div className="flex flex-col">
           {/*Section 1 */}
           <p className="appear-0">{`> LOAD FRANCOIS.WORKS${pathname}`}</p>
@@ -31,18 +31,24 @@ export default function NotFound() {
           {/*Section 2 */}
           <p className="appear-1 mt-[6ch] ">{`> ERR_404 : PAGE NOT FOUND`}</p>
           <p className="appear-1 mt-[1ch] ml-[2ch]">
-            You're looking for something that doesn't exist.
+            The page you're looking for doesn't exist.
           </p>
           <p className="appear-1 ml-[2ch] mt-[1ch]">CAUSE: UNRECOGNIZED PATH</p>
 
           {/*Section 3 */}
-          <span className="appear-2 mt-[6ch]">
+          <span className="appear-2 mt-[6ch] max-sm:hidden">
             {`> PRESS `}
             <Link href="/" className="blink">
               ENTER
             </Link>{" "}
             TO REBOOT
           </span>
+          <Link
+            href="/"
+            className="appear-2 w-full h-[4ch] flex items-center justify-center mt-[16ch] bg-white text-black sm:hidden"
+          >
+            <span>GO BACK TO HOME</span>
+          </Link>
         </div>
       </div>
     </main>

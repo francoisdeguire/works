@@ -4,8 +4,6 @@
 
 @source './content/**/*.mdx';
 
-/* SiteHeader lives outside per-route surface wrappers; :has() lets the dark
-   surface block cascade onto it the same as any descendant. */
 @custom-variant surface-dark (body:has([data-surface='dark']) &);
 
 /* ── Tokens ───────────────────────────────────────────────────────────────── */
@@ -13,12 +11,13 @@
 :root {
     --background: var(--color-white);
     --foreground: var(--color-gray-950);
-    --foreground-muted: var(--color-gray-600);
+    --foreground-muted: var(--color-gray-500);
     --border: var(--color-gray-200);
     --border-subtle: var(--color-gray-100);
     --pill-background: var(--color-black);
     --pill-foreground: var(--color-white);
     --pill-glass: var(--color-white);
+    --dotted-background: var(--color-gray-100);
 }
 
 @theme inline {
@@ -31,6 +30,7 @@
     --color-pill-background: var(--pill-background);
     --color-pill-foreground: var(--pill-foreground);
     --color-pill-glass: var(--pill-glass);
+    --color-dotted-background: var(--dotted-background);
 
     /* Constants — do not flip. */
     --color-dos: oklch(0.452 0.313214 264.052);
@@ -65,8 +65,7 @@
 /* ── Surface treatments ───────────────────────────────────────────────────── */
 
 [data-surface="dotted"] {
-    --background: var(--color-gray-100);
-    background-color: var(--background);
+    background-color: var(--dotted-background);
     background-image: radial-gradient(
         circle,
         var(--color-dotted-grid) 1px,
@@ -91,8 +90,6 @@ body:has([data-surface="dark"]) > header {
     background-color: var(--background);
 }
 
-/* Header fade shows over the default surface and hides as soon as a
-   non-default surface takes over below. */
 body:has([data-surface]:not([data-surface="default"])) [data-header-fade] {
     display: none;
 }
