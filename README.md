@@ -1,35 +1,20 @@
 # francois.works
 
-Personal site of François Deguire — design engineer / creative developer.
+Nice to see you here! 🤍
 
-The source is part of the portfolio. Built with care; readable on purpose.
+You've stumbled on my personal website. It's a small corner of the internet for my writing, a few interactive experiments, and photos I'm fond of. Feel free to peek at the code if you want to see how it works under the hood.
+
+If you'd rather just look around, [francois.works](https://francois.works) is the front door.
 
 ## Stack
 
-- [Next.js 16](https://nextjs.org) (App Router, Turbopack, React Compiler)
-- [React 19](https://react.dev)
-- [TypeScript](https://www.typescriptlang.org) (strict)
+A little Next.js, a lot of CSS, MDX for the words.
+
+- [Next.js 16](https://nextjs.org) and [React 19](https://react.dev)
+- [TypeScript](https://www.typescriptlang.org), strict
 - [Tailwind CSS v4](https://tailwindcss.com)
-- [MDX](https://mdxjs.com) for writing
-- [Bunny CDN](https://bunny.net) for images and video (custom `next/image` loader)
-- [Biome](https://biomejs.dev) for lint + format
-- [bun](https://bun.sh) as the package manager
+- [MDX](https://mdxjs.com) for articles
+- [Bunny CDN](https://bunny.net) for images and video
+- [Biome](https://biomejs.dev) and [bun](https://bun.sh)
 
-## Develop
-
-```bash
-bun install
-bun dev
-```
-
-Open [localhost:3000](http://localhost:3000).
-
-## Verify
-
-```bash
-bun verify   # typecheck + lint + build
-```
-
-## License
-
-[MIT](./LICENSE)
+Want to say hi? [hey@francois.works](mailto:hey@francois.works)
