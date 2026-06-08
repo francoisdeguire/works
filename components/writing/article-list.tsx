@@ -6,33 +6,37 @@ type ArticleListProps = {
   articles: Article[];
 };
 
-export default function ArticleList({ articles }: ArticleListProps) {
-  return (
-    <p className="mt-16 sm:mt-32 text-center font-display text-sm uppercase text-foreground-muted">
-      Coming soon
-    </p>
-  );
+const HIDDEN_PAGE_STATE = true;
 
-  const years = groupByYear(articles);
-  return (
-    <div className="mt-16 sm:mt-32">
-      {years.map(([year, items]) => (
-        <section key={year} className="mt-12 sm:mt-16 first:mt-0">
-          <h2 className="mb-4 font-display text-base text-foreground-muted">
-            {year}
-          </h2>
-          <hr className="mt-2 mb-4" />
-          <ul>
-            {items.map((article) => (
-              <li key={article.slug}>
-                <ArticleRow article={article} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
-  );
+export default function ArticleList({ articles }: ArticleListProps) {
+  if (HIDDEN_PAGE_STATE === true)
+    return (
+      <p className="mt-16 sm:mt-32 text-center font-display text-sm uppercase text-foreground-muted">
+        Coming soon
+      </p>
+    );
+  else {
+    const years = groupByYear(articles);
+    return (
+      <div className="mt-16 sm:mt-32">
+        {years.map(([year, items]) => (
+          <section key={year} className="mt-12 sm:mt-16 first:mt-0">
+            <h2 className="mb-4 font-display text-base text-foreground-muted">
+              {year}
+            </h2>
+            <hr className="mt-2 mb-4" />
+            <ul>
+              {items.map((article) => (
+                <li key={article.slug}>
+                  <ArticleRow article={article} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    );
+  }
 }
 
 function ArticleRow({ article }: { article: Article }) {

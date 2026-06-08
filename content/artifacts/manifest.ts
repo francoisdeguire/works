@@ -2,13 +2,13 @@ import type { ArtifactInput } from '@/lib/artifacts'
 
 export const artifactsManifest: ArtifactInput[] = [
   {
-    slug: 'cursor-trail',
-    title: 'Cursor Trail',
-    date: '2026-05-20',
-    mode: 'light',
-    video: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    poster: 'https://picsum.photos/seed/cursor-trail/1280/720',
-    width: 1280,
+    slug: 'player',
+    title: 'Interactive Tape Player',
+    date: '2026-06-08',
+    mode: 'dark',
+    video: 'https://videos.francois.works/artifacts/tape-player/preview.mp4',
+    poster: 'https://videos.francois.works/artifacts/tape-player/poster.jpg',
+    width: 720,
     height: 720,
     kind: 'demo',
   },
