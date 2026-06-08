@@ -53,6 +53,7 @@ export default function ArtifactMedia({
 
   if (!video) {
     return (
+      // biome-ignore lint/performance/noImgElement: poster can be a cross-zone CDN URL (e.g. the videos zone); next/image's loader would rewrite the host
       <img src={posterUrl} alt={alt} loading="lazy" className={mediaClass} />
     );
   }

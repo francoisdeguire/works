@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { artifactDemos } from '@/app/artifacts/_experiments/registry'
 import { getAllArtifacts, getArtifactBySlug } from '@/lib/artifacts'
 
 export const dynamicParams = false
@@ -14,7 +15,7 @@ export async function generateMetadata({
 }: PageProps<'/artifacts/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   const artifact = await getArtifactBySlug(slug)
-  if (!artifact || artifact.kind !== 'demo') return {}
+  if (artifact?.kind !== 'demo') return {}
   const path = `/artifacts/${slug}`
   return {
     title: artifact.title,
@@ -27,8 +28,10 @@ export async function generateMetadata({
 export default async function ArtifactPage({ params }: PageProps<'/artifacts/[slug]'>) {
   const { slug } = await params
   const artifact = await getArtifactBySlug(slug)
-  if (!artifact || artifact.kind !== 'demo') notFound()
-  const { default: Demo } = await import(`@/app/artifacts/_experiments/${slug}`)
+  if (artifact?.kind !== 'demo') notFound()
+  const load = artifactDemos[slug]
+  if (!load) notFound()
+  const { default: Demo } = await load()
   return (
     <main
       id="main"

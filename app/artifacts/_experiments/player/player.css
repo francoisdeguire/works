@@ -1,0 +1,186 @@
+/*
+ * Player artifact styles: plain CSS imported by index.tsx, so the whole artifact
+ * stays self-contained and never touches the site's global stylesheet. Classes
+ * are player-prefixed; colors read the palette vars Tailwind puts on :root.
+ *
+ * Rules live in `@layer components` so the inline Tailwind arbitrary-property
+ * overrides ([--player-bevel-width:1px] and friends, which land in the
+ * `utilities` layer) win; unlayered rules would outrank them. @font-face and
+ * @property are registrations, not styles, so they stay outside the layer.
+ */
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('./PPNeueMontreal-Light.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+ * Bevel knobs are per-element, not inherited, or a bevel nested inside another
+ * (platter in well, hub in platter) would pick up its parent's face/rim.
+ */
+@property --player-bevel-width {
+  syntax: '*';
+  inherits: false;
+}
+@property --player-bevel-face {
+  syntax: '*';
+  inherits: false;
+}
+@property --player-bevel-rim {
+  syntax: '*';
+  inherits: false;
+}
+
+@layer components {
+  .player-root {
+    font-family: 'PP Neue Montreal', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /*
+   * Machined bevel: conic rim clipped to the border box, face clipped to the
+   * padding box. Concentric corner radii come free from border-radius.
+   */
+  .player-bevel {
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--player-bevel-width, 2px);
+    background:
+      var(
+        --player-bevel-face,
+        linear-gradient(140deg, var(--color-zinc-200), var(--color-zinc-300))
+      )
+      padding-box,
+      var(
+        --player-bevel-rim,
+        conic-gradient(
+          from 140deg,
+          var(--color-zinc-600),
+          var(--color-zinc-100),
+          var(--color-zinc-600)
+        )
+      )
+      border-box;
+  }
+
+  .player-bevel-buttons {
+    --player-bevel-width: 1px 1px 2px 2px;
+    --player-bevel-rim: conic-gradient(
+      from 140deg,
+      var(--color-zinc-700),
+      var(--color-zinc-200),
+      var(--color-zinc-700)
+    );
+  }
+
+  .player-bevel-well {
+    --player-bevel-width: 2px;
+    --player-bevel-face: linear-gradient(140deg, var(--color-zinc-700), var(--color-zinc-700));
+    --player-bevel-rim: conic-gradient(
+      from 140deg,
+      var(--color-zinc-100),
+      var(--color-zinc-500),
+      var(--color-zinc-100)
+    );
+  }
+
+  .player-bevel-screen {
+    --player-bevel-width: 1px;
+    --player-bevel-face: linear-gradient(var(--color-zinc-900), var(--color-zinc-900));
+    --player-bevel-rim: conic-gradient(
+      from 140deg,
+      var(--color-white),
+      var(--color-zinc-400),
+      var(--color-white)
+    );
+  }
+
+  .player-bevel-hole {
+    --player-bevel-width: 1px;
+    --player-bevel-face: linear-gradient(var(--color-zinc-800), var(--color-zinc-800));
+    --player-bevel-rim: conic-gradient(
+      from 140deg,
+      var(--color-white),
+      var(--color-zinc-600),
+      var(--color-white)
+    );
+  }
+
+  .player-bevel-hub {
+    --player-bevel-width: 2px;
+    --player-bevel-face: linear-gradient(
+      320deg,
+      var(--color-zinc-400) 56%,
+      var(--color-zinc-50) 62%
+    );
+    --player-bevel-rim: conic-gradient(
+      from 140deg,
+      var(--color-zinc-500),
+      var(--color-white),
+      var(--color-zinc-500)
+    );
+  }
+
+  .player-gap-mask {
+    mask: linear-gradient(
+      90deg,
+      #000 calc(50% - var(--player-gap-width, 100px) / 2),
+      #0000 0 calc(50% + var(--player-gap-width, 100px) / 2),
+      #000 0
+    );
+  }
+
+  /* ── button machining ─────────────────────────────────────────────── */
+
+  .player-shade {
+    background: linear-gradient(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.15));
+  }
+
+  .player-sheen {
+    background: linear-gradient(rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.2));
+  }
+
+  .player-seam-shade {
+    background: conic-gradient(from 10deg, transparent 45%, rgb(0 0 0 / 0.3) 50%);
+  }
+
+  .player-seam-light {
+    background: conic-gradient(from 7deg, rgb(255 255 255 / 0.5) 45%, transparent 50%);
+  }
+
+  .player-edge-highlight {
+    background: linear-gradient(rgb(255 255 255 / 0.6) 60%, transparent);
+  }
+
+  .player-bleed-y-2 {
+    height: calc(100% + 2px);
+  }
+
+  .player-bleed-y-4 {
+    height: calc(100% + 4px);
+  }
+
+  /* ── small hardware ───────────────────────────────────────────────── */
+
+  .player-shadow-screw {
+    box-shadow:
+      inset 0 1px 1px rgb(0 0 0 / 0.4),
+      0 1px 0 rgb(255 255 255 / 0.6);
+  }
+
+  .player-shadow-slot {
+    box-shadow:
+      inset 1.3px 1.5px 1px rgb(0 0 0 / 0.2),
+      1.3px 1.5px 0 rgb(255 255 255 / 0.2);
+  }
+
+  .player-glow {
+    box-shadow: 0 0 3px currentColor;
+  }
+
+  .player-frost {
+    filter: blur(2px);
+  }
+}
