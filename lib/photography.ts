@@ -24,7 +24,7 @@ export const getAllPhotos = cache(async (): Promise<Photo[]> => {
   return manifestSchema.parse(photographyManifest)
 })
 
-const DEFAULT_QUALITY = 75
+const DEFAULT_QUALITY = 80
 
 // Cache-key stability matters more than it looks. URL.searchParams.set preserves
 // *insertion* order, not lexical order — so two call sites that set the same
@@ -41,7 +41,7 @@ export function photoUrl(src: string, width: number, quality: number = DEFAULT_Q
 const DEFAULT_WIDTHS = [480, 720, 1080, 1440] as const
 // Per the requirements: lower quality at higher widths. At 3× the eye can't
 // see the difference and we save ~20–30% bytes.
-const DEFAULT_QUALITIES = [75, 72, 68, 65] as const
+const DEFAULT_QUALITIES = [82, 80, 78, 75] as const
 
 export function photoSrcset(
   src: string,

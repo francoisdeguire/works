@@ -8,7 +8,7 @@ import { type Photo, photoSrcset, photoUrl } from '@/lib/photography'
 // so adjacent cells never overlap at worst-case jitter. Lower values make
 // photos smaller relative to the cell, which surfaces as more breathing
 // room between adjacent photos.
-const PHOTO_RATIO = 0.6
+const PHOTO_RATIO = 0.72
 
 type CellProps = {
   photo: Photo
@@ -45,7 +45,7 @@ export function Cell({ photo, x, y, cellSize, loading = 'lazy' }: CellProps) {
           <img
             src={photoUrl(photo.src, 720)}
             srcSet={srcset}
-            sizes="(max-width: 40rem) 50vw, 24rem"
+            sizes={`${Math.round(displayWidth)}px`}
             alt={photo.alt}
             width={photo.width}
             height={photo.height}

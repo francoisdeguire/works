@@ -2,14 +2,17 @@ import type { Photo } from '@/lib/photography'
 
 // Mobile uses a fixed cell — phones run a "look at one photo at a time"
 // ergonomic mode where a continuous scale would just compute the same number.
-// 320 gives ~1.17 cells across a 375px phone with partial neighbors visible.
-export const CELL_MOBILE = 320
+// 440 makes one photo the clear focus on a ~390px phone (a portrait photo
+// fills ~55% of the width, a landscape one ~80%) with neighbors peeking in.
+export const CELL_MOBILE = 440
 
-// Desktop scales continuously with viewport width so the number of visible
-// cells stays roughly constant from 13" laptop through 4K. Clamped at the
-// top so cells don't get cartoonish on very wide screens (4K shows ~3 cells
-// across at the cap, which still reads as a wall, not a single hero photo).
-const DESKTOP_TARGET_VISIBLE = 1.3
+// Desktop scales continuously with viewport width so the photo-to-viewport
+// ratio stays constant across screens: a photo's long edge is ~0.72 / 2.2 ≈
+// 33% of viewport width, which is the density that reads well on a 2.5k+
+// screen. Below the cap every width gets that same ratio (so a 13" laptop and
+// a 27" display show the same "wall" feel); above ~2640px the cap freezes the
+// cell so photos don't grow cartoonish and the wall just gets denser.
+const DESKTOP_TARGET_VISIBLE = 2.2
 const DESKTOP_CELL_MAX = 1200
 const MOBILE_BREAKPOINT = 640
 
@@ -20,7 +23,7 @@ export function pickCellSize(viewportWidth: number): number {
 // Subtle drift to break the grid without making photos look scattered.
 // Constraint: PHOTO_RATIO + 2 * JITTER_RATIO <= 1 (in cell.tsx) so cells
 // never overlap their neighbors at worst case.
-export const JITTER_RATIO = 0.1
+export const JITTER_RATIO = 0.05
 export const BUFFER = 1
 
 export type CellRange = {
