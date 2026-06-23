@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './styles/utilities.css';
+@import './styles/tw-utilities.css';
 @import './styles/prose.css';
 
 @source './content/**/*.mdx';
@@ -52,7 +53,7 @@
 
 @layer base {
   * {
-    @apply border-border scrollbar-thin scrollbar-track-gray-50 scrollbar-thumb-foreground/50;
+    @apply border-border scrollbar-thin scrollbar-track-transparent scrollbar-thumb-foreground/10;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-dos selection:text-background;

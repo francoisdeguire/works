@@ -54,11 +54,11 @@ export function Cell({ photo, x, y, cellSize, loading = 'lazy' }: CellProps) {
             decoding="async"
             draggable={false}
             onError={() => setErrored(true)}
-            className="block h-full w-full object-cover select-none"
+            className="block h-full w-full object-cover select-none hover:after:content-[''] hover:after:absolute hover:after:-inset-2 hover:after:bg-white"
             style={{ width: displayWidth, height: displayHeight }}
           />
         )}
-        <figcaption className="mt-2 font-display text-xs text-gray-400 select-none">
+        <figcaption className="mt-4 font-display text-xs lg:text-sm text-foreground/70 select-none">
           {photo.location}
         </figcaption>
       </div>

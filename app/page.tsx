@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <main id="main" className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48">
       <header>
-        <h1 className="stagger-0 font-display text-3xl sm:text-4xl leading-none uppercase">
+        <h1 className="stagger-0 font-display text-3xl sm:text-5xl leading-none uppercase">
           Francois Deguire
         </h1>
         <h2 className="stagger-1 mt-4 text-pretty font-display text-base sm:text-2xl leading-[1.6] text-foreground-muted">

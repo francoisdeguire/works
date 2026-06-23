@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { ComponentPropsWithoutRef } from 'react'
 import Caption from '@/components/mdx/caption'
+import CodeBlock from '@/components/mdx/code-block'
 import Figure from '@/components/mdx/figure'
 import Note from '@/components/mdx/note'
 import Preview from '@/components/mdx/preview'
@@ -74,6 +75,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         />
       )
     },
+    pre: CodeBlock,
     Figure,
     Note,
     Preview,
