@@ -1,5 +1,10 @@
+import { fileURLToPath } from 'node:url'
 import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
+
+// Absolute path so @next/mdx's string-plugin resolver imports it on the Node side of the
+// Turbopack boundary; the custom Shiki highlighter (a function) can't be serialized inline.
+const rehypeCode = fileURLToPath(new URL('./lib/shiki/rehype-code.mjs', import.meta.url))
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
@@ -28,7 +33,7 @@ const withMDX = createMDX({
     ],
     rehypePlugins: [
       ['rehype-slug', {}],
-      ['rehype-pretty-code', { theme: 'min-light', keepBackground: false }],
+      [rehypeCode, { theme: 'catppuccin-latte', keepBackground: false }],
       [
         'rehype-autolink-headings',
         {
