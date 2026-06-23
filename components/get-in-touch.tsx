@@ -1,4 +1,4 @@
-import { mailtoLinkProps } from "@/lib/site";
+import { mailtoLinkProps } from '@/lib/site'
 
 export default function GetInTouch() {
   return (
@@ -8,5 +8,5 @@ export default function GetInTouch() {
     >
       Get In Touch
     </a>
-  );
+  )
 }

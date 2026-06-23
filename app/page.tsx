@@ -1,19 +1,16 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import TerminalCard from "@/components/terminal-card";
-import { cn } from "@/lib/cn";
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import TerminalCard from '@/components/terminal-card'
+import { cn } from '@/lib/cn'
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-  openGraph: { url: "/" },
-};
+  alternates: { canonical: '/' },
+  openGraph: { url: '/' },
+}
 
 export default function HomePage() {
   return (
-    <main
-      id="main"
-      className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48"
-    >
+    <main id="main" className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48">
       <header>
         <h1 className="stagger-0 font-display text-3xl sm:text-4xl leading-none uppercase">
           Francois Deguire
@@ -25,29 +22,27 @@ export default function HomePage() {
 
       <div
         className={cn(
-          "mt-16 sm:mt-32",
-          "space-y-12 sm:space-y-24 *:space-y-6 *:sm:space-y-12",
-          "text-lg sm:text-2xl leading-loose font-[475] tracking-tight text-foreground-muted",
+          'mt-16 sm:mt-32',
+          'space-y-12 sm:space-y-24 *:space-y-6 *:sm:space-y-12',
+          'text-lg sm:text-2xl leading-loose font-[475] tracking-tight text-foreground-muted',
         )}
       >
         <div>
           <p className="stagger-3">
             <strong className="font-[450] text-foreground">
               My work lives between design and engineering.
-            </strong>{" "}
-            I compose interfaces, components, and the quiet systems underneath
-            it all.
+            </strong>{' '}
+            I compose interfaces, components, and the quiet systems underneath it all.
           </p>
           <p className="stagger-4">
-            I studied industrial design, so the way I think about software is
-            shaped by how I was taught to design objects within constraints:
-            every part has purpose.
+            I studied industrial design, so the way I think about software is shaped by how I was
+            taught to design objects within constraints: every part has purpose.
           </p>
         </div>
 
         <div>
           <p className="stagger-5">
-            Since 2022, I've been at{" "}
+            Since 2022, I've been at{' '}
             <a
               href="https://www.volume7.io"
               target="_blank"
@@ -56,12 +51,11 @@ export default function HomePage() {
             >
               Volume7
             </a>
-            , where I now lead design for the 20-person fullstack engineering
-            team. We ship for enterprise and high-growth clients. My work spans
-            systems, tooling, and UI.
+            , where I now lead design for the 20-person fullstack engineering team. We ship for
+            enterprise and high-growth clients. My work spans systems, tooling, and UI.
           </p>
           <p className="stagger-6">
-            Before that, I worked two years at{" "}
+            Before that, I worked two years at{' '}
             <a
               href="https://www.ubisoft.com"
               target="_blank"
@@ -69,16 +63,16 @@ export default function HomePage() {
               className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
             >
               Ubisoft
-            </a>{" "}
-            building developer interfaces, shipping the internal tools design
-            system, and weaving design into engineering workflows.
+            </a>{' '}
+            building developer interfaces, shipping the internal tools design system, and weaving
+            design into engineering workflows.
           </p>
         </div>
 
         <div>
           <p className="stagger-7">
-            When I'm not working you'll find me stress-testing baking recipes,
-            writing code for fun, or deep in some seemingly random new hobby.
+            When I'm not working you'll find me stress-testing baking recipes, writing code for fun,
+            or deep in some seemingly random new hobby.
           </p>
           <p className="stagger-8">
             Current hobby: the endless money pit that is film photography.
@@ -97,5 +91,5 @@ export default function HomePage() {
         <TerminalCard />
       </footer>
     </main>
-  );
+  )
 }

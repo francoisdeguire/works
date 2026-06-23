@@ -1,61 +1,57 @@
-"use client";
+'use client'
 
-import { useEffect, useRef } from "react";
-import { assetUrl, imagesHost, videoUrl } from "@/lib/cdn";
+import { useEffect, useRef } from 'react'
+import { assetUrl, imagesHost, videoUrl } from '@/lib/cdn'
 
 type ArtifactMediaProps = {
-  video?: string | undefined;
-  poster: string;
-  alt: string;
-};
+  video?: string | undefined
+  poster: string
+  alt: string
+}
 
-let sharedObserver: IntersectionObserver | null = null;
+let sharedObserver: IntersectionObserver | null = null
 
 function getObserver(): IntersectionObserver {
-  if (sharedObserver) return sharedObserver;
+  if (sharedObserver) return sharedObserver
   sharedObserver = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        const video = entry.target as HTMLVideoElement;
+        const video = entry.target as HTMLVideoElement
         if (entry.isIntersecting) {
-          void video.play().catch(() => {});
+          void video.play().catch(() => {})
         } else {
-          video.pause();
+          video.pause()
         }
       }
     },
-    { rootMargin: "200px 0px", threshold: 0.25 },
-  );
-  return sharedObserver;
+    { rootMargin: '200px 0px', threshold: 0.25 },
+  )
+  return sharedObserver
 }
 
-const mediaClass = "block size-[calc(100%+4px)] -mr-px -mb-px object-cover";
+const mediaClass = 'block size-[calc(100%+4px)] -mr-px -mb-px object-cover'
 
-export default function ArtifactMedia({
-  video,
-  poster,
-  alt,
-}: ArtifactMediaProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+export default function ArtifactMedia({ video, poster, alt }: ArtifactMediaProps) {
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const observer = getObserver();
-    observer.observe(el);
+    const el = videoRef.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const observer = getObserver()
+    observer.observe(el)
     return () => {
-      observer.unobserve(el);
-    };
-  }, []);
+      observer.unobserve(el)
+    }
+  }, [])
 
-  const posterUrl = assetUrl(poster, imagesHost());
+  const posterUrl = assetUrl(poster, imagesHost())
 
   if (!video) {
     return (
       // biome-ignore lint/performance/noImgElement: poster can be a cross-zone CDN URL (e.g. the videos zone); next/image's loader would rewrite the host
       <img src={posterUrl} alt={alt} loading="lazy" className={mediaClass} />
-    );
+    )
   }
 
   return (
@@ -69,5 +65,5 @@ export default function ArtifactMedia({
       playsInline
       className={mediaClass}
     />
-  );
+  )
 }

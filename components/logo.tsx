@@ -1,5 +1,5 @@
-import Link from "next/link";
-import LogoMark from "./logo-mark";
+import Link from 'next/link'
+import LogoMark from './logo-mark'
 
 export default function Logo() {
   return (
@@ -10,5 +10,5 @@ export default function Logo() {
     >
       <LogoMark size={20} />
     </Link>
-  );
+  )
 }

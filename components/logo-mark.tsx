@@ -1,16 +1,16 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties } from 'react'
 
 type LogoMarkProps = {
-  size: number;
-};
+  size: number
+}
 
 function getDelay(index: number): number {
-  const ROWS = 5;
-  const STEPS = 3;
-  const BASE_DELAY = 240 * (ROWS / STEPS);
-  const DECAY = BASE_DELAY / ROWS;
+  const ROWS = 5
+  const STEPS = 3
+  const BASE_DELAY = 240 * (ROWS / STEPS)
+  const DECAY = BASE_DELAY / ROWS
 
-  return BASE_DELAY - index * DECAY;
+  return BASE_DELAY - index * DECAY
 }
 
 const PIXELS = [
@@ -22,21 +22,15 @@ const PIXELS = [
   { x: 4, y: 12, delay: getDelay(3) },
   { x: 12, y: 12, delay: getDelay(3) },
   { x: 8, y: 16, delay: getDelay(4) },
-];
+]
 
 export default function LogoMark({ size }: LogoMarkProps) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      width={size}
-      height={size}
-      fill="currentColor"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 20 20" width={size} height={size} fill="currentColor" aria-hidden="true">
       {PIXELS.map(({ x, y, delay }) => {
-        const style: CSSProperties & { "--ripple-delay": string } = {
-          "--ripple-delay": `${delay}ms`,
-        };
+        const style: CSSProperties & { '--ripple-delay': string } = {
+          '--ripple-delay': `${delay}ms`,
+        }
         return (
           <rect
             key={`${x}-${y}`}
@@ -47,8 +41,8 @@ export default function LogoMark({ size }: LogoMarkProps) {
             className="logo-pixel"
             style={style}
           />
-        );
+        )
       })}
     </svg>
-  );
+  )
 }

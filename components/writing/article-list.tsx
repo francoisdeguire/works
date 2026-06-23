@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { formatShortDate } from "@/lib/date";
-import type { Article } from "@/lib/writing";
+import Link from 'next/link'
+import { formatShortDate } from '@/lib/date'
+import type { Article } from '@/lib/writing'
 
 type ArticleListProps = {
-  articles: Article[];
-};
+  articles: Article[]
+}
 
-const HIDDEN_PAGE_STATE = true;
+const HIDDEN_PAGE_STATE = true
 
 export default function ArticleList({ articles }: ArticleListProps) {
   if (HIDDEN_PAGE_STATE === true)
@@ -14,16 +14,14 @@ export default function ArticleList({ articles }: ArticleListProps) {
       <p className="mt-16 sm:mt-32 text-center font-display text-sm uppercase text-foreground-muted">
         Coming soon
       </p>
-    );
+    )
   else {
-    const years = groupByYear(articles);
+    const years = groupByYear(articles)
     return (
       <div className="mt-16 sm:mt-32">
         {years.map(([year, items]) => (
           <section key={year} className="mt-12 sm:mt-16 first:mt-0">
-            <h2 className="mb-4 font-display text-base text-foreground-muted">
-              {year}
-            </h2>
+            <h2 className="mb-4 font-display text-base text-foreground-muted">{year}</h2>
             <hr className="mt-2 mb-4" />
             <ul>
               {items.map((article) => (
@@ -35,7 +33,7 @@ export default function ArticleList({ articles }: ArticleListProps) {
           </section>
         ))}
       </div>
-    );
+    )
   }
 }
 
@@ -55,19 +53,19 @@ function ArticleRow({ article }: { article: Article }) {
         {formatShortDate(article.date)}
       </time>
     </Link>
-  );
+  )
 }
 
 // Groups by the calendar year parsed from the ISO date string. We slice the string directly
 // rather than constructing a Date — `new Date('2026-01-01').getFullYear()` returns 2025 in
 // negative-UTC offsets because the string is interpreted as UTC midnight.
 function groupByYear(articles: Article[]): [string, Article[]][] {
-  const map = new Map<string, Article[]>();
+  const map = new Map<string, Article[]>()
   for (const article of articles) {
-    const year = article.date.slice(0, 4);
-    const bucket = map.get(year);
-    if (bucket) bucket.push(article);
-    else map.set(year, [article]);
+    const year = article.date.slice(0, 4)
+    const bucket = map.get(year)
+    if (bucket) bucket.push(article)
+    else map.set(year, [article])
   }
-  return [...map.entries()].sort(([a], [b]) => b.localeCompare(a));
+  return [...map.entries()].sort(([a], [b]) => b.localeCompare(a))
 }

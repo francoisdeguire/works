@@ -1,24 +1,24 @@
-"use client";
+'use client'
 
-import { useBrowserPathname } from "@/hooks/use-browser-pathname";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useBrowserPathname } from '@/hooks/use-browser-pathname'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function NotFound() {
-  const pathname = useBrowserPathname();
-  const router = useRouter();
+  const pathname = useBrowserPathname()
+  const router = useRouter()
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Enter") {
-        router.push("/");
+      if (event.key === 'Enter') {
+        router.push('/')
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [router]);
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [router])
 
   return (
     <main id="main" className="relative h-dvh">
@@ -30,9 +30,7 @@ export default function NotFound() {
 
           {/*Section 2 */}
           <p className="appear-1 mt-[6ch] ">{`> ERR_404 : PAGE NOT FOUND`}</p>
-          <p className="appear-1 mt-[1ch] ml-[2ch]">
-            The page you're looking for doesn't exist.
-          </p>
+          <p className="appear-1 mt-[1ch] ml-[2ch]">The page you're looking for doesn't exist.</p>
           <p className="appear-1 ml-[2ch] mt-[1ch]">CAUSE: UNRECOGNIZED PATH</p>
 
           {/*Section 3 */}
@@ -40,7 +38,7 @@ export default function NotFound() {
             {`> PRESS `}
             <Link href="/" className="blink">
               ENTER
-            </Link>{" "}
+            </Link>{' '}
             TO REBOOT
           </span>
           <Link
@@ -52,5 +50,5 @@ export default function NotFound() {
         </div>
       </div>
     </main>
-  );
+  )
 }
