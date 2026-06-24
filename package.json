@@ -16,6 +16,7 @@
     "postinstall": "next typegen"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "16.2.4",
