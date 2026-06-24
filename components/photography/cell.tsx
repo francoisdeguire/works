@@ -41,22 +41,35 @@ export function Cell({ photo, x, y, cellSize, loading = 'lazy' }: CellProps) {
         {errored ? (
           <div className="bg-gray-900" style={{ width: displayWidth, height: displayHeight }} />
         ) : (
-          // biome-ignore lint/performance/noImgElement: virtualized canvas requires plain <img>; next/image's <picture> markup + priority heuristics fight remount-based cache reuse (R8/R10)
-          <img
-            src={photoUrl(photo.src, 720)}
-            srcSet={srcset}
-            sizes={`${Math.round(displayWidth)}px`}
-            alt={photo.alt}
-            width={photo.width}
-            height={photo.height}
-            loading={eager ? 'eager' : 'lazy'}
-            fetchPriority={eager ? 'high' : 'auto'}
-            decoding="async"
-            draggable={false}
-            onError={() => setErrored(true)}
-            className="block h-full w-full object-cover select-none hover:after:content-[''] hover:after:absolute hover:after:-inset-2 hover:after:bg-white"
-            style={{ width: displayWidth, height: displayHeight }}
-          />
+          // Blur-up: the tiny base64 placeholder paints instantly behind the
+          // image (no layout shift, dims are known) and the decoded WebP, being
+          // opaque and exactly cell-sized, covers it once it lands. WebP has no
+          // progressive decode, so this is the equivalent low-to-sharp reveal.
+          <div
+            className="bg-cover bg-center"
+            style={{
+              width: displayWidth,
+              height: displayHeight,
+              backgroundImage: photo.blur ? `url("${photo.blur}")` : undefined,
+            }}
+          >
+            {/* biome-ignore lint/performance/noImgElement: virtualized canvas requires plain <img>; next/image's <picture> markup + priority heuristics fight remount-based cache reuse (R8/R10) */}
+            <img
+              src={photoUrl(photo.src)}
+              srcSet={srcset}
+              sizes={`${Math.round(displayWidth)}px`}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              loading={eager ? 'eager' : 'lazy'}
+              fetchPriority={eager ? 'high' : 'auto'}
+              decoding="async"
+              draggable={false}
+              onError={() => setErrored(true)}
+              className="block h-full w-full object-cover select-none hover:after:content-[''] hover:after:absolute hover:after:-inset-2 hover:after:bg-white"
+              style={{ width: displayWidth, height: displayHeight }}
+            />
+          </div>
         )}
         <figcaption className="mt-4 font-display text-xs lg:text-sm text-foreground/70 select-none">
           {photo.location}

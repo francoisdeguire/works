@@ -1,20 +1,22 @@
-// Run: bun run scripts/optimize-photos.ts <input-dir> [output-dir]
-//   --quality <1-100>   master JPEG quality (default 85)
-//   --max-edge <px>     long-edge cap (default 1440 = largest srcset width)
+// Run: bun run optimize:photos   (prompts for the originals dir + quality)
+//   or: bun run scripts/optimize-photos.ts <input-dir> [output-dir] --quality <1-100>
 //
-// Prepares raw photos for upload to images.francois.works. Produces ONE master
-// per photo: long edge capped, auto-oriented, converted to sRGB, metadata
-// stripped, re-encoded with mozjpeg. Bunny does per-width resizing + webp at the
-// edge, so a local srcset would only duplicate that and waste storage. We ship
-// a single high-quality master and let the CDN derive delivery variants.
+// Prepares raw photos for upload to images.francois.works. Encode from your
+// ORIGINALS, never from anything already on the CDN: the whole point is a single
+// lossy pass instead of the old original -> JPEG q85 4:2:0 -> Bunny WebP path,
+// which threw away quality across two generations plus chroma subsampling.
 //
-// Master quality (85) sits above delivery quality (Bunny serves 65-75) on
-// purpose: the master is a re-encode source, so headroom here avoids compounding
-// loss when Bunny produces the webp the browser actually downloads.
+// For each photo it emits three pre-sized WebP variants (960 / 1440 / 1920 wide,
+// auto-oriented, sRGB, metadata stripped, full chroma) plus a tiny base64 blur
+// for blur-up. Bunny then serves these as static files with no edge processing,
+// so there is no per-request Optimizer cost and the browser picks a width by DPR
+// through srcset. Widths trace the canvas sizing in lib/photography-math.ts.
 
 import { mkdir, readdir, stat, writeFile } from 'node:fs/promises'
 import { basename, extname, join, resolve } from 'node:path'
 import sharp from 'sharp'
+import { createProgress } from './progress'
+import { createPrompter, isInteractive, type Prompter } from './prompt'
 
 const INPUT_EXT = new Set([
   '.jpg',
@@ -27,54 +29,66 @@ const INPUT_EXT = new Set([
   '.heic',
   '.heif',
 ])
-const DEFAULT_QUALITY = 85
-const DEFAULT_MAX_EDGE = 1440
+const DEFAULT_QUALITY = 90
+// Keep in sync with PHOTO_WIDTHS in lib/photography.ts.
+const VARIANT_WIDTHS = [960, 1440, 1920] as const
+const BLUR_WIDTH = 20
 const CONCURRENCY = 4
 // Bunny-relative path prefix (no leading slash) so the manifest src resolves
-// against images.francois.works rather than serving from /public.
-const PHOTO_DIR = 'photography'
+// against images.francois.works rather than serving from /public. Matches where
+// the live photos sit (the images zone's /photos folder).
+const PHOTO_DIR = 'photos'
 
-type Options = { inputDir: string; outputDir: string; quality: number; maxEdge: number }
+type Options = { inputDir: string; outputDir: string; quality: number }
+type RawArgs = { inputDir: string | null; outputDir: string | null; quality: number | null }
+type Variant = { width: number; height: number; bytes: number }
 type Result = {
   slug: string
   input: string
   srcWidth: number
   srcHeight: number
-  outWidth: number
-  outHeight: number
+  variants: Variant[]
+  blur: string
   inBytes: number
   outBytes: number
 }
 
-function parseArgs(argv: string[]): Options {
+function parseArgs(argv: string[]): RawArgs {
   const positional: string[] = []
-  let quality = DEFAULT_QUALITY
-  let maxEdge = DEFAULT_MAX_EDGE
+  let quality: number | null = null
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]
     if (arg === '--quality') quality = Number(argv[++i])
-    else if (arg === '--max-edge') maxEdge = Number(argv[++i])
     else positional.push(arg ?? '')
   }
-  const inputDir = positional[0]
+  return { inputDir: positional[0] ?? null, outputDir: positional[1] ?? null, quality }
+}
+
+async function resolveOptions(raw: RawArgs, prompter: Prompter | null): Promise<Options> {
+  let inputDir = raw.inputDir
+  if (!inputDir && prompter) inputDir = await prompter.ask('Originals directory')
   if (!inputDir) {
-    process.stderr.write('usage: bun run scripts/optimize-photos.ts <input-dir> [output-dir]\n')
+    process.stderr.write('usage: bun run optimize:photos <input-dir> [output-dir] [--quality 90]\n')
     process.exit(2)
   }
+  inputDir = resolve(inputDir)
+
+  let outputDir = raw.outputDir
+  if (!outputDir && prompter)
+    outputDir = await prompter.ask('Output directory', join(inputDir, 'optimized'))
+  outputDir = resolve(outputDir ?? join(inputDir, 'optimized'))
+
+  let quality = raw.quality
+  if (quality === null && prompter) {
+    quality = Number(await prompter.ask('WebP quality', String(DEFAULT_QUALITY)))
+  }
+  quality ??= DEFAULT_QUALITY
   if (!Number.isFinite(quality) || quality < 1 || quality > 100) {
-    process.stderr.write(`invalid --quality ${quality} (expected 1-100)\n`)
+    process.stderr.write(`invalid quality ${quality} (expected 1-100)\n`)
     process.exit(2)
   }
-  if (!Number.isFinite(maxEdge) || maxEdge < 1) {
-    process.stderr.write(`invalid --max-edge ${maxEdge}\n`)
-    process.exit(2)
-  }
-  return {
-    inputDir: resolve(inputDir),
-    outputDir: resolve(positional[1] ?? join(inputDir, 'optimized')),
-    quality,
-    maxEdge,
-  }
+
+  return { inputDir, outputDir, quality }
 }
 
 function slugify(name: string): string {
@@ -114,59 +128,91 @@ async function mapPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise
 }
 
 async function encode(input: string, slug: string, opts: Options): Promise<Result> {
-  const pipeline = sharp(input, { failOn: 'none' })
-  const { width = 0, height = 0 } = await pipeline.metadata()
-  const { data, info } = await pipeline
-    // .rotate() bakes EXIF orientation into pixels before metadata is stripped,
-    // otherwise sideways phone shots stay sideways once the orientation tag is gone.
-    .rotate()
-    .resize(opts.maxEdge, opts.maxEdge, { fit: 'inside', withoutEnlargement: true })
-    // Convert wide-gamut input (iPhone Display P3, Adobe RGB) to sRGB and drop the
-    // profile; browsers and Bunny assume sRGB, so this prevents a color shift.
-    .withIccProfile('srgb', { attach: false })
-    .jpeg({ quality: opts.quality, mozjpeg: true, chromaSubsampling: '4:2:0' })
-    .toBuffer({ resolveWithObject: true })
+  const meta = await sharp(input, { failOn: 'none' }).metadata()
+  const srcWidth = meta.width ?? 0
+  const srcHeight = meta.height ?? 0
 
-  const outPath = join(opts.outputDir, `${slug}.jpg`)
-  await writeFile(outPath, data)
-  const { size: inBytes } = await stat(input)
-  return {
-    slug,
-    input,
-    srcWidth: width,
-    srcHeight: height,
-    outWidth: info.width,
-    outHeight: info.height,
-    inBytes,
-    outBytes: data.byteLength,
+  const variants: Variant[] = []
+  let outBytes = 0
+  for (const target of VARIANT_WIDTHS) {
+    const { data, info } = await sharp(input, { failOn: 'none' })
+      // .rotate() bakes EXIF orientation into pixels before metadata is stripped,
+      // otherwise sideways phone shots stay sideways once the orientation tag is gone.
+      .rotate()
+      .resize(target, null, { withoutEnlargement: true })
+      // Convert wide-gamut input (iPhone Display P3, Adobe RGB) to sRGB and drop the
+      // profile; browsers assume sRGB, so this prevents a color shift.
+      .withIccProfile('srgb', { attach: false })
+      // smartSubsample keeps full chroma where it matters at high quality, which
+      // is the whole reason we moved off Bunny's 4:2:0 edge transform.
+      .webp({ quality: opts.quality, smartSubsample: true, effort: 6 })
+      .toBuffer({ resolveWithObject: true })
+    await writeFile(join(opts.outputDir, `${slug}-${target}.webp`), data)
+    variants.push({ width: info.width, height: info.height, bytes: data.byteLength })
+    outBytes += data.byteLength
   }
+
+  const blurBuf = await sharp(input, { failOn: 'none' })
+    .rotate()
+    .resize(BLUR_WIDTH, null, { withoutEnlargement: true })
+    .webp({ quality: 50 })
+    .toBuffer()
+  const blur = `data:image/webp;base64,${blurBuf.toString('base64')}`
+
+  const { size: inBytes } = await stat(input)
+  return { slug, input, srcWidth, srcHeight, variants, blur, inBytes, outBytes }
 }
 
 function kb(bytes: number): string {
   return `${Math.round(bytes / 1024)}KB`
 }
 
-function manifestStub(results: Result[]): string {
+type CarriedMeta = { alt: string; location: string }
+
+// Best-effort: carry hand-written alt/location forward when re-encoding files
+// whose slugs match the existing manifest. Misses (e.g. camera-named originals)
+// just fall back to empty TODO fields, same as a first run.
+async function loadExistingMeta(): Promise<Map<string, CarriedMeta>> {
+  const map = new Map<string, CarriedMeta>()
+  try {
+    const mod = (await import('../content/photography/manifest')) as {
+      photographyManifest: Array<{ slug: string; alt: string; location: string }>
+    }
+    for (const p of mod.photographyManifest) map.set(p.slug, { alt: p.alt, location: p.location })
+  } catch {
+    // no existing manifest to merge from
+  }
+  return map
+}
+
+function manifestStub(results: Result[], existing: Map<string, CarriedMeta>): string {
   const entries = results
-    .map(
-      (r) => `  {
+    .map((r) => {
+      const largest = r.variants.at(-1) ?? { width: r.srcWidth, height: r.srcHeight }
+      const carry = existing.get(r.slug)
+      const alt = carry?.alt ?? ''
+      const location = carry?.location ?? ''
+      return `  {
     slug: '${r.slug}',
-    src: '${PHOTO_DIR}/${r.slug}.jpg',
-    alt: '', // TODO
-    location: '', // TODO
-    width: ${r.outWidth},
-    height: ${r.outHeight},
-  },`,
-    )
+    src: '${PHOTO_DIR}/${r.slug}',
+    alt: ${JSON.stringify(alt)},${alt ? '' : ' // TODO'}
+    location: ${JSON.stringify(location)},${location ? '' : ' // TODO'}
+    width: ${largest.width},
+    height: ${largest.height},
+    blur: '${r.blur}',
+  },`
+    })
     .join('\n')
-  return `// Paste into content/photography/manifest.ts and fill alt + location.
-// src is the Bunny-relative form (no leading slash) so assetUrl() resolves it
-// against images.francois.works. A leading slash would serve from /public unoptimized.
+  return `// Paste into content/photography/manifest.ts, fill any empty alt/location,
+// then run 'bun run format'. src is the Bunny-relative base path (no extension);
+// lib/photography appends -<width>.webp per variant.
 ${entries}\n`
 }
 
 async function main() {
-  const opts = parseArgs(process.argv.slice(2))
+  const prompter = isInteractive ? createPrompter() : null
+  const opts = await resolveOptions(parseArgs(process.argv.slice(2)), prompter)
+  prompter?.close()
   await mkdir(opts.outputDir, { recursive: true })
   const files = await collect(opts.inputDir, opts.outputDir)
   if (files.length === 0) {
@@ -183,34 +229,42 @@ async function main() {
     return { file, slug }
   })
 
+  process.stdout.write(
+    `Encoding ${planned.length} photo(s) → ${VARIANT_WIDTHS.length} WebP variants each (q${opts.quality})\n`,
+  )
+  const progress = createProgress(planned.length)
   const failures: string[] = []
   const results = (
     await mapPool(planned, CONCURRENCY, async ({ file, slug }) => {
+      progress.start(slug)
       try {
-        return await encode(file, slug, opts)
+        const r = await encode(file, slug, opts)
+        const sizes = r.variants.map((v) => `${v.width}w ${kb(v.bytes)}`).join(' ')
+        progress.succeed(slug, `${r.srcWidth}×${r.srcHeight} → ${sizes}`)
+        return r
       } catch (error) {
-        failures.push(`${file}: ${error instanceof Error ? error.message : String(error)}`)
+        const message = error instanceof Error ? error.message : String(error)
+        failures.push(`${file}: ${message}`)
+        progress.fail(slug, message)
         return null
       }
     })
   ).filter((r): r is Result => r !== null)
+  progress.stop()
 
   let savedIn = 0
   let savedOut = 0
   for (const r of results) {
     savedIn += r.inBytes
     savedOut += r.outBytes
-    const dims = `${r.srcWidth}×${r.srcHeight} → ${r.outWidth}×${r.outHeight}`
-    process.stdout.write(
-      `  ${r.slug.padEnd(20)} ${dims.padEnd(22)} ${kb(r.inBytes)} → ${kb(r.outBytes)}\n`,
-    )
   }
 
-  await writeFile(join(opts.outputDir, 'manifest-stub.txt'), manifestStub(results))
+  const existing = await loadExistingMeta()
+  await writeFile(join(opts.outputDir, 'manifest-stub.txt'), manifestStub(results, existing))
 
   process.stdout.write(
     `\n${results.length}/${files.length} encoded → ${opts.outputDir}\n` +
-      `total ${kb(savedIn)} → ${kb(savedOut)} (${Math.round((1 - savedOut / savedIn) * 100)}% smaller)\n` +
+      `originals ${kb(savedIn)} → variants ${kb(savedOut)} (${VARIANT_WIDTHS.length} WebP each)\n` +
       `manifest entries → ${join(opts.outputDir, 'manifest-stub.txt')}\n`,
   )
 

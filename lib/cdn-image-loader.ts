@@ -2,23 +2,10 @@ import { assetUrl, imagesHost } from './cdn'
 
 type LoaderArgs = { src: string; width: number; quality?: number }
 
-const PASSTHROUGH_EXTENSIONS = ['.gif', '.svg']
-const DEFAULT_QUALITY = 75
-
-function extension(src: string): string {
-  const path = src.split('?')[0] ?? ''
-  const dot = path.lastIndexOf('.')
-  return dot === -1 ? '' : path.slice(dot).toLowerCase()
-}
-
-export default function bunnyImageLoader({ src, width, quality }: LoaderArgs): string {
-  const absolute = assetUrl(src, imagesHost())
-  if (PASSTHROUGH_EXTENSIONS.includes(extension(src))) {
-    return absolute
-  }
-  const url = new URL(absolute)
-  url.searchParams.set('width', String(width))
-  url.searchParams.set('format', 'webp')
-  url.searchParams.set('quality', String(quality ?? DEFAULT_QUALITY))
-  return url.toString()
+// Images are pre-encoded to their final width and format before upload (see
+// scripts/optimize-photos.ts), so Bunny serves them as plain static files with
+// no edge processing. The loader only resolves the CDN host; there is no
+// on-the-fly variant to request, so width/quality are intentionally ignored.
+export default function bunnyImageLoader({ src }: LoaderArgs): string {
+  return assetUrl(src, imagesHost())
 }

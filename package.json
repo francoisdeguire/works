@@ -11,6 +11,8 @@
     "check": "biome check --write .",
     "typecheck": "next typegen && tsc --noEmit",
     "verify": "bun run typecheck && bun run lint && bun run build",
+    "optimize:photos": "bun run scripts/optimize-photos.ts",
+    "optimize:asset": "bun run scripts/optimize-asset.ts",
     "postinstall": "next typegen"
   },
   "dependencies": {
