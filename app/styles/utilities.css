@@ -8,43 +8,63 @@
   }
 }
 
-@utility eased-gradient {
-  --eg-from: var(--tw-gradient-from, black);
+/* Eased linear gradients mirroring Tailwind's bg-linear-* ergonomics:
+   bg-eased-linear-to-br for the eight compass directions, bg-eased-linear-60
+   (and -bg-eased-linear-60) for angles. They read the same
+   --tw-gradient-from/--tw-gradient-to that from-* / to-* set, so they compose
+   with those utilities. The article at content/writing/tw-utilities.mdx documents
+   this util; its demo copy is namespaced (demo-) in tw-utilities.css to avoid
+   colliding with this one. */
+@theme {
+  --eg-direction-to-t: to top;
+  --eg-direction-to-tr: to top right;
+  --eg-direction-to-r: to right;
+  --eg-direction-to-br: to bottom right;
+  --eg-direction-to-b: to bottom;
+  --eg-direction-to-bl: to bottom left;
+  --eg-direction-to-l: to left;
+  --eg-direction-to-tl: to top left;
+}
+
+/* Stops are auto-spaced (no positions); each interior color is the from/to mix
+   at smoothstep(t) = t * t * (3 - 2t), evaluated at even t from 1/16 to 15/16.
+   The percentages are that curve, not hand-tuned values. */
+@utility eased-linear-fill {
+  --eg-from: var(--tw-gradient-from, currentColor);
   --eg-to: var(--tw-gradient-to, transparent);
-  --eg-angle: var(--eg-direction, to bottom);
-  background: linear-gradient(
-    var(--eg-angle),
-    var(--eg-from) 0%,
-    color-mix(in oklch, var(--eg-from) 99%, var(--eg-to) 1%) 6.25%,
-    color-mix(in oklch, var(--eg-from) 97%, var(--eg-to) 3%) 12.5%,
-    color-mix(in oklch, var(--eg-from) 93%, var(--eg-to) 7%) 18.75%,
-    color-mix(in oklch, var(--eg-from) 87%, var(--eg-to) 13%) 25%,
-    color-mix(in oklch, var(--eg-from) 80%, var(--eg-to) 20%) 31.25%,
-    color-mix(in oklch, var(--eg-from) 71%, var(--eg-to) 29%) 37.5%,
-    color-mix(in oklch, var(--eg-from) 61%, var(--eg-to) 39%) 43.75%,
-    color-mix(in oklch, var(--eg-from) 50%, var(--eg-to) 50%) 50%,
-    color-mix(in oklch, var(--eg-from) 39%, var(--eg-to) 61%) 56.25%,
-    color-mix(in oklch, var(--eg-from) 29%, var(--eg-to) 71%) 62.5%,
-    color-mix(in oklch, var(--eg-from) 20%, var(--eg-to) 80%) 68.75%,
-    color-mix(in oklch, var(--eg-from) 13%, var(--eg-to) 87%) 75%,
-    color-mix(in oklch, var(--eg-from) 7%, var(--eg-to) 93%) 81.25%,
-    color-mix(in oklch, var(--eg-from) 3%, var(--eg-to) 97%) 87.5%,
-    color-mix(in oklch, var(--eg-from) 1%, var(--eg-to) 99%) 93.75%,
-    var(--eg-to) 100%
+  background-image: linear-gradient(
+    var(--eg-angle, to bottom) in oklch,
+    var(--eg-from),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 1.1%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 4.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 9.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 15.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 23.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 31.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 40.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 50%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 59.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 68.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 76.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 84.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 90.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 95.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 98.9%),
+    var(--eg-to)
   );
 }
 
-@utility eased-gradient-to-b {
-  --eg-direction: to bottom;
+@utility bg-eased-linear-* {
+  --eg-angle: --value(--eg-direction-*);
+  --eg-angle: calc(--value(integer) * 1deg);
+  --eg-angle: --value([angle]);
+  @apply eased-linear-fill;
 }
-@utility eased-gradient-to-t {
-  --eg-direction: to top;
-}
-@utility eased-gradient-to-r {
-  --eg-direction: to right;
-}
-@utility eased-gradient-to-l {
-  --eg-direction: to left;
+
+@utility -bg-eased-linear-* {
+  --eg-angle: calc(--value(integer) * -1deg);
+  --eg-angle: calc(--value([angle]) * -1);
+  @apply eased-linear-fill;
 }
 
 @property --tilt-amount {

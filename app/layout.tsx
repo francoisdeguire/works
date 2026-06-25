@@ -1,7 +1,7 @@
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import SiteHeader from '@/components/site-header'
 import { site } from '@/lib/site'
 import './globals.css'

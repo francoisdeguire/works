@@ -1,9 +1,9 @@
 'use client'
 
-import { useBrowserPathname } from '@/hooks/use-browser-pathname'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { useBrowserPathname } from '@/hooks/use-browser-pathname'
 
 export default function NotFound() {
   const pathname = useBrowserPathname()

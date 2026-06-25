@@ -12,7 +12,7 @@
     }
 
     & h2 {
-      @apply mt-24 mb-8 scroll-mt-20 font-display text-base text-foreground sm:text-lg uppercase leading-none text-balance;
+      @apply mt-16 sm:mt-24 mb-8 scroll-mt-20 tracking-tight font-display text-lg text-foreground sm:text-xl uppercase leading-tight text-balance;
     }
 
     & h2:is(:hover, :focus-within) .section-link {
@@ -41,15 +41,15 @@
 
     /* ── Lists ───────────────────────────────────────────────────────── */
     & ul {
-      @apply my-4 ml-6 list-disc marker:text-foreground-muted/50;
+      @apply my-12 ml-6 list-disc marker:text-foreground-muted/50;
     }
 
     & ol {
-      @apply my-4 ml-6 list-decimal marker:text-foreground-muted/50;
+      @apply my-12 ml-6 list-decimal marker:text-foreground-muted/50;
     }
 
     & li {
-      @apply my-3;
+      @apply my-4 leading-loose pl-1;
     }
 
     /* ── Blocks ──────────────────────────────────────────────────────── */
@@ -58,7 +58,7 @@
     }
 
     & aside:not(.mdx-note) {
-      @apply my-12 border-l pl-4;
+      @apply my-10 sm:my-12 border-l pl-4;
 
       & p {
         @apply my-1 leading-relaxed;
@@ -74,7 +74,7 @@
     }
 
     & hr {
-      @apply border-0 border-t my-16 mx-auto max-w-80;
+      @apply border-0 border-t my-16 sm:my-24 mx-auto max-w-80;
     }
 
     /* ── Embedded media ──────────────────────────────────────────────── */
@@ -83,7 +83,7 @@
     }
 
     & figure {
-      @apply my-16;
+      @apply my-12 sm:my-16;
     }
 
     & video {
@@ -92,15 +92,15 @@
 
     /* ── MDX components ──────────────────────────────────────────────── */
     & .mdx-note {
-      @apply my-12 rounded-md border p-5 -mx-2;
+      @apply my-12 rounded-md border p-5 -mx-2 text-sm leading-relaxed;
 
       & .mdx-note-title {
-        @apply mb-2 font-display text-xs uppercase tracking-wider text-foreground-muted;
+        @apply mb-4 font-display text-xs uppercase tracking-wider text-foreground-muted;
       }
     }
 
     & .mdx-preview-card {
-      @apply rounded-md border bg-background p-1 -mx-2 text-foreground;
+      @apply rounded-md border bg-background -mx-2 text-foreground overflow-clip;
 
       /* Reset prose styles that would otherwise bleed into demo content. */
       & a:not(.section-link) {

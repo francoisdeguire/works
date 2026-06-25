@@ -12,10 +12,10 @@ export default function HomePage() {
   return (
     <main id="main" className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48">
       <header>
-        <h1 className="stagger-0 font-display text-3xl sm:text-5xl leading-none uppercase">
+        <h1 className="stagger-0 font-display text-3xl sm:text-5xl tracking-tight leading-none uppercase">
           Francois Deguire
         </h1>
-        <h2 className="stagger-1 mt-4 text-pretty font-display text-base sm:text-2xl leading-[1.6] text-foreground-muted">
+        <h2 className="stagger-1 mt-4 text-pretty tracking-tight font-display text-base sm:text-2xl leading-[1.6] text-foreground-muted">
           Design Engineer / Creative Developer
         </h2>
       </header>
@@ -24,7 +24,7 @@ export default function HomePage() {
         className={cn(
           'mt-16 sm:mt-32',
           'space-y-12 sm:space-y-24 *:space-y-6 *:sm:space-y-12',
-          'text-lg sm:text-2xl leading-loose font-[475] tracking-tight text-foreground-muted',
+          'text-lg sm:text-2xl leading-[1.8] sm:leading-loose font-[475] tracking-tight text-foreground-muted',
         )}
       >
         <div>

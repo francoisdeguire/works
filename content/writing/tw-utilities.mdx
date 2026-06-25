@@ -1,0 +1,998 @@
+---
+title: A collection of custom Tailwind utilities
+date: 2026-06-22
+summary: Ten custom Tailwind v4 utilities I keep reaching for, each ten or twenty lines of CSS that fix a small detail Tailwind leaves to you.
+published: false
+tags: [css, tailwind]
+---
+
+{/* Component imports */}
+
+import GradientCompare from "@/content/writing/demos/tw-utilities/gradient-compare";
+import ProgressiveBlurDemo from "@/content/writing/demos/tw-utilities/progressive-blur-demo";
+import GrainToggle from "@/content/writing/demos/tw-utilities/grain-toggle";
+import GlossyDemo from "@/content/writing/demos/tw-utilities/glossy-demo";
+import FadeDemo from "@/content/writing/demos/tw-utilities/fade-demo";
+import PatternDemo from "@/content/writing/demos/tw-utilities/pattern-demo";
+import ShimmerDemo from "@/content/writing/demos/tw-utilities/shimmer-demo";
+import ShimmerBorderDemo from "@/content/writing/demos/tw-utilities/shimmer-border-demo";
+import CornerDemo from "@/content/writing/demos/tw-utilities/corner-demo";
+import DrawPathDemo from "@/content/writing/demos/tw-utilities/draw-path-demo";
+
+{/* ----- ----- ----- */}
+{/* ----- ----- ----- */}
+{/* ----- ----- ----- */}
+
+Most of what separates an interface that feels handcrafted from slop is small. Attention to human perception, cohesive spacing, surfaces that catch light. Almost nobody notices any one of these but I strongly believe that most people feel the sum of a bunch of tiny attentions. 
+
+Tailwind ships a strong, generic floor by design, which is fine to get up and running quickly but it's also why if you don't bother customizing it, every interface you make with it feels generic and unoriginal.
+
+Over the last few projects I've written and adapted a set of small, composable utilities that add those details without scattering custom CSS inline. Ten of them are below, in `@utility` form, ready to paste into your global stylesheet and reuse in your own projects.
+
+---
+
+## Eased Gradients
+
+First let's talk eased gradients. Let's say you're making a scrim for some overlay on an image. You reach for the obvious black-to-transparent gradient, but the end result feels oddly abrupt and unappealing. It looks like there's a sharp edge near the transparent edge where there should be none and the black part at the start is also somehow way too short.
+
+Nothing's wrong with the gradient itself, it's just yet another quirk of human perception. When your eyes see a colors change at a constant rate and then stop, your brain interprets it as a hard edge rather than a smooth transition it mathematically is. I won't get into the nitty-gritty details of why this is the case, but if you want to read up on the why, you can check out [Mach Bands](https://en.wikipedia.org/wiki/Mach_bands). While the bad news is that our eyes are terrible at their job, the good news is that you can mitigate this pretty easily with a bit of tweaking.
+
+The classic CSS fix is to ease that progression by hand, writing out a long stack of gradient stops along an easing curve. It works, but it's a pain in the ass to write and maintain. Which is why I made a `bg-eased-linear` utility that mirrors Tailwind's own `bg-linear-*`: pick a direction (`bg-eased-linear-to-t`) or an angle (`bg-eased-linear-60`, or `-bg-eased-linear-60`), and it composes with the `from-*` and `to-*` utilities you already use.
+
+<Preview>
+  <GradientCompare />
+  <Caption>Toggle the easing on the gradient to view the difference between the eased and linear fill. You'll notice the eased fill has a smoother, more natural progression.</Caption>
+</Preview>
+
+```css
+@theme {
+  --direction-to-t: to top;
+  --direction-to-tr: to top right;
+  --direction-to-r: to right;
+  --direction-to-br: to bottom right;
+  --direction-to-b: to bottom;
+  --direction-to-bl: to bottom left;
+  --direction-to-l: to left;
+  --direction-to-tl: to top left;
+}
+
+/* Stops are auto-spaced; each interior color is the
+   from/to mix at smoothstep(t) = t * t * (3 - 2t), sampled at even t. */
+@utility eased-linear-fill {
+  --eg-from: var(--tw-gradient-from, currentColor);
+  --eg-to: var(--tw-gradient-to, transparent);
+  background-image: linear-gradient(
+    var(--eg-angle, to bottom) in oklch,
+    var(--eg-from),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 1.1%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 4.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 9.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 15.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 23.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 31.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 40.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 50%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 59.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 68.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 76.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 84.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 90.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 95.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 98.9%),
+    var(--eg-to)
+  );
+}
+
+/* Direction keywords (to-t … to-tl) and angles (60, [30deg], -60). */
+@utility bg-eased-linear-* {
+  --eg-angle: --value(--direction-*);
+  --eg-angle: calc(--value(integer) * 1deg);
+  --eg-angle: --value([angle]);
+  @apply eased-linear-fill;
+}
+
+@utility -bg-eased-linear-* {
+  --eg-angle: calc(--value(integer) * -1deg);
+  --eg-angle: calc(--value([angle]) * -1);
+  @apply eased-linear-fill;
+}
+```
+
+---
+
+## Progressive Blur
+
+Following up on the eased gradients, have you ever noticed the edge blurs in iOS? The content blurs more and more as it moves towards the viewport edge.
+
+We can reproduce this effect in CSS by layering a couple of blur layers one on top of the other. Now this is normally a lot of work to set up, but with a *relatively* simple Tailwind CSS utility it's a breeze. Here it is in action:
+
+<Preview>
+  <ProgressiveBlurDemo />
+  <Caption>Play around with the blur values to find the right balance for your design.</Caption>
+</Preview>
+
+While this effect is pretty simple to set up when you have the utility classs, it has three core quirks to keep in mind:
+
+1. The blur layers are actual HTML layers, not just CSS filters. So you can't just apply a `progressive-blur-*` to a parent element and expect it to work. You need to apply a key to each blur layer to ensure they stack correctly.
+2. Since the gpu is computing blur on blurs many times over, this effect it can be quite expensive. By default, the effect will render 6 blur layers, which can be quite expensive on a large screen. You can reduce the number of blur layers by adjusting `[--progressive-blur-layers:n]` on the container and the corresponding `[--blur-layer:n]` but I would still suggest keeping the number of progressive blurs you're rendering on a page to a minimum.
+3. `backdrop-filter: blur()` has this nasty tendency to create flickering edges because of the way the browser computes blur so if the effect sits on a uniform background, I strongly suggest adding a scrim to gradually fade out the content on top of blurring it. You can use the `progressive-blur-scrim-*` utility classes to quickly add a scrim to your blur effect.
+
+Here's the basic structure you need to set up a progressive blur effect in JSX:
+
+```tsx
+<div className="progressive-blur-md progressive-blur-scrim-background">
+  {[...Array(6)].map((_, i) => (
+    <div key={i} className={`[--blur-layer:${i + 1}]`} />
+  ))}
+</div>
+```
+
+And here's the utility definition:
+
+```css
+@utility blur-ramp {
+  --progressive-blur-layers: 6;
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--progressive-blur-layers) + 1);
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      to top,
+      transparent,
+      var(--progressive-blur-scrim, transparent)
+    );
+  }
+  
+  & > * {
+    position: absolute;
+    inset: 0;
+    z-index: var(--blur-layer);
+    pointer-events: none;
+    backdrop-filter: blur(
+      calc(var(--progressive-blur-amount, var(--blur-lg)) * pow(2, (var(--blur-layer) - var(--progressive-blur-layers))))
+    );
+    mask-image: linear-gradient(
+      to top,
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 2)),
+      black calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 1)),
+      black calc(100% / var(--progressive-blur-layers) * var(--blur-layer)),
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) + 1))
+    );
+  }
+}
+
+@utility progressive-blur {
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-* {
+  --progressive-blur-amount: --value(--blur-*);
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-scrim-* {
+  --progressive-blur-scrim: --value(--color-*);
+}
+```
+
+---
+
+## Grain Filter
+
+Sometimes all your design is missing is just a little bit of texture. You really don't need fancy shaders or heavy image assets to remove the unnatural look of perfect gradients. A little random noise can do the trick without needing anything else than plain CSS.
+
+The `grain-*` Tailwind utility I've created applies a simple `feTurbulence` filter to create a grainy texture effect. I've also exposed a couple of knobs for you to tweak the filter's behaviour. You can firstly adjust the tile/grain size using `grain-xs` through `grain-lg` (or an arbitrary `grain-[120px]`). You can tweak the opacity to your liking using the `grain-opacity-*`. You can also change the blend mode using the `grain-blend-*` utility (Though I've found it's best to stick with the default `overlay` blend mode). Finally, if you really want to turn it up a notch, i've even exposed a `grain-animate` that makes the noise flicker since it's cheap and static, so it costs nothing at runtime.
+
+<Preview>
+  <GrainToggle />
+</Preview>
+
+```css
+@theme {
+  --grain-size-xs: 64px;
+  --grain-size-sm: 128px;
+  --grain-size-md: 256px;
+  --grain-size-lg: 512px;
+
+  --grain-blend-normal: normal;
+  --grain-blend-overlay: overlay;
+  --grain-blend-soft-light: soft-light;
+}
+
+@keyframes grain-flicker {
+  0% { background-position: 0 0; }
+  25% { background-position: -27px 7px; }
+  50% { background-position: 21px 29px; }
+  75% { background-position: 29px 9px; }
+}
+
+@utility film-grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit; /* clip the tile to the parent's rounded corners */
+    pointer-events: none;
+    opacity: var(--grain-opacity, 0.035);
+    mix-blend-mode: var(--grain-blend, overlay);
+    animation: var(--grain-animation, none);
+    background-image: url("data:image/svg+xml,…feTurbulence + feColorMatrix…");
+    background-size: var(--grain-size, var(--grain-size-md)) var(--grain-size, var(--grain-size-md));
+  }
+}
+
+@utility grain {
+  @apply film-grain;
+}
+
+@utility grain-* {
+  --grain-size: --value(--grain-size-*, [length]);
+  --grain-blend: --value(--grain-blend-*);
+  @apply film-grain;
+}
+
+@utility grain-opacity-* {
+  --grain-opacity: calc(--value(number) * 1%);
+  --grain-opacity: --value([percentage]);
+}
+
+@utility grain-animate {
+  @media (prefers-reduced-motion: no-preference) {
+    --grain-animation: grain-flicker 0.3s steps(1) infinite;
+  }
+}
+```
+
+---
+
+## Glossy Buttons
+
+
+
+<Preview>
+  <GlossyDemo />
+</Preview>
+
+It reuses conventions you already know. Tint and strength are a colour and an opacity, `glossy-sky-300/30` for a cool reflection, bare `glossy` for white at 35%. How far the highlight reaches down the face is a number, `glossy-40` covers 40% of the height, and the negative anchors it to the bottom edge instead, `-glossy-40`, for light bouncing up off whatever sits below. I left out arbitrary angles on purpose: a highlight raking in from the side reads as wrong before you can say why.
+
+```css
+@utility glossy {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      120% var(--glossy-h, 55%) at 50% var(--glossy-y, 0%),
+      var(--glossy-color, rgb(255 255 255 / 0.35)),
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+}
+
+/* glossy-<n> = reach; glossy-<color>/<opacity> = tint + strength */
+@utility glossy-* {
+  --glossy-color: --value(--color-*);
+  --glossy-color: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+}
+
+/* -glossy-<n> = same reach, anchored at the bottom */
+@utility -glossy-* {
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+  --glossy-y: 100%;
+}
+```
+
+## Fade Clipping Mask
+
+<Preview>
+  <FadeDemo />
+</Preview>
+
+```css
+/* --fade-s/--fade-e hold the start/end reach so the smoothstep stops below
+   read cleanly; the alpha values are the same curve as the eased gradient. */
+@utility fade-y {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-start, var(--fade, 1.5rem)));
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s),
+    #000 calc(100% - var(--fade-e)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--fade-e) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0)
+  );
+  mask-repeat: no-repeat;
+}
+
+/* fade-t/b drop one side; fade-x/l/r switch to the overflow-x variables */
+@utility fade-* {
+  --fade: calc(--value(number) * var(--spacing));
+  --fade: --value([length]);
+}
+```
+
+---
+
+## Surface Patterns
+
+<Preview>
+  <PatternDemo />
+</Preview>
+
+```css
+@utility pattern-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-grid {
+  background-image:
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-* {
+  --pattern: calc(--value(number) * var(--spacing));
+  --pattern: --value([length]);
+}
+```
+
+---
+
+## Shimmer Animation
+
+<Preview>
+  <ShimmerDemo />
+</Preview>
+
+```css
+@keyframes shimmer {
+  from { background-position: -150% 0; }
+  to { background-position: 250% 0; }
+}
+
+@utility shimmer {
+  --shimmer-c: var(--shimmer, rgb(255 255 255 / 0.5));
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 6.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 12.5%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 18.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 25%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 31.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 37.5%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 43.75%,
+    var(--shimmer-c) 50%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 56.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 62.5%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 68.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 75%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 81.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 87.5%,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 93.75%,
+    transparent
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: shimmer var(--shimmer-duration, 1.5s) linear infinite;
+  }
+}
+
+@utility shimmer-* {
+  --shimmer: --value(--color-*);
+  --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+```
+
+## Animated Border Highlight
+
+<Preview>
+  <ShimmerBorderDemo />
+</Preview>
+
+```css
+@property --shimmer-border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes shimmer-border-spin {
+  to { --shimmer-border-angle: 360deg; }
+}
+
+@utility shimmer-border {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: var(--shimmer-border-width, 1.5px);
+    background: conic-gradient(
+      from var(--shimmer-border-angle),
+      var(--shimmer-border-lo, transparent),
+      var(--shimmer-border-hi, currentColor),
+      var(--shimmer-border-lo, transparent) 25%
+    );
+    /* paint the whole box, subtract the content box: only the ring survives */
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    @media (prefers-reduced-motion: no-preference) {
+      animation: shimmer-border-spin var(--shimmer-border-duration, 3s) linear infinite;
+    }
+  }
+}
+
+/* shimmer-border-<n> = ring width; bare colour = the beam peak (hi) */
+@utility shimmer-border-* {
+  --shimmer-border-width: calc(--value(number) * 1px);
+  --shimmer-border-width: --value([length]);
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@utility shimmer-border-hi-* {
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@utility shimmer-border-lo-* {
+  --shimmer-border-lo: --value(--color-*);
+  --shimmer-border-lo: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+/* lap time in ms, like Tailwind's duration-* */
+@utility shimmer-border-duration-* {
+  --shimmer-border-duration: calc(--value(number) * 1ms);
+  --shimmer-border-duration: --value([*]);
+}
+```
+
+---
+
+## Squircle Corners
+
+<Preview>
+  <CornerDemo />
+</Preview>
+
+```css
+@utility squircle {
+  corner-shape: superellipse(var(--squircle, 2));
+}
+
+/* strength = superellipse exponent: squircle-1 round … squircle-2 full */
+@utility squircle-* {
+  --squircle: --value(number, [number]);
+  corner-shape: superellipse(var(--squircle));
+}
+```
+
+<Note>
+  <Note.Title>Limited Support</Note.Title>
+  <Note.Content>
+      As of writing (June 2026), `corner-shape` is only supported in Chromium-based browsers (139+). In Firefox and Safari, it will be ignored and will instead fall back to a standard rounded corner shape.
+      Since it still renders a rounded corner, it's still "design-intent-safe" but may not look as sharp as you'd like in some cases.
+  </Note.Content>
+</Note>
+
+---
+
+## Animated SVG Paths
+
+<Preview>
+  <DrawPathDemo />
+</Preview>
+
+```css
+@keyframes draw-path {
+  to { stroke-dashoffset: 0; }
+}
+
+@utility draw-path {
+  & path {
+    @media (prefers-reduced-motion: no-preference) {
+      stroke-dasharray: var(--draw-length, 1);
+      stroke-dashoffset: var(--draw-length, 1);
+      animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
+    }
+  }
+}
+```
+
+---
+
+## The Whole Set
+
+Want the whole set of utilities? Copy and paste the following block into your own stylesheet.
+
+```css
+@theme {
+  --direction-to-t: to top;
+  --direction-to-tr: to top right;
+  --direction-to-r: to right;
+  --direction-to-br: to bottom right;
+  --direction-to-b: to bottom;
+  --direction-to-bl: to bottom left;
+  --direction-to-l: to left;
+  --direction-to-tl: to top left;
+
+  --grain-size-xs: 64px;
+  --grain-size-sm: 128px;
+  --grain-size-md: 256px;
+  --grain-size-lg: 512px;
+
+  --grain-blend-normal: normal;
+  --grain-blend-overlay: overlay;
+  --grain-blend-soft-light: soft-light;
+}
+
+@keyframes grain-flicker {
+  0% { background-position: 0 0; }
+  25% { background-position: -27px 7px; }
+  50% { background-position: 21px 29px; }
+  75% { background-position: 29px 9px; }
+}
+
+@utility eased-linear-fill {
+  --eg-from: var(--tw-gradient-from, currentColor);
+  --eg-to: var(--tw-gradient-to, transparent);
+  background-image: linear-gradient(
+    var(--eg-angle, to bottom) in oklch,
+    var(--eg-from),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 1.1%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 4.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 9.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 15.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 23.2%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 31.6%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 40.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 50%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 59.3%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 68.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 76.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 84.4%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 90.8%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 95.7%),
+    color-mix(in oklch, var(--eg-from), var(--eg-to) 98.9%),
+    var(--eg-to)
+  );
+}
+
+@utility bg-eased-linear-* {
+  --eg-angle: --value(--direction-*);
+  --eg-angle: calc(--value(integer) * 1deg);
+  --eg-angle: --value([angle]);
+  @apply eased-linear-fill;
+}
+
+@utility -bg-eased-linear-* {
+  --eg-angle: calc(--value(integer) * -1deg);
+  --eg-angle: calc(--value([angle]) * -1);
+  @apply eased-linear-fill;
+}
+
+@utility glossy {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      120% var(--glossy-h, 55%) at 50% var(--glossy-y, 0%),
+      var(--glossy-color, rgb(255 255 255 / 0.35)),
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+}
+
+@utility glossy-* {
+  --glossy-color: --value(--color-*);
+  --glossy-color: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+}
+
+@utility -glossy-* {
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+  --glossy-y: 100%;
+}
+
+@utility fade-y {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-start, var(--fade, 1.5rem)));
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s),
+    #000 calc(100% - var(--fade-e)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--fade-e) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-t {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-start, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-b {
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-e) * 0.875),
+    #000 var(--fade-e)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-x {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-start, var(--fade, 1.5rem)));
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s),
+    #000 calc(100% - var(--fade-e)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--fade-e) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-l {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-start, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-r {
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to left,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-e) * 0.875),
+    #000 var(--fade-e)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-* {
+  --fade: calc(--value(number) * var(--spacing));
+  --fade: --value([length]);
+}
+
+@utility pattern-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-grid {
+  background-image:
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-* {
+  --pattern: calc(--value(number) * var(--spacing));
+  --pattern: --value([length]);
+}
+
+@keyframes shimmer {
+  from { background-position: -150% 0; }
+  to { background-position: 250% 0; }
+}
+
+@utility shimmer {
+  --shimmer-c: var(--shimmer, rgb(255 255 255 / 0.5));
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 6.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 12.5%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 18.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 25%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 31.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 37.5%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 43.75%,
+    var(--shimmer-c) 50%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 56.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 62.5%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 68.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 75%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 81.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 87.5%,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 93.75%,
+    transparent
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: shimmer var(--shimmer-duration, 1.5s) linear infinite;
+  }
+}
+
+@utility shimmer-* {
+  --shimmer: --value(--color-*);
+  --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@property --shimmer-border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes shimmer-border-spin {
+  to { --shimmer-border-angle: 360deg; }
+}
+
+@utility shimmer-border {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: var(--shimmer-border-width, 1.5px);
+    background: conic-gradient(
+      from var(--shimmer-border-angle),
+      var(--shimmer-border-lo, transparent),
+      var(--shimmer-border-hi, currentColor),
+      var(--shimmer-border-lo, transparent) 25%
+    );
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    @media (prefers-reduced-motion: no-preference) {
+      animation: shimmer-border-spin var(--shimmer-border-duration, 3s) linear infinite;
+    }
+  }
+}
+
+@utility shimmer-border-* {
+  --shimmer-border-width: calc(--value(number) * 1px);
+  --shimmer-border-width: --value([length]);
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@utility shimmer-border-hi-* {
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@utility shimmer-border-lo-* {
+  --shimmer-border-lo: --value(--color-*);
+  --shimmer-border-lo: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+@utility shimmer-border-duration-* {
+  --shimmer-border-duration: calc(--value(number) * 1ms);
+  --shimmer-border-duration: --value([*]);
+}
+
+@utility squircle {
+  corner-shape: superellipse(var(--squircle, 2));
+}
+
+@utility squircle-* {
+  --squircle: --value(number, [number]);
+  corner-shape: superellipse(var(--squircle));
+}
+
+@keyframes draw-path {
+  to { stroke-dashoffset: 0; }
+}
+
+@utility draw-path {
+  & path {
+    @media (prefers-reduced-motion: no-preference) {
+      stroke-dasharray: var(--draw-length, 1);
+      stroke-dashoffset: var(--draw-length, 1);
+      animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
+    }
+  }
+}
+
+@utility film-grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--grain-opacity, 0.035);
+    mix-blend-mode: var(--grain-blend, overlay);
+    animation: var(--grain-animation, none);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: var(--grain-size, var(--grain-size-md)) var(--grain-size, var(--grain-size-md));
+  }
+}
+
+@utility grain {
+  @apply film-grain;
+}
+
+@utility grain-* {
+  --grain-size: --value(--grain-size-*, [length]);
+  --grain-blend: --value(--grain-blend-*);
+  @apply film-grain;
+}
+
+@utility grain-opacity-* {
+  --grain-opacity: calc(--value(number) * 1%);
+  --grain-opacity: --value([percentage]);
+}
+
+@utility grain-animate {
+  @media (prefers-reduced-motion: no-preference) {
+    --grain-animation: grain-flicker 0.5s steps(1) infinite;
+  }
+}
+
+@utility blur-ramp {
+  --progressive-blur-layers: 6;
+  position: relative;
+  isolation: isolate;
+  /* Optional scrim: a color wash over the strong-blur end that hides the
+     shimmer backdrop-filter gives off as content scrolls. Off until a
+     progressive-blur-scrim-* class sets the color. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--progressive-blur-layers) + 1);
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      to top,
+      transparent,
+      var(--progressive-blur-scrim, transparent)
+    );
+  }
+  & > * {
+    position: absolute;
+    inset: 0;
+    z-index: var(--blur-layer);
+    border-radius: inherit;
+    pointer-events: none;
+    backdrop-filter: blur(
+      calc(var(--progressive-blur-amount, var(--blur-lg)) * pow(2, (var(--blur-layer) - var(--progressive-blur-layers))))
+    );
+    mask-image: linear-gradient(
+      to top,
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 2)),
+      black calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 1)),
+      black calc(100% / var(--progressive-blur-layers) * var(--blur-layer)),
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) + 1))
+    );
+  }
+}
+
+@utility progressive-blur {
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-* {
+  --progressive-blur-amount: --value(--blur-*);
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-scrim-* {
+  --progressive-blur-scrim: --value(--color-*);
+}
+```

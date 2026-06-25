@@ -1,0 +1,559 @@
+/* Custom utilities, sibling to utilities.css and imported from globals.css.
+   Companion to content/writing/tw-utilities.mdx. */
+
+@theme {
+  --demo-direction-to-t: to top;
+  --demo-direction-to-tr: to top right;
+  --demo-direction-to-r: to right;
+  --demo-direction-to-br: to bottom right;
+  --demo-direction-to-b: to bottom;
+  --demo-direction-to-bl: to bottom left;
+  --demo-direction-to-l: to left;
+  --demo-direction-to-tl: to top left;
+}
+
+@utility demo-eased-linear-fill {
+  --demo-eg-from: var(--tw-gradient-from, currentColor);
+  --demo-eg-to: var(--tw-gradient-to, transparent);
+  background-image: linear-gradient(
+    var(--demo-eg-angle, to bottom) in oklch,
+    var(--demo-eg-from),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 1.1%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 4.3%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 9.2%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 15.6%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 23.2%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 31.6%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 40.7%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 50%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 59.3%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 68.4%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 76.8%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 84.4%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 90.8%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 95.7%),
+    color-mix(in oklch, var(--demo-eg-from), var(--demo-eg-to) 98.9%),
+    var(--demo-eg-to)
+  );
+}
+
+@utility bg-demo-eased-linear-* {
+  --demo-eg-angle: --value(--demo-direction-*);
+  --demo-eg-angle: calc(--value(integer) * 1deg);
+  --demo-eg-angle: --value([angle]);
+  @apply demo-eased-linear-fill;
+}
+
+@utility -bg-demo-eased-linear-* {
+  --demo-eg-angle: calc(--value(integer) * -1deg);
+  --demo-eg-angle: calc(--value([angle]) * -1);
+  @apply demo-eased-linear-fill;
+}
+
+/* A specular sheen: a near-white highlight that reads as glossy plastic/glass
+   over any fill. `glossy-<n>` sets how far it reaches (40 = 40% of the height);
+   `-glossy-<n>` anchors it at the bottom instead of the top. Colour and
+   strength use the palette and the /opacity convention, e.g. `glossy-sky-300/30`;
+   bare `glossy` is white at 35%. */
+@utility glossy {
+  position: relative;
+  isolation: isolate;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      120% var(--glossy-h, 55%) at 50% var(--glossy-y, 0%),
+      var(--glossy-color, rgb(255 255 255 / 0.35)),
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+}
+
+/* glossy-<n>: reach as a share of the height (glossy-40) or a length
+   (glossy-[24px]). glossy-<color>/<opacity>: tint and strength. */
+@utility glossy-* {
+  --glossy-color: --value(--color-*);
+  --glossy-color: color-mix(
+    in oklch,
+    --value(--color-*) calc(--modifier(number) * 1%),
+    transparent
+  );
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+}
+
+/* -glossy-<n>: same reach, anchored at the bottom edge */
+@utility -glossy-* {
+  --glossy-h: calc(--value(number) * 1%);
+  --glossy-h: --value([percentage], [length]);
+  --glossy-y: 100%;
+}
+
+/* Fade the edges of a scroll/overflow area with a mask, so content dissolves
+   instead of cutting off hard. `fade-<n>` sets the reach (spacing scale). Inside
+   a Base UI ScrollArea the fade grows with scroll via its overflow vars; the
+   fallback makes it a clean static fade anywhere else. The alpha ramps on the
+   same smoothstep stops as the eased gradients, so the dissolve has no hard
+   Mach-band edge a plain linear mask would leave. `--fade-s`/`--fade-e` hold the
+   start/end reach so the smoothstep positions don't repeat the min(). */
+@utility fade-y {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-start, var(--fade, 1.5rem)));
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s),
+    #000 calc(100% - var(--fade-e)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--fade-e) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-t {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-start, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-b {
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-y-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-e) * 0.875),
+    #000 var(--fade-e)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-x {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-start, var(--fade, 1.5rem)));
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s),
+    #000 calc(100% - var(--fade-e)),
+    rgb(0 0 0 / 0.957) calc(100% - var(--fade-e) * 0.875),
+    rgb(0 0 0 / 0.844) calc(100% - var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.684) calc(100% - var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.5) calc(100% - var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.316) calc(100% - var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.156) calc(100% - var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.043) calc(100% - var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-l {
+  --fade-s: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-start, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-s) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-s) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-s) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-s) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-s) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-s) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-s) * 0.875),
+    #000 var(--fade-s)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-r {
+  --fade-e: min(var(--fade, 1.5rem), var(--scroll-area-overflow-x-end, var(--fade, 1.5rem)));
+  mask-image: linear-gradient(
+    to left,
+    rgb(0 0 0 / 0),
+    rgb(0 0 0 / 0.043) calc(var(--fade-e) * 0.125),
+    rgb(0 0 0 / 0.156) calc(var(--fade-e) * 0.25),
+    rgb(0 0 0 / 0.316) calc(var(--fade-e) * 0.375),
+    rgb(0 0 0 / 0.5) calc(var(--fade-e) * 0.5),
+    rgb(0 0 0 / 0.684) calc(var(--fade-e) * 0.625),
+    rgb(0 0 0 / 0.844) calc(var(--fade-e) * 0.75),
+    rgb(0 0 0 / 0.957) calc(var(--fade-e) * 0.875),
+    #000 var(--fade-e)
+  );
+  mask-repeat: no-repeat;
+}
+
+@utility fade-* {
+  --fade: calc(--value(number) * var(--spacing));
+  --fade: --value([length]);
+}
+
+/* Repeating background pattern via gradients. Colour follows `currentColor`
+   (set `text-*` and the dots/lines follow); `pattern-<n>` sets the tile. */
+@utility pattern-dots {
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-grid {
+  background-image:
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: var(--pattern, 16px) var(--pattern, 16px);
+}
+
+@utility pattern-* {
+  --pattern: calc(--value(number) * var(--spacing));
+  --pattern: --value([length]);
+}
+
+/* A loading-skeleton sweep: an animated highlight gliding across the fill.
+   Colour + strength via `shimmer-<color>/<opacity>`; behind a reduced-motion
+   guard so it holds still for anyone who asks. The band's falloff rides the
+   same smoothstep stops as the eased gradients (`--shimmer-c` holds the colour
+   so the stops don't repeat the default), so the highlight blooms instead of
+   ramping in a hard linear wedge. */
+@keyframes shimmer {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 250% 0;
+  }
+}
+
+@utility shimmer {
+  --shimmer-c: var(--shimmer, rgb(255 255 255 / 0.5));
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 6.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 12.5%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 18.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 25%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 31.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 37.5%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 43.75%,
+    var(--shimmer-c) 50%,
+    color-mix(in oklch, var(--shimmer-c) 95.7%, transparent) 56.25%,
+    color-mix(in oklch, var(--shimmer-c) 84.4%, transparent) 62.5%,
+    color-mix(in oklch, var(--shimmer-c) 68.4%, transparent) 68.75%,
+    color-mix(in oklch, var(--shimmer-c) 50%, transparent) 75%,
+    color-mix(in oklch, var(--shimmer-c) 31.6%, transparent) 81.25%,
+    color-mix(in oklch, var(--shimmer-c) 15.6%, transparent) 87.5%,
+    color-mix(in oklch, var(--shimmer-c) 4.3%, transparent) 93.75%,
+    transparent
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: shimmer var(--shimmer-duration, 1.5s) linear infinite;
+  }
+}
+
+@utility shimmer-* {
+  --shimmer: --value(--color-*);
+  --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
+}
+
+/* A point of light orbiting the border. A conic gradient sweeps from a resting
+   colour (`lo`) up to a bright peak (`hi`) and back, riding an `::after` whose
+   angle animates through a registered `@property` (a bare custom property
+   animates in steps, not smoothly), then masked down to the border ring so the
+   fill underneath stays untouched. Defaults: a `currentColor` peak on a
+   transparent ring, 1.5px wide, one lap every 3s.
+     - `shimmer-border-<n>` / `-[len]`  ring width
+     - `shimmer-border-<color>/<op>`    beam peak (alias of `-hi-`)
+     - `shimmer-border-hi-<color>/<op>` beam peak
+     - `shimmer-border-lo-<color>/<op>` resting colour of the rest of the ring
+     - `shimmer-border-duration-<ms>`   lap time, ms like Tailwind's duration-*
+   Freezes to a still highlight under reduced motion. */
+@property --shimmer-border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes shimmer-border-spin {
+  to {
+    --shimmer-border-angle: 360deg;
+  }
+}
+
+@utility shimmer-border {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: var(--shimmer-border-width, 1.5px);
+    background: conic-gradient(
+      from var(--shimmer-border-angle),
+      var(--shimmer-border-lo, transparent),
+      var(--shimmer-border-hi, currentColor),
+      var(--shimmer-border-lo, transparent) 25%
+    );
+    /* paint the whole box, subtract the content box: only the ring survives */
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    @media (prefers-reduced-motion: no-preference) {
+      animation: shimmer-border-spin var(--shimmer-border-duration, 3s) linear infinite;
+    }
+  }
+}
+
+/* shimmer-border-<n> = ring width; bare colour = the beam peak (hi) */
+@utility shimmer-border-* {
+  --shimmer-border-width: calc(--value(number) * 1px);
+  --shimmer-border-width: --value([length]);
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(
+    in oklch,
+    --value(--color-*) calc(--modifier(number) * 1%),
+    transparent
+  );
+}
+
+@utility shimmer-border-hi-* {
+  --shimmer-border-hi: --value(--color-*);
+  --shimmer-border-hi: color-mix(
+    in oklch,
+    --value(--color-*) calc(--modifier(number) * 1%),
+    transparent
+  );
+}
+
+@utility shimmer-border-lo-* {
+  --shimmer-border-lo: --value(--color-*);
+  --shimmer-border-lo: color-mix(
+    in oklch,
+    --value(--color-*) calc(--modifier(number) * 1%),
+    transparent
+  );
+}
+
+/* Lap time in milliseconds, like Tailwind's duration-*; [*] takes any unit. */
+@utility shimmer-border-duration-* {
+  --shimmer-border-duration: calc(--value(number) * 1ms);
+  --shimmer-border-duration: --value([*]);
+}
+
+/* Smooth (Apple-style) corners on top of border-radius. The strength is the
+   superellipse exponent: 1 is a plain round corner, 2 is the full squircle, so
+   `squircle-1.5` is a softer one in between. Unsupported browsers ignore
+   corner-shape and render the normal rounded corner, no fallback needed. */
+@utility squircle {
+  corner-shape: superellipse(var(--squircle, 2));
+}
+
+@utility squircle-* {
+  --squircle: --value(number, [number]);
+  corner-shape: superellipse(var(--squircle));
+}
+
+/* Draw every child <path> like a pen by animating the stroke. Give the paths
+   `pathLength="1"` so the default length of 1 covers any path. Only sets the
+   dash machinery under prefers-reduced-motion, so the icon renders fully drawn
+   for anyone who opts out. */
+@keyframes draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility draw-path {
+  & path {
+    @media (prefers-reduced-motion: no-preference) {
+      stroke-dasharray: var(--draw-length, 1);
+      stroke-dashoffset: var(--draw-length, 1);
+      animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
+    }
+  }
+}
+
+/* Tiled noise overlay that dithers banding out of flat fills and gradients.
+   `grain` for the default; `grain-<size>` sets the tile (xs/sm/md/lg or an
+   arbitrary length); `grain-<blend>` sets the blend mode; the `/<opacity>`
+   modifier rides on either value the way a color's does, e.g. `grain-lg/30`
+   or `grain-soft-light/20`; `grain-animate` makes it flicker like real film.
+   Size and blend are disjoint keywords, so compose: `grain-lg grain-overlay`. */
+@theme {
+  /* Integer ratios of the 256px noise tile (¼/½/1/2), so every step rescales
+     the texture by a whole number and stays crisp. md renders it 1:1. */
+  --grain-size-xs: 64px;
+  --grain-size-sm: 128px;
+  --grain-size-md: 256px;
+  --grain-size-lg: 512px;
+
+  --grain-blend-normal: normal;
+  --grain-blend-overlay: overlay;
+  --grain-blend-soft-light: soft-light;
+}
+
+/* Whole-pixel offsets only: a fractional background-position resamples the
+   tile and softens the grain, so jump by integers to keep it crisp. */
+@keyframes grain-flicker {
+  0% {
+    background-position: 0 0;
+  }
+  12.5% {
+    background-position: 11px 23px;
+  }
+  25% {
+    background-position: -27px 7px;
+  }
+  37.5% {
+    background-position: 5px -17px;
+  }
+  50% {
+    background-position: 21px 29px;
+  }
+  62.5% {
+    background-position: -13px -21px;
+  }
+  75% {
+    background-position: 29px 9px;
+  }
+  87.5% {
+    background-position: -15px 17px;
+  }
+}
+
+@utility film-grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--grain-opacity, 0.035);
+    mix-blend-mode: var(--grain-blend, overlay);
+    animation: var(--grain-animation, none);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: var(--grain-size, var(--grain-size-md)) var(--grain-size, var(--grain-size-md));
+  }
+}
+
+@utility grain {
+  @apply film-grain;
+}
+
+/* One namespace, two disjoint token kinds: `--value` resolves against the
+   size scale first, the blend scale second, and drops whichever misses. */
+@utility grain-* {
+  --grain-size: --value(--grain-size-*, [length]);
+  --grain-blend: --value(--grain-blend-*);
+  @apply film-grain;
+}
+
+/* Opacity as a percentage: `grain-opacity-30` is 30%, `grain-opacity-3.5`
+   the default-ish whisper. Its own utility so it works on bare `grain`. */
+@utility grain-opacity-* {
+  --grain-opacity: calc(--value(number) * 1%);
+  --grain-opacity: --value([percentage]);
+}
+
+@utility grain-animate {
+  @media (prefers-reduced-motion: no-preference) {
+    --grain-animation: grain-flicker 0.5s steps(1) infinite;
+  }
+}
+
+@utility blur-ramp {
+  --progressive-blur-layers: 6;
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x)
+    var(--tw-skew-y);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--progressive-blur-layers) + 1);
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(to top, transparent, var(--progressive-blur-scrim, transparent));
+  }
+  & > * {
+    position: absolute;
+    inset: 0;
+    z-index: var(--blur-layer);
+    border-radius: inherit;
+    pointer-events: none;
+    backdrop-filter: blur(
+      calc(
+        var(--progressive-blur-amount, var(--blur-sm)) *
+        pow(2, (var(--blur-layer) - var(--progressive-blur-layers)))
+      )
+    );
+    mask-image: linear-gradient(
+      to top,
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 2)),
+      black calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) - 1)),
+      black calc(100% / var(--progressive-blur-layers) * var(--blur-layer)),
+      transparent calc(100% / var(--progressive-blur-layers) * (var(--blur-layer) + 1))
+    );
+  }
+}
+
+@utility progressive-blur {
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-* {
+  --progressive-blur-amount: --value(--blur-*);
+  @apply blur-ramp;
+}
+
+@utility progressive-blur-scrim-* {
+  --progressive-blur-scrim: --value(--color-*);
+}
