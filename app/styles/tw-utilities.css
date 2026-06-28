@@ -52,7 +52,7 @@
 
 /* A specular sheen: a near-white highlight that reads as glossy plastic/glass
    over any fill. `glossy-<n>` sets how far it reaches (40 = 40% of the height);
-   `-glossy-<n>` anchors it at the bottom instead of the top. Colour and
+   `-glossy-<n>` anchors it at the bottom instead of the top. Color and
    strength use the palette and the /opacity convention, e.g. `glossy-sky-300/30`;
    bare `glossy` is white at 35%. */
 @utility glossy {
@@ -227,7 +227,7 @@
   --fade: --value([length]);
 }
 
-/* Repeating background pattern via gradients. Colour follows `currentColor`
+/* Repeating background pattern via gradients. Color follows `currentColor`
    (set `text-*` and the dots/lines follow); `pattern-<n>` sets the tile. */
 @utility pattern-dots {
   background-image: radial-gradient(currentColor 1px, transparent 1px);
@@ -247,9 +247,9 @@
 }
 
 /* A loading-skeleton sweep: an animated highlight gliding across the fill.
-   Colour + strength via `shimmer-<color>/<opacity>`; behind a reduced-motion
+   Color + strength via `shimmer-<color>/<opacity>`; behind a reduced-motion
    guard so it holds still for anyone who asks. The band's falloff rides the
-   same smoothstep stops as the eased gradients (`--shimmer-c` holds the colour
+   same smoothstep stops as the eased gradients (`--shimmer-c` holds the color
    so the stops don't repeat the default), so the highlight blooms instead of
    ramping in a hard linear wedge. */
 @keyframes shimmer {
@@ -295,8 +295,14 @@
   --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
 }
 
+/* Sweep time in milliseconds, like Tailwind's duration-*; [*] takes any unit. */
+@utility shimmer-duration-* {
+  --shimmer-duration: calc(--value(number) * 1ms);
+  --shimmer-duration: --value([*]);
+}
+
 /* A point of light orbiting the border. A conic gradient sweeps from a resting
-   colour (`lo`) up to a bright peak (`hi`) and back, riding an `::after` whose
+   color (`lo`) up to a bright peak (`hi`) and back, riding an `::after` whose
    angle animates through a registered `@property` (a bare custom property
    animates in steps, not smoothly), then masked down to the border ring so the
    fill underneath stays untouched. Defaults: a `currentColor` peak on a
@@ -304,7 +310,7 @@
      - `shimmer-border-<n>` / `-[len]`  ring width
      - `shimmer-border-<color>/<op>`    beam peak (alias of `-hi-`)
      - `shimmer-border-hi-<color>/<op>` beam peak
-     - `shimmer-border-lo-<color>/<op>` resting colour of the rest of the ring
+     - `shimmer-border-lo-<color>/<op>` resting color of the rest of the ring
      - `shimmer-border-duration-<ms>`   lap time, ms like Tailwind's duration-*
    Freezes to a still highlight under reduced motion. */
 @property --shimmer-border-angle {
@@ -347,7 +353,7 @@
   }
 }
 
-/* shimmer-border-<n> = ring width; bare colour = the beam peak (hi) */
+/* shimmer-border-<n> = ring width; bare color = the beam peak (hi) */
 @utility shimmer-border-* {
   --shimmer-border-width: calc(--value(number) * 1px);
   --shimmer-border-width: --value([length]);
@@ -414,6 +420,18 @@
       animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
     }
   }
+}
+
+/* Draw time in milliseconds, like Tailwind's duration-*; [*] takes any unit. */
+@utility draw-path-duration-* {
+  --draw-duration: calc(--value(number) * 1ms);
+  --draw-duration: --value([*]);
+}
+
+/* Easing for the draw, from the --ease-* scale like Tailwind's ease-*; [*] takes any value. */
+@utility draw-path-ease-* {
+  --draw-ease: --value(--ease-*);
+  --draw-ease: --value([*]);
 }
 
 /* Tiled noise overlay that dithers banding out of flat fills and gradients.

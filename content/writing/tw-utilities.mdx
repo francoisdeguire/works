@@ -35,7 +35,7 @@ Over the last few projects I've written and adapted a set of small, composable u
 
 First let's talk eased gradients. Let's say you're making a scrim for some overlay on an image. You reach for the obvious black-to-transparent gradient, but the end result feels oddly abrupt and unappealing. It looks like there's a sharp edge near the transparent edge where there should be none and the black part at the start is also somehow way too short.
 
-Nothing's wrong with the gradient itself, it's just yet another quirk of human perception. When your eyes see a colors change at a constant rate and then stop, your brain interprets it as a hard edge rather than a smooth transition it mathematically is. I won't get into the nitty-gritty details of why this is the case, but if you want to read up on the why, you can check out [Mach Bands](https://en.wikipedia.org/wiki/Mach_bands). While the bad news is that our eyes are terrible at their job, the good news is that you can mitigate this pretty easily with a bit of tweaking.
+Nothing's wrong with the gradient itself, it's just yet another quirk of human perception. When your eyes see a color change at a constant rate and then stop, your brain interprets it as a hard edge rather than the smooth transition it mathematically is. I won't get into the nitty-gritty details of why this is the case, but if you want to read up on the why, you can check out [Mach Bands](https://en.wikipedia.org/wiki/Mach_bands). While the bad news is that our eyes are terrible at their job, the good news is that you can mitigate this pretty easily with a bit of tweaking.
 
 The classic CSS fix is to ease that progression by hand, writing out a long stack of gradient stops along an easing curve. It works, but it's a pain in the ass to write and maintain. Which is why I made a `bg-eased-linear` utility that mirrors Tailwind's own `bg-linear-*`: pick a direction (`bg-eased-linear-to-t`) or an angle (`bg-eased-linear-60`, or `-bg-eased-linear-60`), and it composes with the `from-*` and `to-*` utilities you already use.
 
@@ -111,10 +111,10 @@ We can reproduce this effect in CSS by layering a couple of blur layers one on t
   <Caption>Play around with the blur values to find the right balance for your design.</Caption>
 </Preview>
 
-While this effect is pretty simple to set up when you have the utility classs, it has three core quirks to keep in mind:
+While this effect is pretty simple to set up when you have the utility classes, it has three core quirks to keep in mind:
 
 1. The blur layers are actual HTML layers, not just CSS filters. So you can't just apply a `progressive-blur-*` to a parent element and expect it to work. You need to apply a key to each blur layer to ensure they stack correctly.
-2. Since the gpu is computing blur on blurs many times over, this effect it can be quite expensive. By default, the effect will render 6 blur layers, which can be quite expensive on a large screen. You can reduce the number of blur layers by adjusting `[--progressive-blur-layers:n]` on the container and the corresponding `[--blur-layer:n]` but I would still suggest keeping the number of progressive blurs you're rendering on a page to a minimum.
+2. Since the GPU is computing blur on blurs many times over, this effect can be quite expensive. By default, the effect will render 6 blur layers, which gets expensive on a large screen. You can reduce the number of blur layers by adjusting `[--progressive-blur-layers:n]` on the container and the corresponding `[--blur-layer:n]` but I would still suggest keeping the number of progressive blurs you're rendering on a page to a minimum.
 3. `backdrop-filter: blur()` has this nasty tendency to create flickering edges because of the way the browser computes blur so if the effect sits on a uniform background, I strongly suggest adding a scrim to gradually fade out the content on top of blurring it. You can use the `progressive-blur-scrim-*` utility classes to quickly add a scrim to your blur effect.
 
 Here's the basic structure you need to set up a progressive blur effect in JSX:
@@ -186,9 +186,9 @@ And here's the utility definition:
 
 ## Grain Filter
 
-Sometimes all your design is missing is just a little bit of texture. You really don't need fancy shaders or heavy image assets to remove the unnatural look of perfect gradients. A little random noise can do the trick without needing anything else than plain CSS.
+Sometimes all your design is missing is just a little bit of texture. You really don't need fancy shaders or heavy image assets to remove the unnatural look of perfect gradients. A little random noise can do the trick without needing anything other than plain CSS.
 
-The `grain-*` Tailwind utility I've created applies a simple `feTurbulence` filter to create a grainy texture effect. I've also exposed a couple of knobs for you to tweak the filter's behaviour. You can firstly adjust the tile/grain size using `grain-xs` through `grain-lg` (or an arbitrary `grain-[120px]`). You can tweak the opacity to your liking using the `grain-opacity-*`. You can also change the blend mode using the `grain-blend-*` utility (Though I've found it's best to stick with the default `overlay` blend mode). Finally, if you really want to turn it up a notch, i've even exposed a `grain-animate` that makes the noise flicker since it's cheap and static, so it costs nothing at runtime.
+The `grain-*` Tailwind utility I've created applies a simple `feTurbulence` filter to create a grainy texture effect. I've also exposed a couple of knobs for you to tweak the filter's behavior. You can firstly adjust the tile/grain size using `grain-xs` through `grain-lg` (or an arbitrary `grain-[120px]`). You can tweak the opacity to your liking using the `grain-opacity-*`. You can also change the blend mode using the `grain-blend-*` utility (Though I've found it's best to stick with the default `overlay` blend mode). Finally, if you really want to turn it up a notch, I've even exposed a `grain-animate` that makes the noise flicker since it's cheap and static, so it costs nothing at runtime.
 
 <Preview>
   <GrainToggle />
@@ -226,7 +226,7 @@ The `grain-*` Tailwind utility I've created applies a simple `feTurbulence` filt
     opacity: var(--grain-opacity, 0.035);
     mix-blend-mode: var(--grain-blend, overlay);
     animation: var(--grain-animation, none);
-    background-image: url("data:image/svg+xml,…feTurbulence + feColorMatrix…");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
     background-size: var(--grain-size, var(--grain-size-md)) var(--grain-size, var(--grain-size-md));
   }
 }
@@ -257,13 +257,15 @@ The `grain-*` Tailwind utility I've created applies a simple `feTurbulence` filt
 
 ## Glossy Buttons
 
+Hot take, I sort of miss Vista. The peak Frutiger Aero experience. Everything felt like it was made out of glass (or cheap acrylic) and it had a very distinctive style. Now with Liquid Glass, I feel like transparent skeuomorphic surfaces are making a comeback.
 
+Faking refractions has always been hard especially in CSS because it requires faking a lot of the light interaction but a surefire way of adding surface dimensionality is to add surface reflections. Here's a simple util that adds a surface reflection on a before element so it pairs beautifully with gradient surfaces.
 
 <Preview>
   <GlossyDemo />
 </Preview>
 
-It reuses conventions you already know. Tint and strength are a colour and an opacity, `glossy-sky-300/30` for a cool reflection, bare `glossy` for white at 35%. How far the highlight reaches down the face is a number, `glossy-40` covers 40% of the height, and the negative anchors it to the bottom edge instead, `-glossy-40`, for light bouncing up off whatever sits below. I left out arbitrary angles on purpose: a highlight raking in from the side reads as wrong before you can say why.
+It reuses conventions you already know. Tint and strength are a color and an opacity, `glossy-sky-300/30` for a cool reflection, bare `glossy` for white at 35%. How far the highlight reaches down the face is a number, `glossy-40` covers 40% of the height, and the negative anchors it to the bottom edge instead, `-glossy-40`, for light bouncing up off whatever sits below. I left out arbitrary angles on purpose: a highlight raking in from the side reads as wrong before you can say why.
 
 ```css
 @utility glossy {
@@ -300,7 +302,17 @@ It reuses conventions you already know. Tint and strength are a colour and an op
 }
 ```
 
+---
+
 ## Fade Clipping Mask
+
+One of the nicest little touches you can give a scroll area or a marquee is letting the content fade softly as it runs off the edge, rather than stopping dead at a hard `overflow: hidden` line. You've seen it everywhere, and the mechanism is no secret: a `mask-image` gradient from opaque to transparent, fading the pixels out right at the boundary. The one fiddly part is rewriting that gradient by hand for every edge and every axis, on every project.
+
+So I packaged it into a small utility aimed squarely at where you actually want it: scroll areas, marquees, overflowing rows, anywhere content should slip past an edge cleanly. `fade-y` fades the top and bottom, `fade-x` the left and right, and `fade-t`, `fade-b`, `fade-l`, `fade-r` each take a single side. The reach defaults to a comfortable 1.5rem so `fade-y` on its own already looks right, with `fade-8` or `fade-[3rem]` there when you want to nudge it. One class, pointed at whichever edges you like.
+
+A couple of things make it nicer to live with. Because it's a mask and not a scrim, it doesn't care what sits behind it, there's no background color to match, so the same class holds up over a gradient, a photo, or a busy patterned background just as well as over flat white. And the gradient it masks with is the eased one from the top of the article rather than a straight linear ramp, so the falloff reads as genuinely soft instead of bringing back the Mach-band edge we started with.
+
+One last touch: feed it the offsets from a scroll container through the `--scroll-area-overflow-*` variables and each edge only fades while there's actually something clipped behind it, easing back to nothing as you reach the end of the scroll. Leave them out and it's a plain, always-on fade, which is all you need most of the time.
 
 <Preview>
   <FadeDemo />
@@ -347,6 +359,12 @@ It reuses conventions you already know. Tint and strength are a colour and an op
 
 ## Surface Patterns
 
+The grain from earlier breaks up a flat fill with a bit of organic noise. Sometimes a panel wants the opposite: a little structure. A faint dot field or a grid is enough to turn an empty box into something that reads as a place you could set things down, the quiet graph-paper feel of a canvas or a design tool, there without really being noticed.
+
+Underneath it's the usual CSS: a repeating radial-gradient stamps out the dots, a pair of linear-gradients crosses into a grid, and `background-size` decides how often they tile. `pattern-dots` and `pattern-grid` wrap up the two, and one knob sets the cell size, `pattern-8` on the spacing scale or `pattern-[20px]` for an exact tile. That's the whole API, and the dotted half is the same trick that already sits behind this site's artifact pages, just generalized so it drops onto anything.
+
+The one nicety worth pointing out is that none of the color is baked in. The pattern draws in `currentColor`, so it follows whatever `text-*` you put on the element, `text-zinc-200` for a barely-there gray, something darker when you want the structure to actually read. Keep it faint and it does what a background pattern should: give a surface a little rhythm without ever pulling focus.
+
 <Preview>
   <PatternDemo />
 </Preview>
@@ -372,7 +390,45 @@ It reuses conventions you already know. Tint and strength are a colour and an op
 
 ---
 
+## Squircle Corners
+
+Caring about the exact shape of a rounded corner is a slightly unhinged way to spend your attention, and yet here we are. Apple has been rounding its corners with a superellipse rather than a plain circle for years, and the moment someone points it out you can't stop seeing it. A normal CSS `border-radius` rushes through its curve and snaps back to the straight edge. A superellipse eases out of the turn so gradually there's no single point you could put your finger on and call the corner. Set the two side by side and the circular one suddenly looks pinched, like it's in a hurry to be a rectangle again.
+
+The shape is called a squircle, and CSS can finally draw one natively with the `corner-shape` property, no SVG or clip-path gymnastics required. The `squircle` utility turns it on over whatever radius you already have: keep your `rounded-*` as is, add `squircle`, and the corner upgrades itself from a circle to a superellipse. A single number says how far to take it, `squircle-1` being the plain round corner you started with and `squircle-2` the full Apple curve, with the values between for when the whole thing is a touch much. Fair warning though: ship it once and you'll start spotting every un-squircled corner on the rest of the web, a small tax on having yours look right.
+
+<Preview>
+  <CornerDemo />
+</Preview>
+
+```css
+@utility squircle {
+  corner-shape: superellipse(var(--squircle, 2));
+}
+
+/* strength = superellipse exponent: squircle-1 round … squircle-2 full */
+@utility squircle-* {
+  --squircle: --value(number, [number]);
+  corner-shape: superellipse(var(--squircle));
+}
+```
+
+<Note>
+  <Note.Title>Limited Support</Note.Title>
+  <Note.Content>
+      As of writing (June 2026), `corner-shape` is only supported in Chromium-based browsers (139+). In Firefox and Safari, it will be ignored and will instead fall back to a standard rounded corner shape.
+      Since it still renders a rounded corner, it's still "design-intent-safe" but may not look as sharp as you'd like in some cases.
+  </Note.Content>
+</Note>
+
+---
+
 ## Shimmer Animation
+
+A loading skeleton is mostly a kind of polite theater. The gray boxes don't bring the data in any sooner, and the light sweeping across them isn't measuring anything real, but the movement quietly promises that something's still happening and the page hasn't died on you. It's a small reassurance, and somehow it makes the same two-second wait feel shorter than a spinner ever manages.
+
+If you're going to put on a show, though, the light may as well be nice to look at. The effect underneath is old and everywhere, just a pale gradient sliding across the element on a loop, but most takes leave the band's edges linear, so the bright streak comes and goes a little more abruptly than it should. The `shimmer` utility runs it through the same eased ramp the gradients use instead, so the highlight swells up and fades back without a hard edge anywhere on it. It sweeps white at 50% on its own, and `shimmer-zinc-300/40`, or any color and opacity you like, steps in when white reads too harsh over your grays.
+
+Pace it with the Tailwind duration scale you already know: `shimmer-duration-2000` gives a slow, drawn-out pass, and you can take it quicker when you want the wait to feel more alive. And since the whole thing is motion for its own sake, it bows out completely under `prefers-reduced-motion`, sitting perfectly still for anyone who'd rather the screen stayed quiet.
 
 <Preview>
   <ShimmerDemo />
@@ -417,9 +473,25 @@ It reuses conventions you already know. Tint and strength are a colour and an op
   --shimmer: --value(--color-*);
   --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
 }
+
+/* sweep time in ms, like Tailwind's duration-* */
+@utility shimmer-duration-* {
+  --shimmer-duration: calc(--value(number) * 1ms);
+  --shimmer-duration: --value([*]);
+}
 ```
 
+---
+
 ## Animated Border Highlight
+
+Somewhere in the last couple of years, a slowly rotating gradient border became the universal badge for "this is the special one." The premium plan, the AI feature, the one card on the page they really want your eye to land on, all of them ringed with a bright spot quietly doing laps around the edge. A moving highlight is almost impossible to look away from, which is exactly the reason to spend it on one element and not five.
+
+The ring itself is the familiar gradient-border trick: paint a conic-gradient onto a pseudo-element, then mask away everything but a thin band around the edge. The only catch is the spin: a bare custom property judders when you try to animate its angle, so registering it as an `@property` is what lets the browser glide it round smoothly.
+
+On its own, `shimmer-border` puts a `currentColor` highlight on an otherwise invisible 1.5px ring and sends it round once every three seconds. Everything you'd want to change has its own knob: a number for the width (`shimmer-border-2`), a color for the bright peak (`shimmer-border-sky-400`, or just set the element's text color the way the demo does), `shimmer-border-lo-*` for the resting color it fades back to between passes, and `shimmer-border-duration-2000` for the lap time, on the same scale as every other duration in the set.
+
+And like the plain shimmer, it only moves when motion is welcome. Under `prefers-reduced-motion` the light parks and you're left with a plain static gradient border, which is plenty on its own.
 
 <Preview>
   <ShimmerBorderDemo />
@@ -462,7 +534,7 @@ It reuses conventions you already know. Tint and strength are a colour and an op
   }
 }
 
-/* shimmer-border-<n> = ring width; bare colour = the beam peak (hi) */
+/* shimmer-border-<n> = ring width; bare color = the beam peak (hi) */
 @utility shimmer-border-* {
   --shimmer-border-width: calc(--value(number) * 1px);
   --shimmer-border-width: --value([length]);
@@ -489,35 +561,13 @@ It reuses conventions you already know. Tint and strength are a colour and an op
 
 ---
 
-## Squircle Corners
-
-<Preview>
-  <CornerDemo />
-</Preview>
-
-```css
-@utility squircle {
-  corner-shape: superellipse(var(--squircle, 2));
-}
-
-/* strength = superellipse exponent: squircle-1 round … squircle-2 full */
-@utility squircle-* {
-  --squircle: --value(number, [number]);
-  corner-shape: superellipse(var(--squircle));
-}
-```
-
-<Note>
-  <Note.Title>Limited Support</Note.Title>
-  <Note.Content>
-      As of writing (June 2026), `corner-shape` is only supported in Chromium-based browsers (139+). In Firefox and Safari, it will be ignored and will instead fall back to a standard rounded corner shape.
-      Since it still renders a rounded corner, it's still "design-intent-safe" but may not look as sharp as you'd like in some cases.
-  </Note.Content>
-</Note>
-
----
-
 ## Animated SVG Paths
+
+A checkmark that draws itself in, instead of just popping into place, is a satisfying little flourish on a success state. The effect itself is an old SVG trick: make the stroke one long dash as long as the whole path, offset it out of view, then animate that offset back to zero so the line looks like it's being drawn.
+
+The annoying part has always been that "as long as the whole path" bit, which normally means measuring the path in JavaScript first. `draw-path` skips that: add `pathLength="1"` to your `<svg>` paths so the browser treats each one as a single unit long, then drop `draw-path` on the parent and each path inside draws itself. Timing is two knobs, `draw-path-duration-700` for the pace and `draw-path-ease-out` for the easing. And since it's purely decorative, it only runs when motion is welcome. Under `prefers-reduced-motion` the icon just shows up fully drawn.
+
+And if you want a little extra sass, run a subtle entry on the container at the same time: a slight scale-up, a little blur clearing, a fade in. The line drawing itself while the whole icon settles into place lands far better than either move on its own.
 
 <Preview>
   <DrawPathDemo />
@@ -536,6 +586,18 @@ It reuses conventions you already know. Tint and strength are a colour and an op
       animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
     }
   }
+}
+
+/* draw time in ms, like Tailwind's duration-* */
+@utility draw-path-duration-* {
+  --draw-duration: calc(--value(number) * 1ms);
+  --draw-duration: --value([*]);
+}
+
+/* easing from the --ease-* scale, like Tailwind's ease-* */
+@utility draw-path-ease-* {
+  --draw-ease: --value(--ease-*);
+  --draw-ease: --value([*]);
 }
 ```
 
@@ -825,6 +887,12 @@ Want the whole set of utilities? Copy and paste the following block into your ow
   --shimmer: color-mix(in oklch, --value(--color-*) calc(--modifier(number) * 1%), transparent);
 }
 
+/* sweep time in ms, like Tailwind's duration-* */
+@utility shimmer-duration-* {
+  --shimmer-duration: calc(--value(number) * 1ms);
+  --shimmer-duration: --value([*]);
+}
+
 @property --shimmer-border-angle {
   syntax: '<angle>';
   inherits: false;
@@ -903,6 +971,18 @@ Want the whole set of utilities? Copy and paste the following block into your ow
       animation: draw-path var(--draw-duration, 1s) var(--draw-ease, ease) forwards;
     }
   }
+}
+
+/* draw time in ms, like Tailwind's duration-* */
+@utility draw-path-duration-* {
+  --draw-duration: calc(--value(number) * 1ms);
+  --draw-duration: --value([*]);
+}
+
+/* easing from the --ease-* scale, like Tailwind's ease-* */
+@utility draw-path-ease-* {
+  --draw-ease: --value(--ease-*);
+  --draw-ease: --value([*]);
 }
 
 @utility film-grain {
