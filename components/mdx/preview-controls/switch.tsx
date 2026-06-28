@@ -14,7 +14,7 @@ function Switch({ className, children, id, ...props }: SwitchPrimitive.Root.Prop
         id={id}
         data-slot="switch"
         className={cn(
-          'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full bg-black/10 p-0.5 outline outline-black/5 -outline-offset-1 transition-colors duration-150 ease-standard data-checked:bg-foreground disabled:cursor-not-allowed disabled:opacity-50 has-focus-visible:outline-2 has-focus-visible:-outline-offset-1 has-focus-visible:outline-dos',
+          'relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full bg-black/10 p-0.5 outline outline-black/5 -outline-offset-1 transition-colors duration-150 ease-standard data-checked:bg-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-dos focus-visible:outline-offset-2',
           className,
         )}
         {...props}

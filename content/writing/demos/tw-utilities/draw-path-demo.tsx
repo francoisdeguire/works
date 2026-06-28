@@ -2,6 +2,7 @@
 
 import { type CSSProperties, useState } from 'react'
 import Preview from '@/components/mdx/preview'
+import { Button } from '@/components/mdx/preview-controls/button'
 import Slider from '@/components/mdx/preview-controls/slider'
 
 export default function DrawPathDemo() {
@@ -39,13 +40,9 @@ export default function DrawPathDemo() {
           formatValue={(value) => `${value}ms`}
         />
         <span className="h-6 w-px shrink-0 bg-foreground/10 max-md:hidden" />
-        <button
-          type="button"
-          onClick={() => setRun((n) => n + 1)}
-          className="flex h-9 select-none items-center justify-center rounded-lg bg-background px-3 font-medium text-foreground text-sm shadow-sm transition-[scale,background-color] duration-200 ease-standard hover:bg-gray-100 active:scale-[0.97]"
-        >
+        <Button type="button" onClick={() => setRun((n) => n + 1)}>
           Replay
-        </button>
+        </Button>
       </Preview.Controls>
     </>
   )
