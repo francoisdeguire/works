@@ -422,6 +422,16 @@
   }
 }
 
+/* Settle the icon out of a soft blur as the stroke starts. Demo-only flourish
+   (applied via motion-safe:animate-[…]); the draw-path utility stays stroke-only.
+   from-only: it lands on the element's own crisp, opaque values. */
+@keyframes draw-settle {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
 /* Draw time in milliseconds, like Tailwind's duration-*; [*] takes any unit. */
 @utility draw-path-duration-* {
   --draw-duration: calc(--value(number) * 1ms);

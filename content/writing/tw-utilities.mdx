@@ -14,7 +14,7 @@ import GrainToggle from "@/content/writing/demos/tw-utilities/grain-toggle";
 import GlossyDemo from "@/content/writing/demos/tw-utilities/glossy-demo";
 import FadeDemo from "@/content/writing/demos/tw-utilities/fade-demo";
 import PatternDemo from "@/content/writing/demos/tw-utilities/pattern-demo";
-import ShimmerDemo from "@/content/writing/demos/tw-utilities/shimmer-demo";
+import SkeletonDemo from "@/content/writing/demos/tw-utilities/skeleton-demo";
 import ShimmerBorderDemo from "@/content/writing/demos/tw-utilities/shimmer-border-demo";
 import CornerDemo from "@/content/writing/demos/tw-utilities/corner-demo";
 import DrawPathDemo from "@/content/writing/demos/tw-utilities/draw-path-demo";
@@ -422,7 +422,7 @@ The shape is called a squircle, and CSS can finally draw one natively with the `
 
 ---
 
-## Shimmer Animation
+## Shimmering Skeleton
 
 A loading skeleton is mostly a kind of polite theater. The gray boxes don't bring the data in any sooner, and the light sweeping across them isn't measuring anything real, but the movement quietly promises that something's still happening and the page hasn't died on you. It's a small reassurance, and somehow it makes the same two-second wait feel shorter than a spinner ever manages.
 
@@ -431,7 +431,7 @@ If you're going to put on a show, though, the light may as well be nice to look 
 Pace it with the Tailwind duration scale you already know: `shimmer-duration-2000` gives a slow, drawn-out pass, and you can take it quicker when you want the wait to feel more alive. And since the whole thing is motion for its own sake, it bows out completely under `prefers-reduced-motion`, sitting perfectly still for anyone who'd rather the screen stayed quiet.
 
 <Preview>
-  <ShimmerDemo />
+  <SkeletonDemo />
 </Preview>
 
 ```css

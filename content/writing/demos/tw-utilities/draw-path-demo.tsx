@@ -1,5 +1,6 @@
 'use client'
 
+import { RiResetLeftLine } from '@remixicon/react'
 import { type CSSProperties, useState } from 'react'
 import Preview from '@/components/mdx/preview'
 import { Button } from '@/components/mdx/preview-controls/button'
@@ -12,20 +13,18 @@ export default function DrawPathDemo() {
   return (
     <>
       <div className="flex justify-center px-8 py-12">
-        <div className="grid size-24 place-items-center rounded-3xl bg-emerald-500">
+        <div className="grid size-18 place-items-center rounded-2xl bg-sky-50 outline-2 -outline-offset-2 outline-sky-700/5">
           <svg
             key={run}
             viewBox="0 0 24 24"
-            className="draw-path size-12"
+            className="draw-path size-16 motion-safe:animate-[draw-settle_500ms_var(--ease-emphasized)_both] stroke-sky-700"
             fill="none"
             stroke="white"
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            strokeWidth={2.5}
             aria-label="checkmark"
             style={{ '--draw-duration': `${duration}ms` } as CSSProperties}
           >
-            <path pathLength={1} d="M5 13l4 4L19 7" />
+            <path pathLength={1} d="M5 11l5 5L19 7" />
           </svg>
         </div>
       </div>
@@ -41,7 +40,7 @@ export default function DrawPathDemo() {
         />
         <span className="h-6 w-px shrink-0 bg-foreground/10 max-md:hidden" />
         <Button type="button" onClick={() => setRun((n) => n + 1)}>
-          Replay
+          <RiResetLeftLine /> Replay
         </Button>
       </Preview.Controls>
     </>

@@ -134,7 +134,7 @@
     & [data-rehype-pretty-code-figure] {
       /* Vertical rhythm + the -mx-2 bleed live on the CodeBlock wrapper (components/mdx/code-block.tsx). */
       & pre {
-        @apply overflow-x-auto max-h-128 rounded-md border py-3 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
+        @apply overflow-x-auto sm:max-h-128 rounded-md border py-3 font-mono text-[14px] leading-[1.65] overscroll-x-contain;
       }
 
       & pre code {
