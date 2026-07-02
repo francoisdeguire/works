@@ -25,7 +25,7 @@ export default function ProgressiveBlurDemo() {
       <div className="flex flex-col items-center gap-4 p-8">
         <div className="relative h-96 w-full rounded-lg overflow-hidden isolate bg-surface-2">
           <div className="h-full w-full overflow-y-scroll">
-            <div className="px-16 py-24 font-sans text-foreground-muted text-sm tracking-wide leading-relaxed flex flex-col items-center gap-8">
+            <div className="px-6 sm:px-16 py-12 sm:py-24 font-sans text-foreground-muted text-sm tracking-wide leading-relaxed flex flex-col items-center gap-8">
               <p className="text-center">
                 Scroll down to see the progressive blur effect in action.
               </p>
