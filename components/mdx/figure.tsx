@@ -1,21 +1,20 @@
-import Image from 'next/image'
+import Image, { type ImageProps } from 'next/image'
 import type { ReactNode } from 'react'
 import { isAnimatedImage } from '@/lib/cdn'
+import Caption from './caption'
 
-type FigureProps = {
-  src: string
-  alt: string
-  width: number
-  height: number
+type FigureProps = ImageProps & {
+  caption?: string
   children?: ReactNode
 }
 
-export default function Figure({ src, alt, width, height, children }: FigureProps) {
-  const animated = isAnimatedImage(src)
+export default function Figure({ caption, children, ...props }: FigureProps) {
+  const animated = typeof props.src === 'string' && isAnimatedImage(props.src)
   return (
-    <figure>
-      <Image src={src} alt={alt} width={width} height={height} unoptimized={animated} />
+    <figure className="relative -mx-2">
+      <Image unoptimized={animated} {...props} />
       {children}
+      {caption && <Caption>{caption}</Caption>}
     </figure>
   )
 }

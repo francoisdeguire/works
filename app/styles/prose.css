@@ -79,7 +79,7 @@
 
     /* ── Embedded media ──────────────────────────────────────────────── */
     & img {
-      @apply rounded-md border border-border;
+      @apply rounded-md outline -outline-offset-1 outline-black/7;
     }
 
     & figure {
@@ -87,7 +87,7 @@
     }
 
     & video {
-      @apply rounded-md border;
+      @apply rounded-md outline -outline-offset-1 outline-black/7;
     }
 
     /* ── MDX components ──────────────────────────────────────────────── */
@@ -95,7 +95,11 @@
       @apply my-12 rounded-md border p-5 -mx-2 text-sm leading-relaxed;
 
       & .mdx-note-title {
-        @apply mb-4 font-display text-xs uppercase tracking-wider text-foreground-muted;
+        @apply mb-4 font-display text-xs uppercase tracking-wider text-foreground-muted text-balance;
+      }
+
+      & p {
+        @apply text-pretty;
       }
     }
 

@@ -38,6 +38,8 @@ const FENCED_CODE_RE = /^```[\s\S]*?^```$/gm
 // Strip paired uppercase-tagged JSX blocks (Preview, Note, Figure with children, etc.)
 // so markdown headings nested inside MDX components don't leak into the TOC.
 const JSX_BLOCK_RE = /^<([A-Z][\w.]*)\b[^>]*>[\s\S]*?^<\/\1>\s*$/gm
+const IMPORT_RE = /^import\s.+$/gm
+const MDX_COMMENT_RE = /\{\/\*[\s\S]*?\*\/\}/g
 
 export function extractHeadings(source: string): Heading[] {
   const stripped = source.replace(FENCED_CODE_RE, '').replace(JSX_BLOCK_RE, '')
@@ -52,7 +54,12 @@ export function extractHeadings(source: string): Heading[] {
 }
 
 function computeReadingTime(content: string): number {
-  const words = content.trim().split(/\s+/).filter(Boolean).length
+  const prose = content
+    .replace(FENCED_CODE_RE, '')
+    .replace(JSX_BLOCK_RE, '')
+    .replace(IMPORT_RE, '')
+    .replace(MDX_COMMENT_RE, '')
+  const words = prose.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE))
 }
 
