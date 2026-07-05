@@ -46,7 +46,7 @@ export function Cell({ photo, x, y, cellSize, loading = 'lazy' }: CellProps) {
           // opaque and exactly cell-sized, covers it once it lands. WebP has no
           // progressive decode, so this is the equivalent low-to-sharp reveal.
           <div
-            className="bg-cover bg-center"
+            className="bg-foreground/5 bg-cover bg-center"
             style={{
               width: displayWidth,
               height: displayHeight,
