@@ -12,9 +12,9 @@ export default function BlurDemo() {
     <>
       <div className="p-1.5 overflow-clip">
         <Image
-          src="writing/better-dashboards/notion-dashboard.webp"
-          width="1200"
-          height="728"
+          src="writing/better-dashboards/vercel-speed-insights.webp"
+          width="1230"
+          height="768"
           alt="Wise Insights Dashboard"
           className="rounded-sm shadow-lg"
           style={{ filter: `blur(${blur}px)` } as CSSProperties}
@@ -24,7 +24,7 @@ export default function BlurDemo() {
         <Slider
           label="Blur"
           min={0}
-          max={12}
+          max={8}
           step={1}
           value={blur}
           onValueChange={setBlur}

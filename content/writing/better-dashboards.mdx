@@ -2,7 +2,7 @@
 title: How To Build Better Dashboards
 date: 2026-06-29
 summary: How to design dashboards for the people who use them, not the data underneath.
-published: false
+published: true
 tags: [design, dashboards, ui]
 ---
 
@@ -12,6 +12,7 @@ import ColumnDemo from "@/content/writing/demos/better-dashboards/column-demo";
 import BlurDemo from "@/content/writing/demos/better-dashboards/blur-demo";
 import ToolbarDemo from "@/content/writing/demos/better-dashboards/toolbar-demo";
 import ColorDemo from "@/content/writing/demos/better-dashboards/color-demo";
+import MenuDemo from "@/content/writing/demos/better-dashboards/menu-demo";
 
 {/* ----- ----- ----- */}
 {/* ----- ----- ----- */}
@@ -107,6 +108,13 @@ Keep in mind here that we're not talking about removing actions to acheive our h
 
 Color is one of the best tools you have for grabbing attention, and dashboards tend to spend it everywhere. It can be tempting to use bold colors for the headers, use color to help differentiate secondary statuses, colors badges in the table, etc. But when you do that, pretty soon your dashboard ends up looking like a bag of Skittles. When everything is colored, color stops meaning anything, and the one state that actually needs attention drowns with the rest.
 
+<Note>
+  <Note.Title>Accessibility Tip</Note.Title>
+  <Note.Content>
+      Leaning on color to distinguish elements is tempting, but it quietly excludes color-blind users. If something deserves to stand apart, color should never be the only thing doing the work.
+  </Note.Content>
+</Note>
+
 Color reads best when it marks a decision that the user needs to make. An overdue invoice deserves red because someone has to act on it. A paid one can stay gray text, no pill, since paid is the state nobody worries about. The same goes for actions: a permanent delete warrants red, a reversible archive doesn't. If seeing the color doesn't change what the user does next, it probably doesn't need to be there.
 
 <Preview>
@@ -114,14 +122,7 @@ Color reads best when it marks a decision that the user needs to make. An overdu
   <Caption>Toggle between the two and watch where your attention shifts.</Caption>
 </Preview>
 
-This is exactly what the blur test catches, by the way. Color survives blurring better than almost anything else, so a quick blur will show you every badge shouting about a state nobody acts on. Strip those back to plain text and the few colors you kept start doing their job again.
-
-<Note>
-  <Note.Title>Accessibility Tip</Note.Title>
-  <Note.Content>
-      Leaning on color to distinguish elements is tempting, but it quietly excludes color-blind users. If something deserves to stand apart, color should never be the only thing doing the work.
-  </Note.Content>
-</Note>
+This is one of the things the blur test catches best. Color survives blurring better than almost anything else, so a quick blur will show you every badge shouting about a state nobody acts on. Strip those back to plain text and the few colors you kept start doing their job again.
 
 ---
 
@@ -131,7 +132,10 @@ Animation is usually thought of as a sign of craft, and now with LLMs, it's has 
 
 <aside>Let's say you interact with 300 times a day with elements that have a 300ms animation. You get about 90s per day of waiting for the same animation to play out. Multiply that by 250 workdays and that adds up to **more than six hours of waiting per year**.</aside>
 
-{/* Visual: short video, snappy instant hover vs the laggy animated one. Or a <Note>. */}
+<Preview>
+  <MenuDemo />
+  <Caption>Open each menu a few times and notice how quickly the animated one starts to feel slow.</Caption>
+</Preview>
 
 *However*, that doesn't mean stripping every transition out. It means reserving motion for the moments where it communicates something: a skeleton that says the page is loading and not broken, a success state that confirms the payment went through, a subtle pulse pointing at something that changed while you were looking elsewhere. 
 
@@ -163,7 +167,8 @@ By now you've mostly completed your app, all the features are in. Then comes the
 
 The thing is, a tour answers questions nobody has asked yet. Someone on day one doesn't care about the reporting suite or where the export button lives, they signed up to do one specific thing and the tour is standing between them and it. You end up optimizing the first five minutes of your app at the expense of every day after that.
 
-{/* Visual: figure or video, blocking tour modal vs a first-hover tooltip. */}
+<Figure src="writing/better-dashboards/notion-tooltip.webp" width={1230} height={736} alt="Notion Tooltip" caption="Notion's rich tooltips are a great way to provide context and guidance to users without interrupting their workflow." />
+
 
 The better move is to accompany instead of teach. Answer the questions when they actually show up: a tooltip with some extra context the first time someone hovers an action they've never touched, an empty state that says what goes here and how to add the first one, a small popover in the corner when a new feature ships.
 
