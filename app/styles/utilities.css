@@ -146,8 +146,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .logo:hover .logo-pixel,
-  .logo:focus-visible .logo-pixel {
+  .logo[data-rippling] .logo-pixel {
     animation: pixel-ripple 240ms step-end var(--ripple-delay) 1;
   }
 }

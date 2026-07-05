@@ -24,6 +24,8 @@ const PIXELS = [
   { x: 8, y: 16, delay: getDelay(4) },
 ]
 
+export const PIXEL_COUNT = PIXELS.length
+
 export default function LogoMark({ size }: LogoMarkProps) {
   return (
     <svg viewBox="0 0 20 20" width={size} height={size} fill="currentColor" aria-hidden="true">
