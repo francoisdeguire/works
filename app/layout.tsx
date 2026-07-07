@@ -32,6 +32,8 @@ export const metadata: Metadata = {
     template: `%s – ${site.name}`,
   },
   description: site.description,
+  // iOS Safari otherwise auto-links emails/addresses in demo copy with underlined tap targets.
+  formatDetection: { telephone: false, email: false, address: false },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

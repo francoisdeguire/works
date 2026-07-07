@@ -92,8 +92,8 @@ const tableMotion = {
   transition: { duration: 0.2, ease: easeEmphasized },
 }
 
-const th = 'px-3 py-2.5 font-semibold text-foreground'
-const td = 'px-3 py-2.5 align-middle'
+const th = 'px-2 sm:px-3 py-2.5 font-semibold text-foreground'
+const td = 'px-2 sm:px-3 py-2.5 align-middle'
 
 function initials(name: string) {
   return name
@@ -195,12 +195,14 @@ export default function ColorDemo() {
         </Tabs>
       </Preview.Controls>
 
-      <div className="flex h-72 sm:h-96 items-center justify-center px-6 w-full">
+      {/* zoom, not scale: transforms don't affect layout, so a scaled table still
+          overflows and clips on narrow phones. Scroll is the fallback if it still can't fit. */}
+      <div className="flex h-72 sm:h-96 items-center overflow-x-auto px-6 w-full">
         <AnimatePresence mode="wait">
           <motion.table
             key={view}
             {...tableMotion}
-            className="text-left text-xs sm:text-sm text-foreground w-full max-sm:scale-75"
+            className="text-left text-xs sm:text-sm text-foreground w-full max-sm:[zoom:0.75]"
           >
             <thead>
               <tr className="border-b border-border">
@@ -218,7 +220,7 @@ export default function ColorDemo() {
                       <Avatar name={rep.name} avatar={rep.avatar} view={view} />
                       <span className="flex flex-col gap-0.5">
                         <span className="font-medium">{rep.name}</span>
-                        <span className="text-xs text-foreground-muted tracking-wide">
+                        <span className="max-sm:hidden text-xs text-foreground-muted tracking-wide">
                           {rep.email}
                         </span>
                       </span>
