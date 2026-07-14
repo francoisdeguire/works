@@ -1,0 +1,14 @@
+/* Colocated, self-contained CSS (never hits globals.css); scribble-prefixed. */
+
+/* marker color; override per element with [--marker:#111] */
+@property --marker {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #a682ff;
+}
+
+@layer components {
+  .scribble-root {
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  }
+}

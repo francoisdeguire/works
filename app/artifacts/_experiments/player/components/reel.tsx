@@ -1,5 +1,3 @@
-'use client'
-
 import { type MotionValue, motion, useTransform } from 'motion/react'
 import type { ScrubHandlers } from '../use-turntable'
 import { Screw } from './screw'
@@ -16,9 +14,9 @@ export function Reel({ rotation, scrub }: { rotation: MotionValue<number>; scrub
   const counterRotation = useTransform(rotation, (r) => -r + SCREW_LIGHT_OFFSET)
   return (
     <div className="player-bevel player-bevel-well absolute bottom-36 left-1/2 size-88 -translate-x-1/2 rounded-full">
-      {/* platter, flush with the body; grab it to scratch */}
+      {/* platter, drag to scratch */}
       <div
-        className="player-bevel absolute inset-px cursor-grab touch-none rounded-full [--player-bevel-width:2px] active:cursor-grabbing"
+        className="player-bevel absolute inset-px cursor-grab touch-none overflow-clip rounded-full [--player-bevel-width:2px] active:cursor-grabbing"
         {...scrub}
       >
         {/* printed details ride the reel */}
@@ -37,7 +35,7 @@ export function Reel({ rotation, scrub }: { rotation: MotionValue<number>; scrub
               <span className="size-2.5 rounded-full border border-zinc-400" />{' '}
               <span className="-ml-1 size-2.5 rounded-full border border-zinc-400" />
             </span>
-            <span className="ml-1 border border-zinc-400 px-[2px] py-px leading-none">M</span>
+            <span className="ml-1 border border-zinc-400 px-0.5 py-px leading-none">M</span>
           </span>
         </motion.div>
         {/* hub: static polished cap, only the screws rotate */}

@@ -2,6 +2,17 @@ import type { ArtifactInput } from '@/lib/artifacts'
 
 export const artifactsManifest: ArtifactInput[] = [
   {
+    slug: 'scribble-strikethrough',
+    title: 'Scribble Strikethrough',
+    date: '2026-07-13',
+    mode: 'dark',
+    poster: 'https://picsum.photos/seed/scribble-strikethrough/720/720',
+    width: 720,
+    height: 720,
+    kind: 'demo',
+    published: false,
+  },
+  {
     slug: 'player',
     title: 'Interactive Tape Player',
     date: '2026-06-08',

@@ -1,5 +1,3 @@
-'use client'
-
 import { type MotionValue, motion, useTransform } from 'motion/react'
 import { cn } from '@/lib/cn'
 import type { MeterLevels } from '../use-tape-deck'

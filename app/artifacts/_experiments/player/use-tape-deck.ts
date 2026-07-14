@@ -1,5 +1,3 @@
-'use client'
-
 import { type MotionValue, useAnimationFrame, useMotionValue } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import type { TapeInbound, TapeOutbound } from './tape-messages'

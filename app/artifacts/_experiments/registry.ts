@@ -7,4 +7,5 @@ import type { ComponentType } from 'react'
 // index file (colocated CSS or subcomponents poison the generated context).
 export const artifactDemos: Record<string, () => Promise<{ default: ComponentType }>> = {
   player: () => import('./player'),
+  'scribble-strikethrough': () => import('./scribble-strikethrough'),
 }

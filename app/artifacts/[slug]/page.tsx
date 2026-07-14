@@ -36,7 +36,7 @@ export default async function ArtifactPage({ params }: PageProps<'/artifacts/[sl
     <main
       id="main"
       style={{ viewTransitionName: `artifact-${slug}` }}
-      className="mx-auto flex min-h-screen w-full max-w-page flex-col items-center justify-center px-6 pt-32 pb-16"
+      className="mx-auto flex min-h-full w-full max-w-page flex-col items-center justify-center px-3 sm:px-6 pt-32 pb-16"
     >
       <Demo />
     </main>

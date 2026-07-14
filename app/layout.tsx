@@ -1,5 +1,5 @@
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { JetBrains_Mono, Mona_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
 import SiteHeader from '@/components/site-header'
@@ -34,6 +34,11 @@ export const metadata: Metadata = {
   description: site.description,
   // iOS Safari otherwise auto-links emails/addresses in demo copy with underlined tap targets.
   formatDetection: { telephone: false, email: false, address: false },
+}
+
+// Safari won't clear a removed theme-color; every route sets one
+export const viewport: Viewport = {
+  themeColor: '#fff',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

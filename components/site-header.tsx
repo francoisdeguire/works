@@ -3,8 +3,9 @@ import Logo from './logo'
 import NavPill from './nav-pill'
 
 export default function SiteHeader() {
+  // pt max() clears the notch on viewport-fit=cover routes
   return (
-    <header className="pointer-events-none fixed top-0 right-0 left-0 z-40 flex items-center justify-between p-3.5 sm:px-5 sm:py-4">
+    <header className="pointer-events-none fixed top-0 right-0 left-0 z-40 flex items-center justify-between p-3.5 pt-[max(0.875rem,env(safe-area-inset-top))] sm:px-5 sm:py-4 sm:pt-[max(1rem,env(safe-area-inset-top))]">
       <div className="pointer-events-auto flex items-center gap-3 z-10">
         <Logo />
         <div className="hidden sm:block">

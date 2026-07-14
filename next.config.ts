@@ -9,6 +9,8 @@ const rehypeCode = fileURLToPath(new URL('./lib/shiki/rehype-code.mjs', import.m
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
+  allowedDevOrigins: ['192.168.2.14'],
+
   experimental: {
     viewTransition: true,
   },

@@ -67,14 +67,58 @@
 
 /* ── Surface treatments ───────────────────────────────────────────────────── */
 
-[data-surface='dotted'] {
+/* body included: iOS paints safe areas from the canvas */
+[data-surface='dotted'],
+body:has([data-surface='dotted']),
+[data-surface='dotted']::before {
   background-color: var(--dotted-background);
   background-image: radial-gradient(circle, var(--color-dotted-grid) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
+/* pin the document; the demo wrapper scrolls instead */
+body:has([data-surface='dotted']) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* mobile: fade the dots near the top and bottom edges */
+@media (width < 40rem) {
+  [data-surface='dotted'],
+  body:has([data-surface='dotted']) {
+    background-image: none;
+  }
+
+  [data-surface='dotted']::before {
+    --dots-fade-top: 2rem;
+    --dots-fade-bottom: 2rem;
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(0 0 0 / 0.058) calc(0.2 * var(--dots-fade-top)),
+      rgb(0 0 0 / 0.235) calc(0.35 * var(--dots-fade-top)),
+      rgb(0 0 0 / 0.5) calc(0.5 * var(--dots-fade-top)),
+      rgb(0 0 0 / 0.765) calc(0.65 * var(--dots-fade-top)),
+      rgb(0 0 0 / 0.942) calc(0.8 * var(--dots-fade-top)),
+      black var(--dots-fade-top),
+      black calc(100% - var(--dots-fade-bottom)),
+      rgb(0 0 0 / 0.942) calc(100% - 0.8 * var(--dots-fade-bottom)),
+      rgb(0 0 0 / 0.765) calc(100% - 0.65 * var(--dots-fade-bottom)),
+      rgb(0 0 0 / 0.5) calc(100% - 0.5 * var(--dots-fade-bottom)),
+      rgb(0 0 0 / 0.235) calc(100% - 0.35 * var(--dots-fade-bottom)),
+      rgb(0 0 0 / 0.058) calc(100% - 0.2 * var(--dots-fade-bottom)),
+      transparent
+    );
+  }
+}
+
 [data-surface='dark'],
-body:has([data-surface='dark']) > header {
+body:has([data-surface='dark']) {
   --background: var(--color-black);
   --foreground: var(--color-white);
   --foreground-muted: var(--color-gray-400);
@@ -83,9 +127,6 @@ body:has([data-surface='dark']) > header {
   --pill-background: var(--color-white);
   --pill-foreground: var(--color-black);
   --pill-glass: var(--color-zinc-800);
-}
-
-[data-surface='dark'] {
   background-color: var(--background);
 }
 

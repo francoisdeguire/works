@@ -1,5 +1,3 @@
-'use client'
-
 import { useAnimationFrame, useMotionValue, useSpring } from 'motion/react'
 import { type PointerEvent, useRef, useState } from 'react'
 import { useTapeDeck } from './use-tape-deck'

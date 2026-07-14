@@ -1,5 +1,3 @@
-'use client'
-
 import { type MotionValue, motion } from 'motion/react'
 import { cn } from '@/lib/cn'
 
