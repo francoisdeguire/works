@@ -10,7 +10,7 @@ export default function PageTitle({ title, subtitle }: PageTitleProps) {
         {title}
       </h1>
       {subtitle ? (
-        <h2 className="mt-4 text-pretty font-display text-base leading-[1.6] text-foreground-muted sm:text-2xl">
+        <h2 className="mt-4 text-pretty font-[475] text-lg leading-[1.6] text-foreground-muted sm:text-xl">
           {subtitle}
         </h2>
       ) : null}

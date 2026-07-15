@@ -15,7 +15,7 @@ export default function HomePage() {
         <h1 className="stagger-0 font-display text-3xl sm:text-5xl tracking-tight leading-none uppercase">
           Francois Deguire
         </h1>
-        <h2 className="stagger-1 mt-4 text-pretty tracking-tight font-display text-base sm:text-2xl leading-[1.6] text-foreground-muted">
+        <h2 className="stagger-1 mt-4 text-pretty tracking-tight text-lg sm:text-2xl sm:leading-loose font-[475] leading-[1.6] text-foreground-muted">
           Design Engineer / Creative Developer
         </h2>
       </header>

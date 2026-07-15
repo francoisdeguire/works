@@ -33,7 +33,7 @@ function ArticleRow({ article }: { article: Article }) {
       href={`/writing/${article.slug}`}
       className="-mx-4 mt-1 group flex items-center duration-200 ease-standard justify-between gap-6 rounded px-4 py-3 transition-colors hover:bg-surface-2 focus-visible:bg-surface-2"
     >
-      <h3 className="font-sans text-base sm:text-lg font-medium tracking-tight text-foreground text-pretty">
+      <h3 className="font-sans text-base sm:text-lg font-medium tracking-tight text-foreground/80 transition-colors group-hover:text-foreground text-pretty">
         {article.title}
       </h3>
       <time

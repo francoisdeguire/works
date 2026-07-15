@@ -9,6 +9,8 @@ const baseSchema = z.object({
   updated: z.iso.date().optional(),
   /** Overlay text color over the video. 'light' renders white text, 'dark' renders gray-950. */
   mode: z.enum(['light', 'dark']),
+  /** Overrides the auto-derived action label (Try ↗ / Read ↗ / Visit ↗), rendered verbatim. */
+  cta: z.string().optional(),
   video: z.string().optional(),
   poster: z.string(),
   width: z.number().int().positive(),
@@ -24,7 +26,14 @@ const visitSchema = baseSchema.extend({
   href: z.union([z.url(), z.string().startsWith('/')]),
 })
 
-export const artifactSchema = z.discriminatedUnion('kind', [demoSchema, visitSchema])
+// Plain video tile: no action, no link — the clip is the whole artifact.
+const showcaseSchema = baseSchema.extend({ kind: z.literal('showcase') })
+
+export const artifactSchema = z.discriminatedUnion('kind', [
+  demoSchema,
+  visitSchema,
+  showcaseSchema,
+])
 export type ArtifactInput = z.input<typeof artifactSchema>
 export type Artifact = z.output<typeof artifactSchema>
 

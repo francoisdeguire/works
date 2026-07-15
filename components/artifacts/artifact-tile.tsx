@@ -15,18 +15,18 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
     <article
       className="relative overflow-hidden rounded-lg bg-surface-2"
       style={{
-        aspectRatio: 1,
+        aspectRatio: artifact.width / artifact.height,
         viewTransitionName: artifact.kind === 'demo' ? `artifact-${artifact.slug}` : undefined,
       }}
     >
       <ArtifactMedia video={artifact.video} poster={artifact.poster} alt={artifact.title} />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-black/30"
+        className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-black/10"
       />
       <h3
         className={cn(
-          'pointer-events-none leading-none absolute bottom-3 left-3 font-display text-sm uppercase',
+          'pointer-events-none leading-none absolute bottom-3 left-3 text-sm font-[475] ml-0.75 mb-0.5',
           textColor,
         )}
       >
@@ -38,8 +38,10 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
 }
 
 function TileAction({ artifact }: { artifact: Artifact }) {
+  if (artifact.kind === 'showcase') return null
+
   const className = cn(
-    'absolute right-2.5 bottom-2.5 inline-flex leading-none items-center rounded-full px-2.5 py-1.5 font-display text-xs uppercase transition-opacity hover:opacity-90',
+    'absolute right-2.5 bottom-2.5 inline-flex leading-none items-center rounded-full px-2.5 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90',
     artifact.mode === 'light' ? 'bg-background text-foreground' : 'bg-foreground text-background',
   )
 
@@ -50,7 +52,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Open demo: ${artifact.title}`}
         className={className}
       >
-        Test
+        {artifact.cta ?? 'Try ↗'}
       </Link>
     )
   }
@@ -65,7 +67,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Visit external project: ${artifact.title}`}
         className={className}
       >
-        Visit
+        {artifact.cta ?? 'Visit ↗'}
       </a>
     )
   }
@@ -76,7 +78,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
       aria-label={`Visit: ${artifact.title}`}
       className={className}
     >
-      Visit
+      {artifact.cta ?? 'Read ↗'}
     </Link>
   )
 }
