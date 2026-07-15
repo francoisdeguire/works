@@ -13,6 +13,7 @@
     "verify": "bun run typecheck && bun run lint && bun run build",
     "optimize:photos": "bun run scripts/optimize-photos.ts",
     "optimize:asset": "bun run scripts/optimize-asset.ts",
+    "optimize:video": "bun run scripts/optimize-video.ts",
     "postinstall": "next typegen"
   },
   "dependencies": {
