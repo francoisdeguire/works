@@ -1,5 +1,6 @@
 // Run: bun run optimize:video   (prompts for the file(s) + mode)
-//   or: bun run scripts/optimize-video.ts <input...> [--mode tile|article] [--crf 23] [--out-dir <dir>]
+//   or: bun run scripts/optimize-video.ts <input...> [--mode tile|article] [--crf 23]
+//       [--social] [--out-dir <dir>]
 //
 // Wraps the CLAUDE.md ffmpeg recipes (H.264, CRF 23, lanczos, audio stripped,
 // faststart) so clips land upload-ready without retyping flags. Two modes:
@@ -15,6 +16,11 @@
 // input. An .mp4 source with no sibling would collide with its own output —
 // rename it or pass --out-dir. --out-dir merges everything into one flat
 // folder; same-named clips from different artifact folders clobber there.
+//
+// --social additionally emits <base>-social.mp4 for X/Threads. Platforms
+// re-encode everything server-side, so unlike the CDN cut it keeps headroom:
+// 1080 px wide, near-lossless CRF 18, forced yuv420p, and a silent AAC track
+// (X is known to reject or mangle audio-less MP4s). Post it, never upload it.
 //
 // Encode from your original recordings, never from a previously encoded MP4 —
 // that would stack a second lossy pass. Upload MP4s to videos.francois.works
@@ -41,23 +47,40 @@ const FILTERS = {
   article: "scale='min(720,iw)':-2:flags=lanczos",
 } as const
 
+const SOCIAL_CRF = 18
+const SOCIAL_FILTER = "scale='min(1080,iw)':-2:flags=lanczos"
+
 type Mode = keyof typeof FILTERS
-type Options = { inputs: string[]; mode: Mode; crf: number; outDir: string | null }
-type RawArgs = { inputs: string[]; mode: string | null; crf: number | null; outDir: string | null }
+type Options = {
+  inputs: string[]
+  mode: Mode
+  crf: number
+  social: boolean
+  outDir: string | null
+}
+type RawArgs = {
+  inputs: string[]
+  mode: string | null
+  crf: number | null
+  social: boolean | null
+  outDir: string | null
+}
 
 function parseArgs(argv: string[]): RawArgs {
   const inputs: string[] = []
   let mode: string | null = null
   let crf: number | null = null
+  let social: boolean | null = null
   let outDir: string | null = null
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]
     if (arg === '--mode') mode = argv[++i] ?? null
     else if (arg === '--crf') crf = Number(argv[++i])
+    else if (arg === '--social') social = true
     else if (arg === '--out-dir') outDir = argv[++i] ?? null
     else inputs.push(arg ?? '')
   }
-  return { inputs, mode, crf, outDir }
+  return { inputs, mode, crf, social, outDir }
 }
 
 async function expandInputs(paths: string[]): Promise<string[]> {
@@ -89,8 +112,10 @@ async function collectDir(dir: string): Promise<string[]> {
     if (e.isDirectory()) {
       files.push(...(await collectDir(join(dir, e.name))))
     } else if (VIDEO_EXT.has(ext)) {
-      // An .mp4 next to a same-named source is a previous output, not an input.
-      if (ext === '.mp4' && sourceBases.has(basename(e.name, extname(e.name)))) continue
+      // An .mp4 (or -social.mp4) next to a same-named source is a previous
+      // output, not an input.
+      const base = basename(e.name, extname(e.name))
+      if (ext === '.mp4' && sourceBases.has(base.replace(/-social$/, ''))) continue
       files.push(join(dir, e.name))
     }
   }
@@ -99,7 +124,7 @@ async function collectDir(dir: string): Promise<string[]> {
 
 function usage(): never {
   process.stderr.write(
-    'usage: bun run optimize:video <input...> [--mode tile|article] [--crf 23] [--out-dir <dir>]\n',
+    'usage: bun run optimize:video <input...> [--mode tile|article] [--crf 23] [--social] [--out-dir <dir>]\n',
   )
   process.exit(2)
 }
@@ -133,12 +158,18 @@ async function resolveOptions(raw: RawArgs, prompter: Prompter | null): Promise<
   crf ??= DEFAULT_CRF
   if (!Number.isFinite(crf) || crf < 0 || crf > 51) usage()
 
+  let social = raw.social
+  if (social === null && prompter) {
+    social = /^y/i.test(await prompter.ask('Social cut for X/Threads? (y/N)', 'n'))
+  }
+  social ??= false
+
   let outDir = raw.outDir
   if (outDir === null && prompter) {
     outDir = (await prompter.ask('Output directory (blank = ./optimized beside input)')) || null
   }
 
-  return { inputs, mode, crf, outDir: outDir ? resolve(outDir) : null }
+  return { inputs, mode, crf, social, outDir: outDir ? resolve(outDir) : null }
 }
 
 function formatSize(bytes: number): string {
@@ -201,6 +232,43 @@ async function encodeVideo(input: string, out: string, opts: Options): Promise<v
   ])
 }
 
+async function encodeSocial(input: string, out: string): Promise<void> {
+  await run('ffmpeg', [
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-y',
+    '-i',
+    input,
+    '-f',
+    'lavfi',
+    '-i',
+    'anullsrc=channel_layout=stereo:sample_rate=44100',
+    '-map',
+    '0:v:0',
+    '-map',
+    '1:a:0',
+    '-c:v',
+    'libx264',
+    '-crf',
+    String(SOCIAL_CRF),
+    '-preset',
+    'slow',
+    '-pix_fmt',
+    'yuv420p',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '128k',
+    '-shortest',
+    '-movflags',
+    '+faststart',
+    '-vf',
+    SOCIAL_FILTER,
+    out,
+  ])
+}
+
 async function encodePoster(video: string, out: string): Promise<void> {
   await run('ffmpeg', [
     '-hide_banner',
@@ -224,25 +292,32 @@ async function main() {
   const opts = await resolveOptions(parseArgs(process.argv.slice(2)), prompter)
   prompter?.close()
 
+  const extras = opts.social ? ' + social cut' : ''
   process.stdout.write(
-    `Encoding ${opts.inputs.length} clip(s) — ${opts.mode} mode, CRF ${opts.crf} + frame-0 poster each\n`,
+    `Encoding ${opts.inputs.length} clip(s) — ${opts.mode} mode, CRF ${opts.crf} + frame-0 poster${extras} each\n`,
   )
-  const progress = createProgress(opts.inputs.length * 2)
+  const progress = createProgress(opts.inputs.length * (opts.social ? 3 : 2))
   for (const input of opts.inputs) {
     const dir = opts.outDir ?? dirname(input)
     await mkdir(dir, { recursive: true })
     const base = basename(input, extname(input))
     const outVideo = join(dir, `${base}.mp4`)
     const outPoster = join(dir, `${base}-poster.jpg`)
+    const outSocial = join(dir, `${base}-social.mp4`)
 
     // Clips in per-artifact folders are often all named the same (loop.mov),
     // so label progress lines with the parent folder.
     const label = (file: string) => join(basename(dirname(input)), basename(file))
     const videoName = label(outVideo)
-    if (outVideo === input) {
-      progress.fail(videoName, 'output would overwrite the source — rename it or use --out-dir')
+    // No poster/social without a video — count the skipped steps so n/total stays honest.
+    const skipRest = (detail: string) => {
+      progress.fail(videoName, detail)
       progress.fail(label(outPoster), 'skipped')
+      if (opts.social) progress.fail(label(outSocial), 'skipped')
       process.exitCode = 1
+    }
+    if (outVideo === input) {
+      skipRest('output would overwrite the source — rename it or use --out-dir')
       continue
     }
     progress.start(videoName)
@@ -259,10 +334,7 @@ async function main() {
         `${dims ?? '?'} ${formatSize(inBytes)}→${formatSize(outBytes)}${warn}`,
       )
     } catch (error) {
-      progress.fail(videoName, ffmpegError(error))
-      process.exitCode = 1
-      // No poster without a video — count the skipped step so n/total stays honest.
-      progress.fail(label(outPoster), 'skipped')
+      skipRest(ffmpegError(error))
       continue
     }
 
@@ -276,12 +348,26 @@ async function main() {
       progress.fail(posterName, ffmpegError(error))
       process.exitCode = 1
     }
+
+    if (!opts.social) continue
+    // The social cut encodes from the ORIGINAL, not the CDN encode — one lossy pass.
+    const socialName = label(outSocial)
+    progress.start(socialName)
+    try {
+      await encodeSocial(input, outSocial)
+      const [{ size }, dims] = await Promise.all([stat(outSocial), probeDimensions(outSocial)])
+      progress.succeed(socialName, `${dims ?? '?'} ${formatSize(size)}`)
+    } catch (error) {
+      progress.fail(socialName, ffmpegError(error))
+      process.exitCode = 1
+    }
   }
   progress.stop()
 
   process.stdout.write(
     '\nUpload MP4s to videos.francois.works, posters to images.francois.works.\n' +
-      'Manifest width/height must match the encoded dimensions above.\n',
+      'Manifest width/height must match the encoded dimensions above.\n' +
+      (opts.social ? 'Social cuts (-social.mp4) are for posting, not the CDN.\n' : ''),
   )
 }
 
