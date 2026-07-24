@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef, useState } from 'react'
 import type { AnimationEvent, FocusEvent } from 'react'
+import { useRef, useState } from 'react'
 import LogoMark, { PIXEL_COUNT } from './logo-mark'
 
 export default function Logo() {

@@ -23,18 +23,19 @@
 *.tsbuildinfo
 next-env.d.ts
 
-# local-only scratch (drafts, brain dumps, internal docs)
+# local-only scratch
 .notes/
 private/
 *.local.*
 docs/
+lib/resume/variants/*
+!lib/resume/variants/.gitkeep
 
 # editor
 .idea/
 .vscode/
 .zed/
 
-# agent guides (kept locally, not committed)
+# agent guides
 CLAUDE.md
 AGENTS.md
-
