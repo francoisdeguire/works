@@ -40,9 +40,20 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
 function TileAction({ artifact }: { artifact: Artifact }) {
   if (artifact.kind === 'showcase') return null
 
-  const className = cn(
-    'absolute right-2.5 bottom-2.5 inline-flex leading-none items-center rounded-full px-2.5 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90',
-    artifact.mode === 'light' ? 'bg-background text-foreground' : 'bg-foreground text-background',
+  const className =
+    'absolute inset-0 flex items-end justify-end p-2.5 rounded-lg transition-opacity hover:opacity-90'
+
+  const pill = (label: string) => (
+    <span
+      className={cn(
+        'inline-flex leading-none items-center rounded-full px-2.5 py-1.5 text-xs font-semibold',
+        artifact.mode === 'light'
+          ? 'bg-background text-foreground'
+          : 'bg-foreground text-background',
+      )}
+    >
+      {label}
+    </span>
   )
 
   if (artifact.kind === 'demo') {
@@ -52,7 +63,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Open demo: ${artifact.title}`}
         className={className}
       >
-        {artifact.cta ?? 'Try ↗'}
+        {pill(artifact.cta ?? 'Try ↗')}
       </Link>
     )
   }
@@ -67,7 +78,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Visit external project: ${artifact.title}`}
         className={className}
       >
-        {artifact.cta ?? 'Visit ↗'}
+        {pill(artifact.cta ?? 'Visit ↗')}
       </a>
     )
   }
@@ -78,7 +89,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
       aria-label={`Visit: ${artifact.title}`}
       className={className}
     >
-      {artifact.cta ?? 'Read ↗'}
+      {pill(artifact.cta ?? 'Read ↗')}
     </Link>
   )
 }
