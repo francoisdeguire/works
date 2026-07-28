@@ -8,7 +8,7 @@ type TocProps = {
   headings: Heading[]
 }
 
-// Active line sits below the fixed header — matches `scroll-mt-20` on h2.
+// Active line sits below the fixed header, in step with the root `scroll-pt-20`.
 const ACTIVE_OFFSET_PX = 96
 
 // useLayoutEffect on the server warns; fall back to useEffect during SSR. The browser
@@ -75,7 +75,7 @@ export default function Toc({ headings }: TocProps) {
       aria-label="Table of contents"
       className="fixed top-48 my-4 left-8 pr-2 hidden w-64 xl:flex flex-col gap-6"
     >
-      <h3 className="font-display text-xs uppercase text-foreground-muted/80">Table of contents</h3>
+      <p className="font-display text-xs uppercase text-foreground-muted/80">Table of contents</p>
 
       <div className="flex flex-col gap-1">
         {headings.map((h) => {
@@ -84,6 +84,7 @@ export default function Toc({ headings }: TocProps) {
             <a
               key={h.id}
               href={`#${h.id}`}
+              aria-current={isActive ? 'location' : undefined}
               className="group flex h-6 items-center gap-3 rounded-sm"
             >
               <span

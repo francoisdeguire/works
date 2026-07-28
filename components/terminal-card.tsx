@@ -22,7 +22,7 @@ export default async function TerminalCard() {
           <div className="flex max-sm:flex-1 items-center justify-center min-h-0">
             <a
               {...mailtoLinkProps}
-              className="max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 sm:focus-visible:outline-white"
             >
               {site.email.toUpperCase()}
             </a>

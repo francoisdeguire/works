@@ -5,7 +5,7 @@ function NoteRoot({ children }: { children: ReactNode }) {
 }
 
 function NoteTitle({ children }: { children: ReactNode }) {
-  return <h4 className="mdx-note-title">{children}</h4>
+  return <h3 className="mdx-note-title">{children}</h3>
 }
 
 function NoteContent({ children }: { children: ReactNode }) {

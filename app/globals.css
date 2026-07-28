@@ -63,8 +63,14 @@
 /* ── Base ─────────────────────────────────────────────────────────────────── */
 
 @layer base {
+  /* outline-dos at rest, not just on :focus-visible: Tailwind's transition-colors animates
+     outline-color, so a default of currentColor makes focus rings fade in from black */
   * {
-    @apply border-border scrollbar-thin scrollbar-track-transparent scrollbar-thumb-foreground/10;
+    @apply border-border outline-dos scrollbar-thin scrollbar-track-transparent scrollbar-thumb-foreground/10;
+  }
+  /* keeps anchor jumps and keyboard focus clear of the fixed header */
+  html {
+    @apply scroll-pt-20;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-dos selection:text-background;

@@ -13,13 +13,15 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
 
   return (
     <article
-      className="relative overflow-hidden rounded-lg bg-surface-2"
+      className="relative rounded-lg bg-surface-2"
       style={{
         aspectRatio: artifact.width / artifact.height,
         viewTransitionName: artifact.kind === 'demo' ? `artifact-${artifact.slug}` : undefined,
       }}
     >
-      <ArtifactMedia video={artifact.video} poster={artifact.poster} alt={artifact.title} />
+      <div className="absolute inset-0 overflow-hidden rounded-lg">
+        <ArtifactMedia video={artifact.video} poster={artifact.poster} alt={artifact.title} />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-black/10"
