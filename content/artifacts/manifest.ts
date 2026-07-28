@@ -2,6 +2,28 @@ import type { ArtifactInput } from '@/lib/artifacts'
 
 export const artifactsManifest: ArtifactInput[] = [
   {
+    slug: 'burst-grid',
+    title: 'Canvas',
+    date: '2026-07-28',
+    mode: 'light',
+    video: 'https://videos.francois.works/artifacts/burst-grid/burst-grid.mp4',
+    poster: 'https://videos.francois.works/artifacts/burst-grid/burst-grid-poster.jpg',
+    width: 720,
+    height: 518,
+    kind: 'showcase',
+  },
+  {
+    slug: 'perspective-text',
+    title: 'React Three Fiber',
+    date: '2026-07-28',
+    mode: 'dark',
+    video: 'https://videos.francois.works/artifacts/perspective-text/perspective-text.mp4',
+    poster: 'https://videos.francois.works/artifacts/perspective-text/perspective-text-poster.jpg',
+    width: 720,
+    height: 482,
+    kind: 'showcase',
+  },
+  {
     slug: 'lem-login',
     title: 'WebGL Shaders',
     date: '2026-07-15',
