@@ -12,7 +12,6 @@ const monaSans = Mona_Sans({
   variable: '--font-mona-sans',
   subsets: ['latin'],
   display: 'swap',
-  axes: ['wdth'],
 })
 
 const jetbrainsMono = JetBrains_Mono({

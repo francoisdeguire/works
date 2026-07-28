@@ -45,11 +45,11 @@ export async function getCurrentWeather(): Promise<WeatherSnapshot | null> {
 }
 
 function codeToCondition(code: number): string {
-  if (code <= 1) return 'SUNNY'
-  if (code <= 3) return 'CLOUDY'
-  if (code === 45 || code === 48) return 'FOG'
-  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'RAIN'
-  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'SNOW'
-  if (code >= 95 && code <= 99) return 'STORM'
-  return 'CLEAR'
+  if (code <= 1) return 'Sunny'
+  if (code <= 3) return 'Cloudy'
+  if (code === 45 || code === 48) return 'Fog'
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'Rain'
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'Snow'
+  if (code >= 95 && code <= 99) return 'Storm'
+  return 'Clear'
 }

@@ -13,7 +13,7 @@ export default async function TerminalCard() {
   const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country)
 
   return (
-    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 py-4 font-display text-foreground sm:text-white">
+    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 py-4 font-display uppercase text-foreground sm:text-white">
       <div className="relative flex flex-col h-full sm:h-80 sm:justify-between">
         <div className="flex flex-col sm:flex-row max-sm:flex-1 min-h-0">
           <div className="flex-1 max-sm:hidden">
@@ -24,18 +24,18 @@ export default async function TerminalCard() {
               {...mailtoLinkProps}
               className="max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 sm:focus-visible:outline-white"
             >
-              {site.email.toUpperCase()}
+              {site.email}
             </a>
           </div>
         </div>
 
         <div className="flex justify-between text-foreground-muted sm:text-white/80 ">
           <div className="self-end text-sm sm:text-base -mb-0.5">
-            <p>MADE WITH LOVE</p>
-            <p>(AND MATCHA)</p>
+            <p>Made with love</p>
+            <p>(and matcha)</p>
           </div>
           <div className="self-end justify-self-end text-right text-sm sm:text-base -mb-0.5">
-            <p>BASED IN MTL</p>
+            <p>Based in MTL</p>
             {weather ? (
               <p>
                 {weather.condition}
