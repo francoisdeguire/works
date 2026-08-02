@@ -13,7 +13,7 @@ export default async function TerminalCard() {
   const useFahrenheit = FAHRENHEIT_COUNTRIES.has(country)
 
   return (
-    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:shadow-xl sm:rounded-4xl bg-transparent sm:bg-black sm:p-8 py-4 font-display uppercase text-foreground sm:text-white">
+    <TerminalCardSurface className="tilt-card relative overflow-hidden max-sm:h-[40svh] sm:smooth-shadow-ring-xl sm:smooth-ring-gray-500/30 sm:rounded-[56px] sm:squircle-1.5 sm:border-10 sm:border-gray-50 bg-transparent sm:bg-radial-[at_50%_0%] sm:from-black sm:to-neutral-800 sm:p-8 py-4 font-display uppercase text-foreground sm:text-white">
       <div className="relative flex flex-col h-full sm:h-80 sm:justify-between">
         <div className="flex flex-col sm:flex-row max-sm:flex-1 min-h-0">
           <div className="flex-1 max-sm:hidden">

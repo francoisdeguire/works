@@ -1,3 +1,4 @@
+import { RiArrowRightUpLine } from '@remixicon/react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import TerminalCard from '@/components/terminal-card'
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main id="main" className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6 sm:pb-48">
+    <main id="main" className="mx-auto w-full max-w-[90ch] px-5 pt-[30svh] sm:px-6">
       <header>
         <h1 className="stagger-0 font-display text-3xl sm:text-5xl tracking-tight leading-none text-balance uppercase">
           Francois Deguire
@@ -87,8 +88,36 @@ export default function HomePage() {
         </div>
       </div>
 
-      <footer className="stagger-9 mt-12 sm:mt-72 max-w-180 mx-auto">
-        <TerminalCard />
+      <nav
+        aria-label="Elsewhere"
+        className="stagger-9 mt-12 sm:mt-24 flex items-center gap-6 sm:gap-10 text-lg sm:text-2xl font-[475] tracking-tight text-foreground"
+      >
+        {[
+          { label: 'GitHub', href: 'https://github.com/francoisdeguire' },
+          { label: 'X', href: 'https://x.com/madebyfrancois' },
+        ].map(({ label, href }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-1 rounded-xs"
+          >
+            <span className="underline underline-offset-3 decoration-foreground/30 transition-[text-decoration-color] duration-200 group-hover:decoration-foreground group-focus-visible:decoration-foreground">
+              {label}
+            </span>
+            <RiArrowRightUpLine
+              aria-hidden
+              className="size-4 sm:size-5 transition-transform duration-200 ease-standard group-hover:-translate-y-px group-hover:translate-x-px"
+            />
+          </a>
+        ))}
+      </nav>
+
+      <footer className="sm:h-svh sm:flex sm:flex-col">
+        <div className="stagger-10 mt-12 sm:my-auto w-full max-w-180 mx-auto">
+          <TerminalCard />
+        </div>
       </footer>
     </main>
   )
