@@ -22,9 +22,15 @@ export default async function TerminalCard() {
           <div className="flex max-sm:flex-1 items-center justify-center min-h-0">
             <a
               {...mailtoLinkProps}
-              className="max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none transition-opacity duration-100 hover:text-foreground/80 sm:hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 sm:focus-visible:outline-white"
+              className="group relative inline-block rounded-xs max-sm:mb-4 max-sm:underline underline-offset-3 text-xl sm:text-2xl leading-none focus-visible:outline-2 focus-visible:outline-offset-4 sm:focus-visible:outline-white"
             >
-              {site.email}
+              <span className="block px-[0.4em] py-[0.18em]">{site.email}</span>
+              <span
+                aria-hidden
+                className="absolute inset-0 hidden sm:block px-[0.4em] py-[0.18em] bg-white text-black [clip-path:inset(0_100%_0_0)] transition-[clip-path] delay-100 duration-200 ease-emphasized group-hover:[clip-path:inset(0_0_0_0)] group-focus-visible:[clip-path:inset(0_0_0_0)] motion-reduce:transition-none"
+              >
+                {site.email}
+              </span>
             </a>
           </div>
         </div>
