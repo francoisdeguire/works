@@ -33,7 +33,7 @@ export default function HomePage() {
             <strong className="font-medium text-foreground">
               My work lives between design and engineering.
             </strong>{' '}
-            I compose interfaces, components, and the quiet systems underneath it all.
+            I compose interfaces, components, and the hidden systems underneath it all.
           </p>
           <p className="stagger-4">
             I studied industrial design, so the way I think about software is shaped by how I was

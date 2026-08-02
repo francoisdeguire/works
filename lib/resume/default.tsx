@@ -27,9 +27,9 @@ export default function DefaultResume() {
 
       <p className="mt-8 text-pretty paper:mt-4">
         Design engineer with six years of experience in enterprise software. I take complex and
-        novel ideas all the way to production, owning the outcome and not just part of the process.
-        My curiosity and wide skill set allow me to work across both design and engineering to
-        deliver the last 10% that makes an interface feel truly special.
+        novel ideas all the way to production, owning the outcome through every stage of the
+        creative process. My curiosity and wide skill set allow me to work across both design and
+        engineering to deliver the last 10% that makes an interface feel truly considered.
       </p>
 
       <p className="mt-8 text-pretty paper:mt-2">
