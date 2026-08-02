@@ -72,8 +72,21 @@ export default function HomePage() {
 
         <div>
           <p className="stagger-7">
-            When I'm not working you'll find me stress-testing baking recipes, writing code for fun,
-            or deep in some seemingly random new hobby.
+            When I'm not working you'll find me stress-testing baking recipes,{' '}
+            <Link
+              href="/artifacts"
+              className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
+            >
+              writing code for fun
+            </Link>
+            , sharing my thoughts on{' '}
+            <Link
+              href="/writing"
+              className="text-foreground underline-offset-3 transition-[text-decoration-color] duration-200 underline decoration-foreground/30 hover:decoration-foreground focus-visible:decoration-foreground"
+            >
+              my blog
+            </Link>
+            , or deep in some seemingly random new hobby.
           </p>
           <p className="stagger-8">
             Current hobby: the endless money pit that is film photography.
