@@ -17,4 +17,6 @@ A little next.js, a lot of css, and mdx for the content.
 - [Bunny CDN](https://bunny.net) for images and video
 - [Biome](https://biomejs.dev) and [bun](https://bun.sh)
 
-Want to say hi? [hey@francois.works](mailto:hey@francois.works)
+Want to say hi? 
+[hey@francois.works](mailto:hey@francois.works)
+[Follow me on X](https://x.com/madebyfrancois)
