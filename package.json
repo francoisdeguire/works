@@ -14,6 +14,7 @@
     "optimize:photos": "bun run scripts/optimize-photos.ts",
     "optimize:asset": "bun run scripts/optimize-asset.ts",
     "optimize:video": "bun run scripts/optimize-video.ts",
+    "generate:icons": "bun run scripts/generate-icons.ts",
     "postinstall": "next typegen"
   },
   "dependencies": {
