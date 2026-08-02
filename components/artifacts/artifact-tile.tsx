@@ -1,3 +1,4 @@
+import { RiArrowRightUpLine } from '@remixicon/react'
 import type { Route } from 'next'
 import Link from 'next/link'
 import ArtifactMedia from '@/components/artifacts/artifact-media'
@@ -9,11 +10,11 @@ type ArtifactTileProps = {
 }
 
 export default function ArtifactTile({ artifact }: ArtifactTileProps) {
-  const textColor = artifact.mode === 'light' ? 'text-background' : 'text-foreground'
+  const textColor = artifact.mode === 'light' ? 'text-background/80' : 'text-foreground/70'
 
   return (
     <article
-      className="relative rounded-lg bg-surface-2"
+      className="group relative"
       style={{
         aspectRatio: artifact.width / artifact.height,
         viewTransitionName: artifact.kind === 'demo' ? `artifact-${artifact.slug}` : undefined,
@@ -24,11 +25,11 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
       </div>
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-black/10"
+        className="pointer-events-none absolute inset-0 rounded-lg outline outline-black/10 -outline-offset-1"
       />
       <h3
         className={cn(
-          'pointer-events-none leading-none absolute bottom-3 left-3 text-sm font-[475] ml-0.75 mb-0.5',
+          'pointer-events-none leading-none absolute bottom-3.5 left-4 text-xs font-medium',
           textColor,
         )}
       >
@@ -42,19 +43,18 @@ export default function ArtifactTile({ artifact }: ArtifactTileProps) {
 function TileAction({ artifact }: { artifact: Artifact }) {
   if (artifact.kind === 'showcase') return null
 
-  const className =
-    'absolute inset-0 flex items-end justify-end p-2.5 rounded-lg transition-opacity hover:opacity-90'
+  const className = 'absolute inset-0 flex items-end justify-end p-2.5 rounded-lg'
 
-  const pill = (label: string) => (
+  const badge = (
     <span
       className={cn(
-        'inline-flex leading-none items-center rounded-full px-2.5 py-1.5 text-xs font-semibold',
+        'inline-flex size-7 items-center justify-center rounded-full backdrop-blur-md transition-[color,background-color,translate] duration-200 group-hover:-translate-y-0.5',
         artifact.mode === 'light'
-          ? 'bg-background text-foreground'
-          : 'bg-foreground text-background',
+          ? 'bg-background/50 text-foreground/80 group-hover:bg-background group-hover:text-foreground'
+          : 'bg-foreground/50 text-background/80 group-hover:bg-foreground group-hover:text-background',
       )}
     >
-      {label}
+      <RiArrowRightUpLine aria-hidden className="size-4" />
     </span>
   )
 
@@ -65,7 +65,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Open demo: ${artifact.title}`}
         className={className}
       >
-        {pill(artifact.cta ?? 'Try ↗')}
+        {badge}
       </Link>
     )
   }
@@ -80,7 +80,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
         aria-label={`Visit external project: ${artifact.title}`}
         className={className}
       >
-        {pill(artifact.cta ?? 'Visit ↗')}
+        {badge}
       </a>
     )
   }
@@ -91,7 +91,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
       aria-label={`Visit: ${artifact.title}`}
       className={className}
     >
-      {pill(artifact.cta ?? 'Read ↗')}
+      {badge}
     </Link>
   )
 }

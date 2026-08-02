@@ -8,6 +8,8 @@
 
 @custom-variant surface-dark (body:has([data-surface='dark']) &);
 
+@custom-variant can-hover (@media (hover: hover));
+
 @custom-variant paper {
   @media print {
     @slot;
