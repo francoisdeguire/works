@@ -6,9 +6,7 @@
       {
         "rule": "codex-grid-background",
         "value": "*",
-        "files": [
-          "app/globals.css"
-        ],
+        "files": ["app/globals.css"],
         "createdAt": "2026-08-02T19:34:20.645Z",
         "reason": "dotted surface is the /artifacts/[slug] demo canvas, not decorative"
       }
