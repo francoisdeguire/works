@@ -4,11 +4,11 @@ Nice to see you here! 🤍
 
 You've stumbled on my personal website. It's a small corner of the internet for my writing, a few interactive experiments, and photos I'm fond of. Feel free to peek at the code if you want to see how it works under the hood.
 
-If you'd rather just look around, [francois.works](https://francois.works) is the front door.
+[francois.works](https://francois.works)
 
 ## Stack
 
-A little Next.js, a lot of CSS, MDX for the words.
+A little next.js, a lot of css, and mdx for the content.
 
 - [Next.js 16](https://nextjs.org) and [React 19](https://react.dev)
 - [TypeScript](https://www.typescriptlang.org), strict
