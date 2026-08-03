@@ -48,7 +48,7 @@ function TileAction({ artifact }: { artifact: Artifact }) {
   const badge = (
     <span
       className={cn(
-        'inline-flex size-7 items-center justify-center rounded-full backdrop-blur-md transition-[color,background-color,translate] duration-200 group-hover:-translate-y-0.5',
+        'bevel inline-flex size-7 items-center justify-center rounded-full backdrop-blur-[1px] backdrop-saturate-150 transition-[color,background-color,translate] duration-200 group-hover:-translate-y-0.5',
         artifact.mode === 'light'
           ? 'bg-background/50 text-foreground/80 group-hover:bg-background group-hover:text-foreground'
           : 'bg-foreground/50 text-background/80 group-hover:bg-foreground group-hover:text-background',

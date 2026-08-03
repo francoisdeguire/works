@@ -67,6 +67,15 @@
   @apply eased-linear-fill;
 }
 
+@utility bevel {
+  box-shadow:
+    0 -1px 0 oklch(100% 0 0 / 0.35),
+    1px 0 0 oklch(100% 0 0 / 0.15),
+    -1px 0 0 oklch(100% 0 0 / 0.15),
+    0 1px 0 oklch(100% 0 0 / 0.3),
+    0 1px 1px oklch(0% 0 0 / 0.2);
+}
+
 @property --tilt-amount {
   syntax: '<number>';
   inherits: false;
