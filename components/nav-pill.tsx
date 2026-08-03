@@ -15,7 +15,7 @@ export default function NavPill({ withContact = false }: NavPillProps) {
   return (
     <nav
       aria-label="Primary"
-      className="flex h-10 items-center gap-5 rounded-full border-[0.5px] border-foreground/10 bg-pill-glass/85 px-6 font-display font-medium text-[15px] uppercase tracking-tight backdrop-blur-md *:flex *:h-full *:items-center *:text-foreground/60 *:hover:text-foreground *:aria-[current=page]:text-foreground *:transition-colors *:duration-100"
+      className="flex h-10 items-center gap-1 rounded-full border-[0.5px] border-foreground/10 bg-pill-glass/85 px-4 font-display font-medium text-[15px] uppercase tracking-tight backdrop-blur-md *:flex *:h-full *:items-center *:text-foreground/50 *:hover:text-foreground *:aria-[current=page]:text-foreground *:transition-colors *:px-2 *:duration-100 backdrop-saturate-150"
     >
       <Link href="/writing" aria-current={isActive('/writing') ? 'page' : undefined}>
         Writing
