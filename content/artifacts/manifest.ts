@@ -2,6 +2,17 @@ import type { ArtifactInput } from '@/lib/artifacts'
 
 export const artifactsManifest: ArtifactInput[] = [
   {
+    slug: 'context-menu',
+    title: 'React + Motion',
+    date: '2026-08-03',
+    mode: 'dark',
+    video: 'https://videos.francois.works/artifacts/context-menu/context-menu.mp4',
+    poster: 'https://videos.francois.works/artifacts/context-menu/context-menu-poster.jpg',
+    width: 720,
+    height: 720,
+    kind: 'showcase',
+  },
+  {
     slug: 'burst-grid',
     title: 'Canvas',
     date: '2026-07-28',
