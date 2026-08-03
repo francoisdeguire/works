@@ -9,6 +9,8 @@ const baseSchema = z.object({
   updated: z.iso.date().optional(),
   /** Overlay text color over the video. 'light' renders white text, 'dark' renders gray-950. */
   mode: z.enum(['light', 'dark']),
+  /** Column the tile sits in on the two-column grid. Order within a column follows manifest order. */
+  column: z.union([z.literal(1), z.literal(2)]),
   /** Overrides the auto-derived action label (Try ↗ / Read ↗ / Visit ↗), rendered verbatim. */
   cta: z.string().optional(),
   video: z.string().optional(),
@@ -47,8 +49,7 @@ export const getAllArtifacts = cache(async (): Promise<Artifact[]> => {
       throw new Error(`Invalid artifact (${id}): ${why}`)
     }
   })
-  const visible = process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
-  return visible.sort((a, b) => b.date.localeCompare(a.date))
+  return process.env.NODE_ENV === 'production' ? parsed.filter((a) => a.published) : parsed
 })
 
 export async function getArtifactBySlug(slug: string): Promise<Artifact | null> {
